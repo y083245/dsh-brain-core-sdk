@@ -37,6 +37,6 @@ node apps/kernel/src/cli.ts start --port 17345
 
 ## 授权许可
 
-项目自本次许可变更起采用 **PolyForm Noncommercial License 1.0.0**，版权归 xiaoyuan 所有（© 2026）。许可允许在条款规定的非商业用途下使用、修改和分发项目。**商业用途须取得版权方的单独授权。** 完整条款见 [LICENSE](LICENSE)。
+项目许可采用 **PolyForm Noncommercial License 1.0.0**，版权归 xiaoyuan 所有（© 2026）。许可允许在条款规定的非商业用途下使用、修改和分发项目。**商业用途须取得版权方的单独授权。** 完整条款见 [LICENSE](LICENSE)。
 
-此前按 MIT 发布的版本仍适用其随附的 MIT 许可证。第三方依赖和资源适用各自的许可证，控制台字体的许可见 [OFL.txt](apps/console/web/public/fonts/OFL.txt)。
+第三方依赖和资源适用各自的许可证，控制台字体的许可见 [OFL.txt](apps/console/web/public/fonts/OFL.txt)。
