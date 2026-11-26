@@ -1,0 +1,48 @@
+{
+  "name": "@brain-core/plugin-console-chat",
+  "version": "0.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "node --test \"test/*.test.ts\""
+  },
+  "brain": {
+    "id": "console-chat",
+    "kinds": ["channel"],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "channel.provide",
+      "channel.send",
+      "agent.session",
+      "memory.ingest",
+      "identity.link",
+      "tools.register"
+    ],
+    "source": {
+      "channels": ["console-chat:private:*", "console-chat:group:*"],
+      "eventKinds": ["console-chat.message"],
+      "defaultVisibility": "subject",
+      "trust": "owner"
+    },
+    "tools": [
+      {
+        "name": "send_message",
+        "effect": "send",
+        "load": "core",
+        "summary": "在控制台对话里发送一条消息",
+        "textArg": "text"
+      }
+    ]
+  },
+  "dependencies": {
+    "@brain-core/chat-kit": "workspace:*",
+    "@brain-core/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@brain-core/testkit": "workspace:*"
+  }
+}

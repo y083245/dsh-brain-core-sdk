@@ -1,0 +1,28 @@
+{
+  "name": "__ID__",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "uv run --no-sync python main.py"
+  },
+  "brain": {
+    "id": "__ID__",
+    "kinds": __KINDS__,
+    "api": "^1.0.0",
+    "runtime": "process",
+    "process": {
+      "command": "uv",
+      "args": ["run", "--no-sync", "python", "main.py"]
+    },
+    "permissions": __PERMISSIONS__,
+__SOURCE_LINE__
+    "tools": [
+      {
+        "name": "hello",
+        "effect": "read",
+        "load": "core",
+        "summary": "Say hello"
+      }
+    ]
+  }
+}

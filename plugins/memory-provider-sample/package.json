@@ -1,0 +1,30 @@
+{
+  "name": "@brain-core/plugin-memory-provider-sample",
+  "version": "0.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "node --test \"test/*.test.ts\""
+  },
+  "brain": {
+    "id": "memory-provider-sample",
+    "kinds": ["memory-provider"],
+    "api": "^1.0.0",
+    "runtime": "process",
+    "process": {
+      "command": "node",
+      "args": ["src/index.ts"]
+    },
+    "permissions": [
+      "memory.readL0",
+      "memory.writeDerived"
+    ]
+  },
+  "devDependencies": {
+    "@brain-core/sdk": "workspace:*",
+    "@brain-core/testkit": "workspace:*"
+  }
+}

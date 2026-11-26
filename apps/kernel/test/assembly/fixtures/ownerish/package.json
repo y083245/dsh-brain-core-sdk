@@ -1,0 +1,37 @@
+{
+  "name": "brain-plugin-owner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "ownerish",
+    "kinds": [
+      "channel",
+      "capability"
+    ],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "tools.register"
+    ],
+    "source": {
+      "channels": [
+        "ownerish:private:*",
+        "ownerish:group:*"
+      ],
+      "eventKinds": [],
+      "defaultVisibility": "origin",
+      "trust": "member"
+    },
+    "tools": [
+      {
+        "name": "ping",
+        "effect": "read",
+        "load": "core",
+        "summary": "owner only",
+        "audience": "owner"
+      }
+    ]
+  }
+}

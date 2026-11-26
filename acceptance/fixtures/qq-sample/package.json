@@ -1,0 +1,157 @@
+{
+  "name": "@brain-core/acceptance-qq-sample",
+  "version": "1.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "brain": {
+    "id": "qq",
+    "kinds": ["channel"],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "channel.provide",
+      "channel.send",
+      "agent.session",
+      "memory.ingest",
+      "memory.record",
+      "memory.search",
+      "identity.link",
+      "schedule.ownTime",
+      "tools.register"
+    ],
+    "source": {
+      "channels": ["qq:private:*", "qq:group:*"],
+      "eventKinds": ["qq.message", "qq.vision", "qq.action", "qq.wake"],
+      "defaultVisibility": "subject",
+      "trust": "member"
+    },
+    "tools": [
+      {
+        "name": "send_message",
+        "effect": "send",
+        "load": "core",
+        "summary": "在 QQ 通道发送一条消息",
+        "textArg": "text"
+      },
+      {
+        "name": "reply",
+        "effect": "send",
+        "load": "core",
+        "summary": "回复 QQ 指定消息",
+        "textArg": "text"
+      },
+      {
+        "name": "send_burst",
+        "effect": "send",
+        "load": "core",
+        "summary": "连发几句简短 QQ 消息",
+        "textArg": "text",
+        "sendPerMinute": 2
+      },
+      {
+        "name": "set_wake_config",
+        "effect": "write",
+        "load": "core",
+        "summary": "设置本通道的唤醒条件与触发偏好"
+      },
+      {
+        "name": "get_message_images",
+        "effect": "read",
+        "load": "context",
+        "group": "media",
+        "when": "message.hasMedia",
+        "summary": "读取并记录图片描述",
+        "keywords": ["看图", "图片"]
+      },
+      {
+        "name": "get_forward_msg",
+        "effect": "read",
+        "load": "context",
+        "group": "forward",
+        "when": "message.hasForward",
+        "summary": "读取并记录合并转发内容",
+        "keywords": ["转发", "合并转发"]
+      },
+      {
+        "name": "send_poke",
+        "effect": "send",
+        "load": "context",
+        "group": "poke",
+        "when": "event.poke",
+        "summary": "回拍一下对方",
+        "keywords": ["拍一拍", "戳"],
+        "sendPerMinute": 10
+      },
+      {
+        "name": "list_stickers",
+        "effect": "read",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "查看已收藏的表情列表",
+        "keywords": ["表情", "表情包"]
+      },
+      {
+        "name": "send_sticker",
+        "effect": "send",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "在当前会话发送一个表情",
+        "keywords": ["表情", "发表情"],
+        "sendPerMinute": 10
+      },
+      {
+        "name": "collect_sticker",
+        "effect": "write",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "收藏一个表情",
+        "keywords": ["收藏表情"]
+      },
+      {
+        "name": "sticker_note",
+        "effect": "write",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "记录某个表情的表达含义",
+        "keywords": ["表情含义", "记表情"]
+      },
+      {
+        "name": "send_voice",
+        "effect": "send",
+        "load": "onDemand",
+        "group": "voice",
+        "summary": "发送一段语音消息",
+        "keywords": ["语音", "发语音"]
+      },
+      {
+        "name": "tts_voice",
+        "effect": "write",
+        "load": "onDemand",
+        "group": "voice",
+        "summary": "把文字合成为语音片段",
+        "keywords": ["合成语音", "tts"]
+      },
+      {
+        "name": "slang_note",
+        "effect": "write",
+        "load": "onDemand",
+        "group": "slang",
+        "summary": "记下群里的黑话与梗含义",
+        "keywords": ["黑话", "梗", "slang"]
+      }
+    ],
+    "groups": {
+      "media": { "summary": "图片读取与视觉描述" },
+      "forward": { "summary": "合并转发消息读取" },
+      "poke": { "summary": "拍一拍互动" },
+      "stickers": { "summary": "表情包查看、发送、收藏与含义记录", "usage": "先 list_stickers 看列表，再用 send_sticker 发送。" },
+      "voice": { "summary": "语音合成与发送" },
+      "slang": { "summary": "群黑话与梗知识记录" }
+    }
+  },
+  "dependencies": {
+    "@brain-core/sdk": "workspace:*"
+  }
+}

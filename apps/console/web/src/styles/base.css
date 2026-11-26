@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--ink-stone);
+    color: var(--text-1);
+    font-family: var(--font-ui);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  a {
+    color: var(--shiqing);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--hair-strong);
+    border-radius: var(--radius);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-3);
+  }
+}
+
+/* Preserve the tone edge when callers set an inline border shorthand. */
+.plate[data-tone='warn'] {
+  border-left: 2px solid var(--tenghuang) !important;
+}
+
+.plate[data-tone='danger'] {
+  border-left: 2px solid var(--yanzhi) !important;
+}
+
+html.has-brush-cursor,
+html.has-brush-cursor * {
+  cursor: none;
+}
+
+html.has-brush-cursor input,
+html.has-brush-cursor textarea,
+html.has-brush-cursor [contenteditable="true"],
+html.has-brush-cursor [data-native-cursor="true"] {
+  cursor: text;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Hold the visual stack to four cards while Motion retires displaced toasts. */
+.seal-toast-stack > :nth-last-child(n + 5) {
+  display: none;
+}
+
+/* The shell's top bar supplies the route label above the page title. */
+[data-shell-main] .inktide-page-label {
+  display: none;
+}
+
+.inktide-fallback-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-6);
+  background: var(--ink-stone);
+  color: var(--text-1);
+}
+
+.inktide-fallback-gate {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--sp-7);
+  background: var(--plate);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-plate);
+  border: 1px solid var(--hair);
+}
+
+.inktide-fallback-header {
+  margin-bottom: var(--sp-6);
+}
+
+.inktide-fallback-title {
+  margin: var(--sp-3) 0 var(--sp-2);
+  font: 900 var(--fs-display)/var(--lh-display) var(--font-display-cjk);
+  letter-spacing: -0.015em;
+  color: var(--text-1);
+}
+
+.inktide-fallback-subtitle {
+  margin: 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--text-2);
+}
+
+.inktide-fallback-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.inktide-fallback-label {
+  display: block;
+  font: 600 var(--fs-label)/var(--lh-label) var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.inktide-fallback-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--sp-3);
+  background: var(--plate-sunken);
+  color: var(--text-1);
+  border: 0;
+  border-bottom: 1px solid var(--hair-strong);
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+}
+
+.inktide-fallback-input:focus {
+  outline: none;
+  border-bottom: 2px solid var(--zhusha);
+}
+
+.inktide-fallback-submit {
+  height: 40px;
+  padding: 0 var(--sp-5);
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--zhusha);
+  color: var(--plate);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  cursor: pointer;
+}

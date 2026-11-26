@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Envelope",
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "data": {},
+        "meta": {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "apiVersion": {
+              "type": "string"
+            },
+            "degraded": {
+              "type": "boolean"
+            },
+            "nextCursor": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "requestId"
+          ]
+        }
+      },
+      "required": [
+        "ok",
+        "data",
+        "meta"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "const": false
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "enum": [
+                "INVALID_ARGUMENT",
+                "UNAUTHENTICATED",
+                "PERMISSION_DENIED",
+                "NOT_FOUND",
+                "CONFLICT",
+                "PAYLOAD_TOO_LARGE",
+                "RATE_LIMITED",
+                "EMBEDDING_MISMATCH",
+                "UNAVAILABLE",
+                "INTERNAL"
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": {}
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "details"
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "apiVersion": {
+              "type": "string"
+            },
+            "degraded": {
+              "type": "boolean"
+            },
+            "nextCursor": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "requestId"
+          ]
+        }
+      },
+      "required": [
+        "ok",
+        "error",
+        "meta"
+      ]
+    }
+  ]
+}

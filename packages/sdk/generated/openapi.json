@@ -1,0 +1,2514 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Brain Core Memory API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/memory/events": {
+      "post": {
+        "operationId": "ingestEvent",
+        "summary": "Append an L0 event",
+        "requestBody": {
+          "required": true,
+          "description": "The event to append. idempotencyKey is required.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IngestEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Event accepted for asynchronous ingest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "type": "object",
+                          "required": [
+                            "id"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/records": {
+      "post": {
+        "operationId": "createRecord",
+        "summary": "Write an L1 or L2 record",
+        "requestBody": {
+          "required": true,
+          "description": "The record to write. evidence is required.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "$ref": "#/components/schemas/MemoryRecord"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/records/{id}": {
+      "patch": {
+        "operationId": "updateRecord",
+        "summary": "Update a record with optimistic locking",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "description": "The record version the update expects (optimistic lock). A mismatch returns CONFLICT.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The fields to change.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "$ref": "#/components/schemas/MemoryRecord"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteRecord",
+        "summary": "Tombstone a record",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record tombstoned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/search": {
+      "post": {
+        "operationId": "searchMemory",
+        "summary": "Search memory",
+        "requestBody": {
+          "required": true,
+          "description": "Query, scope and optional filters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results; pagination is in meta.nextCursor and degradation in meta.degraded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "type": "object",
+                          "required": [
+                            "items"
+                          ],
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/SearchHit"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/context": {
+      "post": {
+        "operationId": "getContext",
+        "summary": "Assemble the context bundle for one wake",
+        "requestBody": {
+          "required": true,
+          "description": "The channel to assemble for.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContextRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Context bundle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "$ref": "#/components/schemas/ContextBundle"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/forget": {
+      "post": {
+        "operationId": "forgetMemory",
+        "summary": "Forget records and cascade to higher layers",
+        "requestBody": {
+          "required": true,
+          "description": "What to forget.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgetSelector"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Forget report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "$ref": "#/components/schemas/ForgetReport"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/jobs": {
+      "post": {
+        "operationId": "createJob",
+        "summary": "Start a maintenance job",
+        "requestBody": {
+          "required": true,
+          "description": "Job shape is not final yet; any object is accepted for now.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/jobs/{id}": {
+      "get": {
+        "operationId": "getJob",
+        "summary": "Read a maintenance job",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v1/memory/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Read component health",
+        "responses": {
+          "200": {
+            "description": "Health by component",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "data"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "const": true
+                        },
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "enum": [
+                              "ok",
+                              "degraded",
+                              "down"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MemoryRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "layer": {
+            "enum": [
+              "L0",
+              "L1",
+              "L2",
+              "L3"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50
+          },
+          "actor": {
+            "type": "string"
+          },
+          "content": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            },
+            "maxItems": 100
+          },
+          "visibility": {
+            "enum": [
+              "open",
+              "subject",
+              "origin",
+              "owner",
+              "internal"
+            ]
+          },
+          "trust": {
+            "enum": [
+              "self",
+              "owner",
+              "member",
+              "external"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "importance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "tEvent": {
+            "type": "number"
+          },
+          "tIngest": {
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "outdated",
+              "archived",
+              "tombstoned"
+            ]
+          },
+          "validFrom": {
+            "type": "number"
+          },
+          "validTo": {
+            "type": "number"
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "layer",
+          "kind",
+          "source",
+          "channel",
+          "subjects",
+          "actor",
+          "content",
+          "evidence",
+          "visibility",
+          "trust",
+          "confidence",
+          "importance",
+          "tEvent",
+          "tIngest",
+          "status",
+          "version"
+        ]
+      },
+      "IngestEvent": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50
+          },
+          "actor": {
+            "type": "string"
+          },
+          "content": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "tEvent": {
+            "type": "number"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "visibility": {
+            "enum": [
+              "open",
+              "subject",
+              "origin",
+              "owner",
+              "internal"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "channel",
+          "subjects",
+          "actor",
+          "content",
+          "tEvent",
+          "idempotencyKey"
+        ]
+      },
+      "RecordInput": {
+        "type": "object",
+        "properties": {
+          "layer": {
+            "enum": [
+              "L1",
+              "L2"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50
+          },
+          "actor": {
+            "type": "string"
+          },
+          "content": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            },
+            "maxItems": 100
+          },
+          "visibility": {
+            "enum": [
+              "open",
+              "subject",
+              "origin",
+              "owner",
+              "internal"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "importance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "tEvent": {
+            "type": "number"
+          },
+          "validFrom": {
+            "type": "number"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "layer",
+          "kind",
+          "channel",
+          "subjects",
+          "actor",
+          "content",
+          "evidence"
+        ]
+      },
+      "RecordPatch": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50
+          },
+          "visibility": {
+            "enum": [
+              "open",
+              "subject",
+              "origin",
+              "owner",
+              "internal"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "importance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "status": {
+            "enum": [
+              "active",
+              "outdated",
+              "archived",
+              "tombstoned"
+            ]
+          },
+          "validTo": {
+            "type": "number"
+          }
+        }
+      },
+      "SearchRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "here",
+              "person",
+              "all"
+            ]
+          },
+          "layers": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "L0",
+                "L1",
+                "L2",
+                "L3"
+              ]
+            }
+          },
+          "from": {
+            "type": "number"
+          },
+          "to": {
+            "type": "number"
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50
+          },
+          "limit": {
+            "type": "number",
+            "maximum": 100
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "neighbors": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "history": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "query",
+          "scope"
+        ]
+      },
+      "ContextRequest": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "budgetChars": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "channel"
+        ]
+      },
+      "ContextBundle": {
+        "type": "object",
+        "properties": {
+          "profileVersion": {
+            "type": "number"
+          },
+          "stable": {
+            "type": "string"
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "enum": [
+                    "profile",
+                    "working",
+                    "topics",
+                    "facts",
+                    "lessons",
+                    "recall",
+                    "elsewhere",
+                    "promises"
+                  ]
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "disclosure": {
+                        "type": "object",
+                        "properties": {
+                          "speakable": {
+                            "enum": [
+                              "yes",
+                              "if-subject-raises",
+                              "never"
+                            ]
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "speakable",
+                          "label"
+                        ]
+                      },
+                      "inferred": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "text",
+                      "disclosure"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "items"
+              ]
+            }
+          },
+          "truncated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "profileVersion",
+          "stable",
+          "blocks",
+          "truncated"
+        ]
+      },
+      "ForgetSelector": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "by": {
+                "const": "record"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "id"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "by": {
+                "const": "channel"
+              },
+              "channel": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "channel"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "by": {
+                "const": "person"
+              },
+              "personId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "personId"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "by": {
+                "const": "time"
+              },
+              "from": {
+                "type": "number"
+              },
+              "to": {
+                "type": "number"
+              },
+              "channel": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "by",
+              "from",
+              "to"
+            ]
+          }
+        ]
+      },
+      "Envelope": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {},
+              "meta": {
+                "type": "object",
+                "properties": {
+                  "requestId": {
+                    "type": "string"
+                  },
+                  "apiVersion": {
+                    "type": "string"
+                  },
+                  "degraded": {
+                    "type": "boolean"
+                  },
+                  "nextCursor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "requestId"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "meta"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "error": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "enum": [
+                      "INVALID_ARGUMENT",
+                      "UNAUTHENTICATED",
+                      "PERMISSION_DENIED",
+                      "NOT_FOUND",
+                      "CONFLICT",
+                      "PAYLOAD_TOO_LARGE",
+                      "RATE_LIMITED",
+                      "EMBEDDING_MISMATCH",
+                      "UNAVAILABLE",
+                      "INTERNAL"
+                    ]
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "code",
+                  "message",
+                  "details"
+                ]
+              },
+              "meta": {
+                "type": "object",
+                "properties": {
+                  "requestId": {
+                    "type": "string"
+                  },
+                  "apiVersion": {
+                    "type": "string"
+                  },
+                  "degraded": {
+                    "type": "boolean"
+                  },
+                  "nextCursor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "requestId"
+                ]
+              }
+            },
+            "required": [
+              "ok",
+              "error",
+              "meta"
+            ]
+          }
+        ]
+      },
+      "SearchHit": {
+        "type": "object",
+        "properties": {
+          "record": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "layer": {
+                "enum": [
+                  "L0",
+                  "L1",
+                  "L2",
+                  "L3"
+                ]
+              },
+              "kind": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "channel": {
+                "type": "string"
+              },
+              "subjects": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 50
+              },
+              "actor": {
+                "type": "string"
+              },
+              "content": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                },
+                "maxItems": 100
+              },
+              "visibility": {
+                "enum": [
+                  "open",
+                  "subject",
+                  "origin",
+                  "owner",
+                  "internal"
+                ]
+              },
+              "trust": {
+                "enum": [
+                  "self",
+                  "owner",
+                  "member",
+                  "external"
+                ]
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "importance": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tEvent": {
+                "type": "number"
+              },
+              "tIngest": {
+                "type": "number"
+              },
+              "status": {
+                "enum": [
+                  "active",
+                  "outdated",
+                  "archived",
+                  "tombstoned"
+                ]
+              },
+              "validFrom": {
+                "type": "number"
+              },
+              "validTo": {
+                "type": "number"
+              },
+              "version": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "layer",
+              "kind",
+              "source",
+              "channel",
+              "subjects",
+              "actor",
+              "content",
+              "evidence",
+              "visibility",
+              "trust",
+              "confidence",
+              "importance",
+              "tEvent",
+              "tIngest",
+              "status",
+              "version"
+            ]
+          },
+          "disclosure": {
+            "type": "object",
+            "properties": {
+              "speakable": {
+                "enum": [
+                  "yes",
+                  "if-subject-raises",
+                  "never"
+                ]
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "speakable",
+              "label"
+            ]
+          },
+          "score": {
+            "type": "number"
+          },
+          "neighbors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "record": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "layer": {
+                      "enum": [
+                        "L0",
+                        "L1",
+                        "L2",
+                        "L3"
+                      ]
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "subjects": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "maxItems": 50
+                    },
+                    "actor": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "maxItems": 100
+                    },
+                    "visibility": {
+                      "enum": [
+                        "open",
+                        "subject",
+                        "origin",
+                        "owner",
+                        "internal"
+                      ]
+                    },
+                    "trust": {
+                      "enum": [
+                        "self",
+                        "owner",
+                        "member",
+                        "external"
+                      ]
+                    },
+                    "confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "importance": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "tEvent": {
+                      "type": "number"
+                    },
+                    "tIngest": {
+                      "type": "number"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "outdated",
+                        "archived",
+                        "tombstoned"
+                      ]
+                    },
+                    "validFrom": {
+                      "type": "number"
+                    },
+                    "validTo": {
+                      "type": "number"
+                    },
+                    "version": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "layer",
+                    "kind",
+                    "source",
+                    "channel",
+                    "subjects",
+                    "actor",
+                    "content",
+                    "evidence",
+                    "visibility",
+                    "trust",
+                    "confidence",
+                    "importance",
+                    "tEvent",
+                    "tIngest",
+                    "status",
+                    "version"
+                  ]
+                },
+                "disclosure": {
+                  "type": "object",
+                  "properties": {
+                    "speakable": {
+                      "enum": [
+                        "yes",
+                        "if-subject-raises",
+                        "never"
+                      ]
+                    },
+                    "label": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "speakable",
+                    "label"
+                  ]
+                },
+                "position": {
+                  "enum": [
+                    "before",
+                    "after"
+                  ]
+                }
+              },
+              "required": [
+                "record",
+                "disclosure",
+                "position"
+              ]
+            }
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "value": {},
+                "text": {
+                  "type": "string"
+                },
+                "changedAt": {
+                  "type": "number"
+                },
+                "status": {
+                  "enum": [
+                    "outdated",
+                    "archived"
+                  ]
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "key",
+                "value",
+                "text",
+                "changedAt",
+                "status",
+                "label"
+              ]
+            }
+          }
+        },
+        "required": [
+          "record",
+          "disclosure",
+          "score"
+        ]
+      },
+      "SearchNeighbor": {
+        "type": "object",
+        "properties": {
+          "record": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "layer": {
+                "enum": [
+                  "L0",
+                  "L1",
+                  "L2",
+                  "L3"
+                ]
+              },
+              "kind": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "channel": {
+                "type": "string"
+              },
+              "subjects": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 50
+              },
+              "actor": {
+                "type": "string"
+              },
+              "content": {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                },
+                "maxItems": 100
+              },
+              "visibility": {
+                "enum": [
+                  "open",
+                  "subject",
+                  "origin",
+                  "owner",
+                  "internal"
+                ]
+              },
+              "trust": {
+                "enum": [
+                  "self",
+                  "owner",
+                  "member",
+                  "external"
+                ]
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "importance": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tEvent": {
+                "type": "number"
+              },
+              "tIngest": {
+                "type": "number"
+              },
+              "status": {
+                "enum": [
+                  "active",
+                  "outdated",
+                  "archived",
+                  "tombstoned"
+                ]
+              },
+              "validFrom": {
+                "type": "number"
+              },
+              "validTo": {
+                "type": "number"
+              },
+              "version": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "layer",
+              "kind",
+              "source",
+              "channel",
+              "subjects",
+              "actor",
+              "content",
+              "evidence",
+              "visibility",
+              "trust",
+              "confidence",
+              "importance",
+              "tEvent",
+              "tIngest",
+              "status",
+              "version"
+            ]
+          },
+          "disclosure": {
+            "type": "object",
+            "properties": {
+              "speakable": {
+                "enum": [
+                  "yes",
+                  "if-subject-raises",
+                  "never"
+                ]
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "speakable",
+              "label"
+            ]
+          },
+          "position": {
+            "enum": [
+              "before",
+              "after"
+            ]
+          }
+        },
+        "required": [
+          "record",
+          "disclosure",
+          "position"
+        ]
+      },
+      "SearchHistoryItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {},
+          "text": {
+            "type": "string"
+          },
+          "changedAt": {
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "outdated",
+              "archived"
+            ]
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value",
+          "text",
+          "changedAt",
+          "status",
+          "label"
+        ]
+      },
+      "Disclosure": {
+        "type": "object",
+        "properties": {
+          "speakable": {
+            "enum": [
+              "yes",
+              "if-subject-raises",
+              "never"
+            ]
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "speakable",
+          "label"
+        ]
+      },
+      "ForgetReport": {
+        "type": "object",
+        "properties": {
+          "tombstoned": {
+            "type": "number"
+          },
+          "invalidated": {
+            "type": "number"
+          },
+          "l3Flagged": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "tombstoned",
+          "invalidated",
+          "l3Flagged"
+        ]
+      },
+      "BrainManifest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kinds": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "channel",
+                "activity",
+                "capability",
+                "memory-provider"
+              ]
+            }
+          },
+          "api": {
+            "type": "string"
+          },
+          "runtime": {
+            "enum": [
+              "node",
+              "process"
+            ]
+          },
+          "process": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "command"
+            ]
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "channels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "eventKinds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "defaultVisibility": {
+                "enum": [
+                  "open",
+                  "subject",
+                  "origin",
+                  "owner",
+                  "internal"
+                ]
+              },
+              "trust": {
+                "enum": [
+                  "self",
+                  "owner",
+                  "member",
+                  "external"
+                ]
+              },
+              "retentionDays": {
+                "type": "number"
+              },
+              "rateLimitPerHour": {
+                "type": "number"
+              },
+              "proactiveMessaging": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "channels",
+              "eventKinds",
+              "defaultVisibility",
+              "trust"
+            ]
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "effect": {
+                  "enum": [
+                    "read",
+                    "write",
+                    "send"
+                  ]
+                },
+                "load": {
+                  "enum": [
+                    "core",
+                    "context",
+                    "onDemand"
+                  ]
+                },
+                "group": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "when": {
+                  "type": "string"
+                },
+                "channels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "sendPerMinute": {
+                  "type": "number"
+                },
+                "textArg": {
+                  "type": "string"
+                },
+                "audience": {
+                  "const": "owner"
+                },
+                "mcpName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "effect",
+                "load",
+                "summary"
+              ]
+            }
+          },
+          "groups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "type": "string"
+                },
+                "usage": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "summary"
+              ]
+            }
+          },
+          "config": {
+            "type": "string"
+          },
+          "migrations": {
+            "type": "string"
+          },
+          "mcp": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string"
+                  },
+                  "args": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "env": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "command"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kinds",
+          "api",
+          "runtime",
+          "permissions"
+        ]
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "INVALID_ARGUMENT (HTTP 400)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error401": {
+        "description": "UNAUTHENTICATED (HTTP 401)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error403": {
+        "description": "PERMISSION_DENIED (HTTP 403)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "NOT_FOUND (HTTP 404)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error409": {
+        "description": "CONFLICT (HTTP 409)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error413": {
+        "description": "PAYLOAD_TOO_LARGE (HTTP 413)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "RATE_LIMITED (HTTP 429)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error500": {
+        "description": "INTERNAL (HTTP 500)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Error503": {
+        "description": "EMBEDDING_MISMATCH / UNAVAILABLE (HTTP 503)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Envelope"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "error"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,400 @@
+.inktide-settings {
+  display: grid;
+  grid-template-columns: minmax(96px, 140px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-6);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-nav {
+  position: sticky;
+  top: var(--sp-5);
+  display: grid;
+  padding: var(--sp-2);
+  background: var(--plate);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-nav button {
+  position: relative;
+  min-height: 40px;
+  color: var(--text-2);
+  text-align: left;
+  padding-inline: var(--sp-3);
+  cursor: pointer;
+}
+
+.inktide-settings-nav button[aria-current='true'] {
+  color: var(--text-1);
+}
+
+.inktide-settings-nav-bar {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--zhusha);
+  pointer-events: none;
+}
+
+.inktide-settings-nav button:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.inktide-settings-content,
+.inktide-settings-plate,
+.inktide-settings-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-section {
+  scroll-margin-top: var(--sp-5);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-plate {
+  padding: var(--sp-6);
+  border: 1px solid var(--hair);
+}
+
+.inktide-settings-persona-plate {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-plate);
+}
+
+.inktide-settings-persona-paper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: none;
+  background: var(--plate);
+}
+
+.inktide-settings-persona-plate > :not(.inktide-settings-persona-paper) {
+  position: relative;
+  z-index: 1;
+}
+
+.inktide-settings-plate h2 {
+  margin: 0;
+  font: 700 var(--fs-h2) / var(--lh-h2) var(--font-display-cjk);
+}
+
+.inktide-settings-note {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inktide-settings-memory-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+}
+
+.inktide-settings-memory-row + .inktide-settings-memory-row {
+  border-top: 1px solid var(--hair);
+}
+
+.inktide-settings-row-heading,
+.inktide-settings-secret-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-secret-list li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inktide-settings-row-heading h3 {
+  margin: 0;
+  font-size: var(--fs-body);
+}
+
+.inktide-settings-model-row,
+.inktide-settings-secret-row,
+.inktide-settings-trait-row {
+  display: grid;
+  align-items: end;
+  gap: var(--sp-4);
+}
+
+.inktide-settings-model-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+}
+
+.inktide-settings-secret-row,
+.inktide-settings-trait-row {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) auto;
+}
+
+.inktide-settings-notice {
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.inktide-settings-secret-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inktide-settings-secret-list li {
+  min-height: 44px;
+  border-bottom: 1px solid var(--hair);
+}
+
+.inktide-settings-enso-well {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.inktide-settings-role-preview,
+.inktide-settings-role-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-role-preview {
+  flex-wrap: wrap;
+}
+
+.inktide-settings-role-preview > :last-child,
+.inktide-settings-role-card > :last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inktide-settings-role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: var(--sp-3);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-role-card-shell {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius);
+  background: transparent;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-role-card-paper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: none;
+  background: var(--plate-sunken);
+  mask-image: radial-gradient(circle 20px at calc(var(--sp-3) + 17px) 50%, transparent 100%, var(--ink-void) 100%);
+  -webkit-mask-image: radial-gradient(circle 20px at calc(var(--sp-3) + 17px) 50%, transparent 100%, var(--ink-void) 100%);
+}
+
+.inktide-settings-role-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 56px;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--hair-strong);
+  border-radius: var(--radius);
+  padding: var(--sp-3);
+}
+
+.inktide-settings-role-card[aria-pressed='true'] {
+  border-color: var(--zhusha);
+}
+
+.inktide-settings-role-select-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-role-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  background: var(--plate-sunken);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.inktide-settings-role-detail-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-role-detail-name {
+  color: var(--text-1);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 600;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inktide-settings-role-detail-summary {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inktide-settings-role-detail-hint {
+  margin: 0;
+  padding-left: var(--sp-2);
+  border-left: 2px solid var(--zhusha);
+  color: var(--text-3);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inktide-settings-role-detail-status {
+  margin: 0;
+  color: var(--text-3);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+
+.inktide-settings-role-detail-error {
+  margin: 0;
+  color: var(--zhusha);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inktide-settings-role-detail-body {
+  margin: var(--sp-1) 0 0;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--hair);
+  color: var(--text-2);
+  font-family: var(--font-ui);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  max-height: 240px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-preferences {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-3);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.inktide-settings-preferences > div {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) minmax(0, 4fr);
+  align-items: center;
+  gap: var(--sp-4);
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+  border-bottom: 1px solid var(--hair);
+}
+
+@media (max-width: 767px) {
+  .inktide-settings {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .inktide-settings-nav {
+    top: 0;
+    z-index: 2;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .inktide-settings-nav button {
+    text-align: center;
+    padding-inline: var(--sp-2);
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .inktide-settings-nav-bar {
+    left: 6px;
+    right: 6px;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 2px;
+  }
+
+  .inktide-settings-section {
+    scroll-margin-top: calc(56px + var(--sp-3));
+  }
+
+  .inktide-settings-plate {
+    padding: var(--sp-4);
+  }
+
+  .inktide-settings-model-row,
+  .inktide-settings-secret-row,
+  .inktide-settings-trait-row,
+  .inktide-settings-preferences > div {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+}

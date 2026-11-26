@@ -1,0 +1,30 @@
+{
+  "name": "@brain-core/plugin-memory-vector",
+  "version": "0.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "node --test \"test/*.test.ts\""
+  },
+  "brain": {
+    "id": "memory-vector",
+    "kinds": ["memory-provider"],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "memory.readL0",
+      "memory.writeDerived",
+      "network:config:endpoint",
+      "lan:config:endpoint"
+    ]
+  },
+  "dependencies": {
+    "@brain-core/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@brain-core/testkit": "workspace:*"
+  }
+}

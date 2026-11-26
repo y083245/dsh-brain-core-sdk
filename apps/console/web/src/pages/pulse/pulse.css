@@ -1,0 +1,27 @@
+.pulse-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  min-width: 0;
+  max-width: 100%;
+}
+.pulse-agents { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); min-width: 0; max-width: 100%; }
+.pulse-panel { min-width: 0; max-width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--sp-3); padding: var(--sp-5); }
+.pulse-panel h2, .pulse-panel p, .pulse-panel dl { margin: 0; }
+.pulse-panel h2 { font: 700 var(--fs-h2)/var(--lh-h2) var(--font-display-cjk); }
+.pulse-panel[data-agent] h2 { font-family: var(--font-display-latin); }
+.pulse-line { width: 100%; max-width: 100%; display: block; background: var(--plate-sunken); }
+.pulse-line g:focus-visible { outline-color: var(--zhusha); }
+.pulse-meta { color: var(--text-2); overflow-wrap: anywhere; }
+.pulse-actions { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: var(--sp-3); min-width: 0; }
+.pulse-table { min-width: 0; max-width: 100%; overflow-x: auto; }
+.pulse-session-id { display: block; max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pulse-recovery { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; font-size: var(--fs-small); min-width: 0; }
+.pulse-detail { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); padding: var(--sp-3); min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.pulse-detail dt { color: var(--text-2); }
+.pulse-detail dd { margin: 0; }
+.pulse-isolation { font: 900 var(--fs-h1)/var(--lh-h1) var(--font-display-cjk); }
+.pulse-carving { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--sp-3); align-items: center; padding-block: var(--sp-2); min-width: 0; }
+.pulse-carving-mark { position: relative; width: 56px; height: 56px; border: 1px solid var(--zhusha); overflow: hidden; }
+.pulse-carving-mark > span { position: absolute; left: 0; top: 26px; height: 2px; width: 22px; background: var(--zhusha); }
+@media (max-width: 860px) { .pulse-agents { grid-template-columns: minmax(0, 1fr); } }

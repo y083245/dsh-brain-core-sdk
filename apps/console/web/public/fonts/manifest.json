@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "license": "OFL-1.1",
+  "totalWoff2Bytes": 448224,
+  "oflSha256": "141849094ba392cb8107f473134402cf5e782f55ce8d22ed6e5871d4877bd4e5",
+  "coverage": {
+    "cjkCount": 607,
+    "cjkChars": "一七万三上下不与专且世业东丝两严个中为主么义之九也习书了争事二于互五些交产京亲人什今从他代令以们件价任众会传但位低住体何作你使例依便保信候值做停儿元先光克党入全八公六共关其具养内再写军农决况准减几出分切划列则利别到制刷前力办加务动劳包化北区十千升半华单南卡卫印即却卷卸厂历压原去县参又及反发取受变口只叫可史号各合同名后向听启员周命和品响商器四回因团固国图圆土在地场块型基增墨声处备复外多夜大天太失头契她好如始委子存学它安完定实审宣家容密对导将小少就局层展属山工巩己已市布带常干平年并广应府度庭建开异式引张强归当形影往待很律得心必忆志忘快态思性总恢情想意感慎成我或战所手才打执批技把报拆拉拒择持指按据接提插支收改放政效教数整文斗料断斯新方族无日时明易星是更最月有期未本术朱机权条来极构林果枢染查标样根格案档检模次款止正此步段每比毛民气水求江没油治法活派流济浓海消淡深清温渲满潮火点热焦然照片版牌物特状率王现理生用由电画界留痕白百的目直相省看真眼着知石矿砂研砚确示社神离种科积称程究空立笔第等算管米类精系素索红约级纸线组细织经结给统维绿编置美群老者而聊联育胭能脂脉自至般色节花落藤行表被装褪西要见观规视览角解触计认讫议记许论设访证识试话该语误说请调谱象败账质费资走起越跟路身车转载较辑输边达过运近还这进连送适选通速造道遗那部都配酸采里重量金鉴钥铁锋长门问间队阶际限院除随隔难集需青静非面革音项须预领题额风马驻验高鱼鲸黄",
+    "latinDisplayCount": 115,
+    "monoCount": 148
+  },
+  "files": {
+    "noto-serif-sc-700.woff2": {
+      "bytes": 162836,
+      "gzipBytes": 162904,
+      "sha256": "4cb6ccd2ddfc2f98ba4c8bd447def3e4fcb8a98b4d10737f16ab552912fc262f",
+      "sourceName": "Noto Serif CJK SC Bold",
+      "sourceVersion": "Version 2.003;hotconv 1.1.1;makeotfexe 2.6.0",
+      "charCount": 755,
+      "axes": []
+    },
+    "noto-serif-sc-900.woff2": {
+      "bytes": 162700,
+      "gzipBytes": 162768,
+      "sha256": "c557d3df189807a6badf8a99d83ff951fa2f064e0c58b12a9a2b6ebf600800eb",
+      "sourceName": "Noto Serif CJK SC Black",
+      "sourceVersion": "Version 2.003;hotconv 1.1.1;makeotfexe 2.6.0",
+      "charCount": 755,
+      "axes": []
+    },
+    "fraunces-variable.woff2": {
+      "bytes": 87112,
+      "gzipBytes": 87160,
+      "sha256": "466b4e6f28d49a55a3b585fb90d0c57c7242446e5e434934ddcf87a4cbb38668",
+      "sourceName": "Fraunces 9pt Black",
+      "sourceVersion": "Version 1.000;[b76b70a41]",
+      "charCount": 115,
+      "axes": [
+        {
+          "tag": "opsz",
+          "min": 9,
+          "default": 9,
+          "max": 144
+        },
+        {
+          "tag": "wght",
+          "min": 100,
+          "default": 900,
+          "max": 900
+        },
+        {
+          "tag": "SOFT",
+          "min": 0,
+          "default": 0,
+          "max": 100
+        },
+        {
+          "tag": "WONK",
+          "min": 0,
+          "default": 1,
+          "max": 1
+        }
+      ]
+    },
+    "jetbrains-mono-variable.woff2": {
+      "bytes": 35576,
+      "gzipBytes": 35609,
+      "sha256": "ea3dcef58f49977f0155b096fee640ddf3cedb226f0087b7b95f1c3d068ecea4",
+      "sourceName": "JetBrains Mono Regular",
+      "sourceVersion": "Version 2.211",
+      "charCount": 148,
+      "axes": [
+        {
+          "tag": "wght",
+          "min": 100,
+          "default": 400,
+          "max": 800
+        }
+      ]
+    }
+  }
+}

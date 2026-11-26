@@ -1,0 +1,29 @@
+name: DSH next
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * 1'
+  pull_request:
+    paths: ['.github/workflows/dsh-next.yml']
+
+jobs:
+  e-series:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install the next tag of the DSH packages
+        run: |
+          pnpm --filter @brain-core/satellite-host add @deepseek-ai/dsh@next @deepseek-ai/dsh-llm@next @deepseek-ai/dsh-sdk-client@next @deepseek-ai/dsh-sdk-protocol@next @deepseek-ai/dsh-session@next
+          pnpm --filter @brain-core/satellite-bundle add -D @deepseek-ai/dsh-tools@next
+      - name: Show the installed DSH versions
+        run: pnpm -r ls --depth 0 "@deepseek-ai/*"
+      - run: pnpm build
+      - run: node --test --test-concurrency=1 "spikes/s1/test/e*.test.ts"

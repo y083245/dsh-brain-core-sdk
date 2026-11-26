@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "rootDir": ".", "outDir": "dist" },
+  "include": ["src", "test"],
+  "references": [
+    { "path": "../../packages/sdk" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/testkit" },
+    { "path": "../../packages/satellite-host" },
+    { "path": "../console" }
+  ]
+}

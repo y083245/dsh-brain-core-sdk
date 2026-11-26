@@ -1,0 +1,31 @@
+{
+  "name": "python-echo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A small out-of-process plugin: ingest the text, then search for it.",
+  "brain": {
+    "id": "python-echo",
+    "kinds": ["capability"],
+    "api": "^1",
+    "runtime": "process",
+    "process": {
+      "command": "uv",
+      "args": ["run", "--no-sync", "python", "main.py"]
+    },
+    "permissions": ["memory.ingest", "memory.search", "tools.register"],
+    "source": {
+      "channels": ["python-echo:private:*"],
+      "eventKinds": ["python-echo.echo"],
+      "defaultVisibility": "origin",
+      "trust": "member"
+    },
+    "tools": [
+      {
+        "name": "echo",
+        "effect": "write",
+        "load": "core",
+        "summary": "Ingest text, then search for it."
+      }
+    ]
+  }
+}

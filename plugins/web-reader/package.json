@@ -1,0 +1,38 @@
+{
+  "name": "@brain-core/plugin-web-reader",
+  "version": "0.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "node --test \"test/*.test.ts\""
+  },
+  "brain": {
+    "id": "web-reader",
+    "kinds": ["activity"],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "schedule.ownTime",
+      "agent.session",
+      "memory.ingest",
+      "memory.record",
+      "network:config:feeds"
+    ],
+    "config": "./src/config.ts",
+    "source": {
+      "channels": ["web-reader:feed:*"],
+      "eventKinds": ["web-reader.article"],
+      "defaultVisibility": "open",
+      "trust": "external"
+    }
+  },
+  "dependencies": {
+    "@brain-core/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@brain-core/testkit": "workspace:*"
+  }
+}

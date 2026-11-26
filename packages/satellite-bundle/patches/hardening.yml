@@ -1,0 +1,37 @@
+# Applied to sdk-minimal on every start. sdk-minimal ships danger-full-access with a
+# persistent shell, so each execution-capable row is switched off here. The bundle
+# then reports DSH's real tool list and the kernel refuses anything but its catalog.
+#
+# It also uploads the whole session log and the plugin list to the official API by
+# default. Brain promises that data stays on this machine, so both are off as well.
+- id: session-log-deepseek
+  disabled: true
+- id: plugin-package-inventory-deepseek
+  disabled: true
+- id: persistent-bash
+  disabled: true
+- id: persistent-pwsh
+  disabled: true
+- id: terminal-bash
+  disabled: true
+- id: terminal-pwsh
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: mcp-resources
+  disabled: true
+- id: pty
+  disabled: true
+- id: subprocess
+  disabled: true
+- id: jobs
+  disabled: true
+- id: sandbox-policy
+  config:
+    mode: read-only
+    workspaceRoot: !!js process.cwd()
+- insert:
+    - id: brain-bridge
+      name: ../dist/index.js

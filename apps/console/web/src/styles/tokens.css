@@ -1,0 +1,103 @@
+:root {
+  --font-display-cjk: "Noto Serif SC Inktide", "Songti SC", "STSong", "SimSun", serif;
+  --font-display-latin: "Fraunces Inktide", "Noto Serif SC Inktide", Georgia, serif;
+  --font-ui: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Inktide", "SF Mono", Menlo, Consolas, monospace;
+
+  --fs-hero: 88px;     --lh-hero: 92px;
+  --fs-display: 56px;  --lh-display: 60px;
+  --fs-h1: 32px;       --lh-h1: 38px;
+  --fs-h2: 20px;       --lh-h2: 28px;
+  --fs-body: 15px;     --lh-body: 24px;
+  --fs-small: 13px;    --lh-small: 20px;
+  --fs-mono: 12.5px;   --lh-mono: 18px;
+  --fs-label: 11px;    --lh-label: 14px;
+  --fs-num-xl: 64px;   --lh-num-xl: 64px;
+
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
+  --sp-7: 40px; --sp-8: 48px; --sp-9: 64px; --sp-10: 80px; --sp-11: 96px;
+
+  --radius: 2px;
+  --rail-w: 72px;
+  --topbar-h: 56px;
+  --statusbar-h: 28px;
+}
+
+[data-theme="night"] {
+  color-scheme: dark;
+  --ink-void: #070605;
+  --ink-stone: #0E0C0A;
+  --plate: #14110F;
+  --plate-raised: #1B1714;
+  --plate-sunken: #0B0908;
+  --hair: rgba(236, 226, 208, 0.09);
+  --hair-strong: rgba(236, 226, 208, 0.18);
+  --text-1: #ECE4D4;
+  --text-2: rgba(236, 228, 212, 0.66);
+  --text-3: rgba(236, 228, 212, 0.40);
+  --smoke: #F3EBDD;
+  --zhusha: #FF4A1C;
+  --zhusha-deep: #C2300F;
+  --zhusha-glow: rgba(255, 74, 28, 0.28);
+  --tenghuang: #E9AE3A;
+  --shilv: #4FB295;
+  --shiqing: #5B7FD6;
+  --yanzhi: #D2335C;
+  --tone-l0: rgba(236, 228, 212, 0.38);
+  --tone-l1: rgba(236, 228, 212, 0.68);
+  --tone-l2: #ECE4D4;
+  --tone-l3: #FF4A1C;
+  --shadow-plate: inset 0 1px 0 rgba(236, 226, 208, 0.06), 0 18px 40px -24px rgba(0, 0, 0, 0.85);
+  --shadow-raised: inset 0 1px 0 rgba(236, 226, 208, 0.09), 0 28px 60px -28px rgba(0, 0, 0, 0.95);
+  --texture: url("/synapse/textures/inkstone.png");
+  --texture-opacity: 0.035;
+}
+
+[data-theme="paper"] {
+  color-scheme: light;
+  --ink-void: #E9E2D3;
+  --ink-stone: #EFE9DD;
+  --plate: #F7F3EA;
+  --plate-raised: #FFFCF5;
+  --plate-sunken: #E6DFD0;
+  --hair: rgba(28, 22, 16, 0.10);
+  --hair-strong: rgba(28, 22, 16, 0.22);
+  --text-1: #1A1511;
+  --text-2: rgba(26, 21, 17, 0.68);
+  --text-3: rgba(26, 21, 17, 0.44);
+  --smoke: #141009;
+  --zhusha: #E23A12;
+  --zhusha-deep: #B32A08;
+  --zhusha-glow: rgba(226, 58, 18, 0.18);
+  --tenghuang: #B97A0E;
+  --shilv: #2D7F68;
+  --shiqing: #3557B0;
+  --yanzhi: #B0203F;
+  --tone-l0: rgba(26, 21, 17, 0.30);
+  --tone-l1: rgba(26, 21, 17, 0.58);
+  --tone-l2: #1A1511;
+  --tone-l3: #E23A12;
+  --shadow-plate: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 16px 36px -26px rgba(60, 40, 20, 0.35);
+  --shadow-raised: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 26px 56px -30px rgba(60, 40, 20, 0.45);
+  --texture: url("/synapse/textures/paper-fiber.png");
+  --texture-opacity: 0.06;
+}
+
+html { background: var(--ink-stone); color: var(--text-1); font: var(--fs-body)/var(--lh-body) var(--font-ui); }
+::selection { background: var(--zhusha); color: var(--plate); }
+:focus-visible { outline: 2px solid var(--zhusha); outline-offset: 2px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.plate {
+  position: relative; background: var(--plate); border-radius: var(--radius); box-shadow: var(--shadow-plate);
+}
+.plate::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: var(--texture); background-size: 256px; opacity: var(--texture-opacity); mix-blend-mode: overlay;
+}
+.label {
+  font: 600 var(--fs-label)/var(--lh-label) var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--zhusha);
+}
+.label::before { content: ""; display: inline-block; width: 24px; height: 1px; background: currentColor; margin-right: 10px; vertical-align: middle; }
+.title-display {
+  font: 900 var(--fs-display)/var(--lh-display) var(--font-display-cjk); letter-spacing: -0.015em; color: var(--text-1);
+}

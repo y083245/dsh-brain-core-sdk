@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies and build output
+node_modules/
+dist/
+dist-web/
+*.tsbuildinfo
+coverage/
+
+# Local development documents
+/docs/
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+
+# Local runtime state and secrets: never commit
+state/
+.brain-core/
+.env
+.env.*
+!.env.example
+*.pem
+*.log
+
+# Raw measurement runs stay local
+spikes/**/runs/

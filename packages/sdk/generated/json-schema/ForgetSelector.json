@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ForgetSelector",
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "by": {
+          "const": "record"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "by",
+        "id"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "by": {
+          "const": "channel"
+        },
+        "channel": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "by",
+        "channel"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "by": {
+          "const": "person"
+        },
+        "personId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "by",
+        "personId"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "by": {
+          "const": "time"
+        },
+        "from": {
+          "type": "number"
+        },
+        "to": {
+          "type": "number"
+        },
+        "channel": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "by",
+        "from",
+        "to"
+      ]
+    }
+  ]
+}

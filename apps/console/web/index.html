@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="night">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%222%22%20fill%3D%22%23070605%22%2F%3E%3Cpath%20d%3D%22M16%205a11%2011%200%201%201-7.8%203.2%22%20fill%3D%22none%22%20stroke%3D%22%23FF4A1C%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E"
+    />
+    <title>墨潮 · INKTIDE · Brain Core</title>
+  </head>
+  <body>
+    <div id="root">
+      <main class="inktide-fallback-shell">
+        <section class="inktide-fallback-gate" aria-label="落款开印">
+          <div class="inktide-fallback-header">
+            <span class="label">INKTIDE · SEAL GATE</span>
+            <h1 class="inktide-fallback-title">落款</h1>
+            <p class="inktide-fallback-subtitle">令牌只驻留内存，刷新即清 · 请输入访问令牌开印</p>
+          </div>
+          <form id="token-login-form" class="inktide-fallback-form" autocomplete="off">
+            <label for="token" class="inktide-fallback-label">ACCESS TOKEN</label>
+            <input
+              id="token"
+              name="token"
+              type="password"
+              class="inktide-fallback-input"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="输入访问令牌…"
+              required
+            />
+            <button type="submit" class="inktide-fallback-submit">落款开印</button>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

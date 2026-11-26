@@ -1,0 +1,82 @@
+{
+  "name": "brain-plugin-big-core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "bigcore",
+    "kinds": [
+      "capability"
+    ],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "tools.register"
+    ],
+    "source": {
+      "channels": [
+        "bigcore:private:*"
+      ],
+      "eventKinds": [],
+      "defaultVisibility": "origin",
+      "trust": "member"
+    },
+    "tools": [
+      {
+        "name": "t1",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 1"
+      },
+      {
+        "name": "t2",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 2"
+      },
+      {
+        "name": "t3",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 3"
+      },
+      {
+        "name": "t4",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 4"
+      },
+      {
+        "name": "t5",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 5"
+      },
+      {
+        "name": "t6",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 6"
+      },
+      {
+        "name": "t7",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 7"
+      },
+      {
+        "name": "t8",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 8"
+      },
+      {
+        "name": "t9",
+        "effect": "read",
+        "load": "core",
+        "summary": "tool 9"
+      }
+    ]
+  }
+}

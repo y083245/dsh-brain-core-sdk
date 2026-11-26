@@ -1,0 +1,47 @@
+{
+  "name": "@brain-core/acceptance-qzone-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "brain": {
+    "id": "qzone",
+    "kinds": ["capability"],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": ["tools.register", "channel.send", "memory.ingest"],
+    "source": {
+      "channels": ["qzone:feed:*"],
+      "eventKinds": ["qzone.post"],
+      "defaultVisibility": "open",
+      "trust": "member"
+    },
+    "tools": [
+      {
+        "name": "publish_post",
+        "effect": "send",
+        "load": "onDemand",
+        "group": "qzone",
+        "channels": ["*:*"],
+        "summary": "发布一条 QQ 空间说说",
+        "keywords": ["说说", "空间", "qzone"],
+        "textArg": "text",
+        "sendPerMinute": 2
+      }
+    ],
+    "groups": {
+      "qzone": {
+        "summary": "QQ 空间说说",
+        "usage": "publish_post 一次发布一条说说动态。"
+      }
+    },
+    "mcp": {
+      "command": "node",
+      "args": ["./mcp-server.mjs"]
+    }
+  },
+  "dependencies": {
+    "@brain-core/sdk": "workspace:*"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@brain-core/sdk",
+  "version": "0.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "generate": "node scripts/generate.ts"
+  },
+  "dependencies": {
+    "schemastery": "3.18.0"
+  }
+}

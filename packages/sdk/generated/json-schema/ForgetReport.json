@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ForgetReport",
+  "type": "object",
+  "properties": {
+    "tombstoned": {
+      "type": "number"
+    },
+    "invalidated": {
+      "type": "number"
+    },
+    "l3Flagged": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "tombstoned",
+    "invalidated",
+    "l3Flagged"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "brain-plugin-ticker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "ticker",
+    "kinds": [
+      "capability"
+    ],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": []
+  }
+}

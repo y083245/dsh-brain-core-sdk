@@ -1,0 +1,14 @@
+{
+  "name": "brain-plugin-broken",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "broken",
+    "kinds": ["capability"],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": []
+  }
+}

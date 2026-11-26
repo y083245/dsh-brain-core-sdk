@@ -1,0 +1,32 @@
+{
+  "name": "brain-plugin-mcp-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "mcpdemo",
+    "kinds": [
+      "capability"
+    ],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "tools.register"
+    ],
+    "tools": [
+      {
+        "name": "ping",
+        "effect": "read",
+        "load": "core",
+        "summary": "MCP ping"
+      }
+    ],
+    "mcp": {
+      "command": "node",
+      "args": [
+        "mcp-server.js"
+      ]
+    }
+  }
+}

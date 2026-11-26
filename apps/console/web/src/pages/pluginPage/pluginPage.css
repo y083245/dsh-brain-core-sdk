@@ -1,0 +1,69 @@
+.inktide-plugin-page {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--hair);
+}
+
+.inktide-plugin-page > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-4);
+  border-bottom: 1px solid var(--hair);
+}
+
+.inktide-plugin-page > header h2 {
+  margin: 0;
+  font-size: var(--fs-body);
+}
+
+.inktide-plugin-page-frame {
+  position: relative;
+  min-height: max(480px, calc(100dvh - 248px));
+}
+
+.inktide-plugin-page-carving {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--sp-3);
+  min-height: 160px;
+}
+
+.inktide-plugin-page-carving-mark {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+}
+
+.inktide-plugin-page-carving-line {
+  position: absolute;
+  left: 0;
+  top: 27px;
+  width: 22px;
+  height: 2px;
+  background: var(--zhusha);
+  pointer-events: none;
+}
+
+.inktide-plugin-page-carving-label {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+
+.inktide-plugin-page-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--plate);
+  border: 0;
+  visibility: hidden;
+}
+
+.inktide-plugin-page-frame iframe[data-loaded='true'] {
+  visibility: visible;
+}

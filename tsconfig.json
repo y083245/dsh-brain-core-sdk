@@ -1,0 +1,22 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/sdk" },
+    { "path": "packages/satellite-host" },
+    { "path": "packages/satellite-bundle" },
+    { "path": "spikes/s1" },
+    { "path": "packages/legacy-cleanup" },
+    { "path": "packages/shared" },
+    { "path": "packages/chat-kit" },
+    { "path": "packages/testkit" },
+    { "path": "packages/create-brain-plugin" },
+    { "path": "apps/kernel" },
+    { "path": "apps/console" },
+    { "path": "plugins/console-chat" },
+    { "path": "plugins/web-reader" },
+    { "path": "plugins/memory-provider-sample" },
+    { "path": "plugins/memory-vector" },
+    { "path": "plugins/qq-channel" },
+    { "path": "acceptance" }
+  ]
+}

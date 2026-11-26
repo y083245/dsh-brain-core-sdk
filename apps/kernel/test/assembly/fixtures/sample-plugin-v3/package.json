@@ -1,0 +1,85 @@
+{
+  "name": "brain-plugin-sample",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "sample",
+    "kinds": [
+      "channel",
+      "capability"
+    ],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "memory.ingest",
+      "memory.record",
+      "memory.search",
+      "memory.context",
+      "tools.register",
+      "channel.provide",
+      "channel.send",
+      "agent.session",
+      "memory.forget"
+    ],
+    "source": {
+      "channels": [
+        "sample:private:*",
+        "sample:group:*"
+      ],
+      "eventKinds": [
+        "sample.message",
+        "sample.note"
+      ],
+      "defaultVisibility": "origin",
+      "trust": "member"
+    },
+    "tools": [
+      {
+        "name": "remember",
+        "effect": "write",
+        "load": "core",
+        "summary": "记下一件事",
+        "keywords": [
+          "记住",
+          "记一下"
+        ]
+      },
+      {
+        "name": "lookup",
+        "effect": "read",
+        "load": "context",
+        "group": "memory",
+        "summary": "查一件事",
+        "keywords": [
+          "查",
+          "找"
+        ],
+        "when": "message.hasMedia"
+      },
+      {
+        "name": "say",
+        "effect": "send",
+        "load": "onDemand",
+        "group": "messaging",
+        "summary": "在通道里说一句话",
+        "keywords": [
+          "发消息",
+          "说话"
+        ],
+        "textArg": "text",
+        "sendPerMinute": 2
+      }
+    ],
+    "groups": {
+      "memory": {
+        "summary": "查记下的事"
+      },
+      "messaging": {
+        "summary": "在通道里说话",
+        "usage": "say 一次只发一句。"
+      }
+    }
+  }
+}

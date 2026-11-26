@@ -1,0 +1,37 @@
+{
+  "name": "brain-plugin-flaky-members",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "flaky",
+    "kinds": [
+      "channel",
+      "capability"
+    ],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": [
+      "tools.register",
+      "memory.search",
+      "channel.provide"
+    ],
+    "source": {
+      "channels": [
+        "flaky:private:*"
+      ],
+      "eventKinds": [],
+      "defaultVisibility": "origin",
+      "trust": "member"
+    },
+    "tools": [
+      {
+        "name": "probe",
+        "effect": "read",
+        "load": "core",
+        "summary": "probe participants"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@brain-core/acceptance",
+  "version": "0.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@brain-core/console": "workspace:*",
+    "@brain-core/kernel": "workspace:*",
+    "@brain-core/plugin-console-chat": "workspace:*",
+    "@brain-core/plugin-web-reader": "workspace:*",
+    "@brain-core/satellite-host": "workspace:*",
+    "@brain-core/sdk": "workspace:*",
+    "@brain-core/shared": "workspace:*",
+    "@brain-core/testkit": "workspace:*"
+  }
+}

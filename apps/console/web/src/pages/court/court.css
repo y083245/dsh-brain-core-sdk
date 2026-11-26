@@ -1,0 +1,284 @@
+.court-page {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.court-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--sp-5);
+  margin-top: var(--sp-7);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.court-presence,
+.court-right {
+  grid-column: span 6;
+  min-width: 0;
+}
+
+.court-presence {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-5);
+  min-height: 340px;
+  text-align: center;
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-plate);
+}
+
+/* Keep one canvas-visible ink well and opaque paper under every line of text. */
+.court-presence-paper {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--plate);
+  mask-image: radial-gradient(circle 108px at 50% calc(var(--sp-5) + 110px), transparent 100%, var(--ink-void) 100%);
+}
+
+.court-role-name {
+  margin: 0;
+  font: 700 var(--fs-h1)/var(--lh-h1) var(--font-display-cjk);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.court-presence-status {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.court-right {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-content: start;
+  max-width: 100%;
+}
+
+.court-card {
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--sp-5);
+  border: 1px solid var(--hair);
+}
+
+.court-card h2 {
+  margin: 0 0 var(--sp-4);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+}
+
+.court-today,
+.court-today-numbers,
+.court-cache {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.court-today > div:first-child {
+  min-width: 0;
+  flex: 1;
+}
+
+.court-today-numbers {
+  justify-content: flex-start;
+  margin-bottom: var(--sp-3);
+}
+
+.court-today-numbers > span {
+  white-space: nowrap;
+}
+
+.court-cache {
+  color: var(--text-2);
+  justify-content: flex-start;
+  font-size: var(--fs-small);
+}
+
+.court-cache progress {
+  width: min(100%, 160px);
+  height: 4px;
+  appearance: none;
+  border: 0;
+  background: var(--hair);
+}
+
+.court-cache progress::-webkit-progress-bar { background: var(--hair); }
+.court-cache progress::-webkit-progress-value { background: var(--text-1); }
+.court-cache progress::-moz-progress-bar { background: var(--text-1); }
+
+.court-meta {
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
+
+.court-task-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.court-task-list li + li {
+  border-top: 1px solid var(--hair);
+}
+
+.court-task-list button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  padding: 0 var(--sp-2);
+  text-align: left;
+  color: var(--text-1);
+  background: transparent;
+}
+
+.court-task-list button:hover,
+.court-task-list button:focus-visible {
+  background: var(--plate-raised);
+  box-shadow: inset 2px 0 var(--zhusha);
+}
+
+.court-task-box {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--hair-strong);
+}
+
+.court-task-list [data-tone="warn"] .court-task-box {
+  border-color: var(--tenghuang);
+}
+
+.court-flow-card {
+  grid-column: 1 / -1;
+}
+
+.court-flow-card > p {
+  margin: 0;
+}
+
+.court-flow {
+  position: relative;
+  margin-top: var(--sp-4);
+  padding-inline: 12px;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.court-flow ol {
+  position: relative;
+  height: 76px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--hair-strong);
+}
+
+.court-flow li.court-flow-item {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0;
+  pointer-events: none;
+}
+
+.court-flow li.court-flow-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.court-flow li.court-flow-item button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.court-flow li button span {
+  display: block;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.court-flow [data-layer="L3"] {
+  outline: 1px solid var(--zhusha);
+  outline-offset: 2px;
+}
+
+.court-flow-axis {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--sp-2);
+}
+
+.court-flow-tooltip {
+  position: absolute;
+  z-index: 2;
+  bottom: calc(100% - 12px);
+  translate: -50% 0;
+  width: min(248px, 100%);
+  padding: var(--sp-3);
+  background: var(--plate-raised);
+  border: 1px solid var(--hair-strong);
+  box-shadow: var(--shadow-raised);
+  pointer-events: none;
+  overflow-wrap: anywhere;
+}
+
+.court-flow-tooltip-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.court-flow-tooltip p {
+  margin: var(--sp-2) 0 0;
+}
+
+@media (max-width: 1439px) {
+  .court-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .court-presence, .court-right { grid-column: span 4; }
+}
+
+@media (max-width: 1023px) {
+  .court-presence, .court-right { grid-column: 1 / -1; }
+}
+
+@media (max-width: 500px) {
+  .court-grid { gap: var(--sp-4); }
+  .court-card { padding: var(--sp-4); }
+  .court-today-numbers {
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    max-width: 100%;
+    --fs-num-xl: 44px;
+    --lh-num-xl: 48px;
+  }
+  .court-today-numbers > span { max-width: 100%; overflow-x: auto; }
+}

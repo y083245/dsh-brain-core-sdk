@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IngestEvent",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 50
+    },
+    "actor": {
+      "type": "string"
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "tEvent": {
+      "type": "number"
+    },
+    "idempotencyKey": {
+      "type": "string"
+    },
+    "visibility": {
+      "enum": [
+        "open",
+        "subject",
+        "origin",
+        "owner",
+        "internal"
+      ]
+    }
+  },
+  "required": [
+    "kind",
+    "channel",
+    "subjects",
+    "actor",
+    "content",
+    "tEvent",
+    "idempotencyKey"
+  ]
+}

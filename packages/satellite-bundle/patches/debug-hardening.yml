@@ -1,0 +1,6 @@
+# Applied to the isolated DSH debug view (`dsh --profile web`).
+# Ensures session logs and plugin package inventory are never uploaded to official servers (RFC S9).
+- id: session-log-deepseek
+  disabled: true
+- id: plugin-package-inventory-deepseek
+  disabled: true

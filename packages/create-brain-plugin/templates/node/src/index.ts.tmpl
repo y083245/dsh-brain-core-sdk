@@ -1,0 +1,21 @@
+import type { BrainContext } from '@brain-core/sdk'
+
+/**
+ * Runs once when the plugin is enabled. Tools, timers, routes and event handlers registered here
+ * are all removed again when it is disabled, so never clean them up by hand.
+ */
+export async function apply(ctx: BrainContext, config: Readonly<Record<string, unknown>>): Promise<void> {
+  const greeting = typeof config.greeting === 'string' ? config.greeting : 'hello'
+
+  ctx.tools.register({
+    name: 'hello',
+    description: 'Say hello to the user.',
+    parameters: {
+      type: 'object',
+      properties: {},
+    },
+    handler: async () => greeting,
+  })
+
+__INGEST__
+}

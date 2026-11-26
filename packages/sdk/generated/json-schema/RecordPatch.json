@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RecordPatch",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 50
+    },
+    "visibility": {
+      "enum": [
+        "open",
+        "subject",
+        "origin",
+        "owner",
+        "internal"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "importance": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "enum": [
+        "active",
+        "outdated",
+        "archived",
+        "tombstoned"
+      ]
+    },
+    "validTo": {
+      "type": "number"
+    }
+  }
+}

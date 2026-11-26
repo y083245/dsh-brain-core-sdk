@@ -1,0 +1,217 @@
+{
+  "name": "@brain-core/plugin-qq",
+  "version": "0.1.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.ts\""
+  },
+  "brain": {
+    "id": "qq",
+    "kinds": ["channel"],
+    "api": "^1.0.0",
+    "runtime": "process",
+    "process": {
+      "command": "node",
+      "args": ["src/index.ts"]
+    },
+    "config": "./src/config.ts",
+    "migrations": "./migrations",
+    "permissions": [
+      "channel.provide",
+      "channel.send",
+      "agent.session",
+      "memory.ingest",
+      "memory.record",
+      "memory.search",
+      "identity.link",
+      "tools.register",
+      "lan:config:onebotHttpUrl",
+      "lan:config:onebotWsUrl",
+      "secrets:onebot-http-token",
+      "secrets:onebot-ws-token",
+      "network:*.qpic.cn",
+      "network:*.qq.com",
+      "network:*.qq.com.cn",
+      "network:*.gtimg.cn",
+      "network:*.qlogo.cn"
+    ],
+    "source": {
+      "channels": ["qq:private:*", "qq:group:*"],
+      "eventKinds": ["qq.message", "qq.action", "qq.wake"],
+      "defaultVisibility": "origin",
+      "trust": "external",
+      "proactiveMessaging": true,
+      "rateLimitPerHour": 3600
+    },
+    "groups": {
+      "media": {
+        "summary": "按需查看并归一化 QQ 消息图片或动画表情"
+      },
+      "forward": {
+        "summary": "按需展开当前通道可见的 QQ 合并转发消息"
+      },
+      "poke": {
+        "summary": "在收到拍一拍时回拍对方"
+      },
+      "group_info": {
+        "summary": "查看当前 QQ 群成员或近期活跃成员列表"
+      },
+      "stickers": {
+        "summary": "查看、发送、收藏 QQ 表情包并记录本通道含义备注"
+      },
+      "voice": {
+        "summary": "列出并发送本地语音库语音条（默认关闭）"
+      },
+      "history_extra": {
+        "summary": "按记录或消息 ID 读取本通道可见的 L0 原始消息详情"
+      }
+    },
+    "tools": [
+      {
+        "name": "send_message",
+        "effect": "send",
+        "load": "core",
+        "summary": "发送 QQ 消息（支持单发、引用回复与多气泡连发）",
+        "keywords": ["发送", "回复", "QQ消息", "连发", "引用"],
+        "channels": ["qq:*"],
+        "textArg": "messages"
+      },
+      {
+        "name": "set_wake_config",
+        "effect": "write",
+        "load": "core",
+        "summary": "调整当前 QQ 群的触发模式与活跃参数",
+        "keywords": ["唤醒", "触发", "安静", "关键词", "群聊设置"],
+        "channels": ["qq:group"]
+      },
+      {
+        "name": "get_message_images",
+        "effect": "read",
+        "load": "context",
+        "group": "media",
+        "summary": "按需读取并归一化当前消息中的图片或表情",
+        "keywords": ["图片", "看图", "截图", "表情", "媒体"],
+        "when": "message.hasMedia",
+        "channels": ["qq:*"]
+      },
+      {
+        "name": "get_forward_msg",
+        "effect": "read",
+        "load": "context",
+        "group": "forward",
+        "summary": "展开当前通道内可见的 QQ 合并转发聊天记录",
+        "keywords": ["合并转发", "转发", "聊天记录"],
+        "when": "message.hasForward",
+        "channels": ["qq:*"]
+      },
+      {
+        "name": "send_poke",
+        "effect": "send",
+        "load": "context",
+        "group": "poke",
+        "summary": "在 QQ 中拍一拍对方或回拍",
+        "keywords": ["拍一拍", "戳一戳", "回拍"],
+        "when": "event.poke",
+        "channels": ["qq:*"],
+        "sendPerMinute": 6
+      },
+      {
+        "name": "get_group_members",
+        "effect": "read",
+        "load": "context",
+        "group": "group_info",
+        "summary": "读取当前 QQ 群成员列表或近期活跃成员",
+        "keywords": ["群成员", "活跃成员", "群友", "名片"],
+        "when": "channel.kind == \"group\"",
+        "channels": ["qq:group"]
+      },
+      {
+        "name": "list_stickers",
+        "effect": "read",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "检索已收藏 QQ 表情列表与本通道学到的含义",
+        "keywords": ["表情包", "收藏表情", "斗图", "列表"],
+        "channels": ["qq:*"]
+      },
+      {
+        "name": "get_sticker_image",
+        "effect": "read",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "查看指定收藏表情包的归一化预览图",
+        "keywords": ["表情预览", "看表情", "表情图片"],
+        "channels": ["qq:*"]
+      },
+      {
+        "name": "send_sticker",
+        "effect": "send",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "发送指定的收藏 QQ 表情包",
+        "keywords": ["发表情", "斗图", "表情包"],
+        "channels": ["qq:*"],
+        "sendPerMinute": 10
+      },
+      {
+        "name": "collect_sticker",
+        "effect": "write",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "从当前通道消息中收藏表情包到 QQ 收藏",
+        "keywords": ["收藏表情", "存表情", "偷图"],
+        "channels": ["qq:*"]
+      },
+      {
+        "name": "sticker_note",
+        "effect": "write",
+        "load": "onDemand",
+        "group": "stickers",
+        "summary": "依据本通道 L0 证据为表情包记录含义备注",
+        "keywords": ["表情备注", "黑话", "表情含义"],
+        "channels": ["qq:*"]
+      },
+      {
+        "name": "list_voices",
+        "effect": "read",
+        "load": "onDemand",
+        "group": "voice",
+        "summary": "列出本地可用语音库条目",
+        "keywords": ["语音列表", "语音库", "发语音"],
+        "channels": ["qq:*"]
+      },
+      {
+        "name": "send_voice",
+        "effect": "send",
+        "load": "onDemand",
+        "group": "voice",
+        "summary": "发送本地语音库中的语音条",
+        "keywords": ["发语音", "语音条", "语音消息"],
+        "channels": ["qq:*"],
+        "sendPerMinute": 2
+      },
+      {
+        "name": "get_message_detail",
+        "effect": "read",
+        "load": "onDemand",
+        "group": "history_extra",
+        "summary": "读取当前通道内可见的 L0 原始消息详情",
+        "keywords": ["消息详情", "原文", "L0", "recordId"],
+        "channels": ["qq:*"]
+      }
+    ]
+  },
+  "dependencies": {
+    "@brain-core/chat-kit": "workspace:*",
+    "@brain-core/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@brain-core/testkit": "workspace:*"
+  }
+}

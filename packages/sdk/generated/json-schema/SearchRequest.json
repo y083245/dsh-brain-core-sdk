@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SearchRequest",
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string"
+    },
+    "scope": {
+      "enum": [
+        "here",
+        "person",
+        "all"
+      ]
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "L0",
+          "L1",
+          "L2",
+          "L3"
+        ]
+      }
+    },
+    "from": {
+      "type": "number"
+    },
+    "to": {
+      "type": "number"
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 50
+    },
+    "limit": {
+      "type": "number",
+      "maximum": 100
+    },
+    "cursor": {
+      "type": "string"
+    },
+    "neighbors": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "history": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "query",
+    "scope"
+  ]
+}

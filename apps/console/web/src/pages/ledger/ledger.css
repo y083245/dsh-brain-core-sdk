@@ -1,0 +1,68 @@
+.ledger-page, .ledger-book {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  min-width: 0;
+  max-width: 100%;
+}
+.ledger-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ledger-panel h2, .ledger-panel h3, .ledger-panel p { margin: 0; }
+.ledger-panel h2, .ledger-panel h3 { font-family: var(--font-display-cjk); }
+.ledger-muted { color: var(--text-2); }
+.ledger-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--sp-3); min-width: 0; max-width: 100%; }
+.ledger-metrics { grid-template-columns: minmax(0, 1fr) 160px; align-items: center; }
+.ledger-metric-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); margin: 0; align-items: start; min-width: 0; max-width: 100%; }
+.ledger-metric-values > div { min-width: 0; }
+.ledger-metric-values dt { color: var(--text-2); }
+.ledger-metric-values dd { margin: 0; min-width: 0; max-width: 100%; overflow-wrap: normal; }
+.ledger-gauge { display: grid; justify-items: center; gap: var(--sp-2); min-width: 0; }
+.ledger-by-plugin { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); min-width: 0; max-width: 100%; }
+.ledger-breakdown-row { display: grid; grid-template-columns: minmax(100px, 2fr) minmax(20px, 3fr) auto; align-items: center; gap: var(--sp-4); min-height: 40px; min-width: 0; max-width: 100%; }
+.ledger-plugin-name { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.ledger-plugin-name button { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.ledger-plugin-chart { width: 100%; display: block; }
+.ledger-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ledger-form p { margin: 0; }
+.ledger-table { min-width: 0; max-width: 100%; overflow-x: auto; }
+.ledger-price-input > div { min-width: 76px; }
+.ledger-limit { padding: var(--sp-3); }
+.ledger-limit-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); min-width: 0; max-width: 100%; }
+.ledger-budget-section { scroll-margin-top: var(--sp-5); }
+.ledger-budget-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); min-width: 0; max-width: 100%; }
+.ledger-interop { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); align-items: start; min-width: 0; max-width: 100%; }
+.ledger-amp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); min-width: 0; max-width: 100%; }
+.ledger-amp code { border: 1px solid var(--hair); padding: var(--sp-2); font-size: var(--fs-label); min-width: 0; overflow-wrap: anywhere; }
+.ledger-code { background: var(--plate-sunken); border: 1px solid var(--hair); padding: var(--sp-3); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); min-width: 0; max-width: 100%; overflow-x: auto; }
+.ledger-code pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ledger-running { background: var(--zhusha); display: inline-block; margin-right: var(--sp-1); width: 6px; height: 6px; border-radius: 50%; vertical-align: 2px; }
+@media (max-width: 1200px) { .ledger-interop { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 850px) {
+  .ledger-metrics, .ledger-interop, .ledger-budget-grid { grid-template-columns: minmax(0, 1fr); }
+  .ledger-metric-values { grid-template-columns: repeat(auto-fit, minmax(122px, 1fr)); }
+}
+@media (max-width: 500px) {
+  .ledger-panel { padding: var(--sp-4); }
+  .ledger-metric-values {
+    grid-template-columns: minmax(0, 1fr);
+    --fs-num-xl: 44px;
+    --lh-num-xl: 48px;
+  }
+  .ledger-metric-values dd { overflow-x: auto; }
+  .ledger-amp, .ledger-limit-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ledger-breakdown-row { grid-template-columns: minmax(0, 2fr) minmax(20px, 2fr) auto; gap: var(--sp-2); }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "brain-plugin-external",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "external",
+    "kinds": ["capability"],
+    "api": "^1.0.0",
+    "runtime": "process",
+    "process": { "command": "node", "args": ["index.js", "brain-external-probe"] },
+    "permissions": []
+  }
+}

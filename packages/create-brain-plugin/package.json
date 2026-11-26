@@ -1,0 +1,19 @@
+{
+  "name": "create-brain-plugin",
+  "version": "0.0.0",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "bin": { "create-brain-plugin": "./src/cli.ts" },
+  "scripts": {
+    "gen:api": "node scripts/gen-api-docs.ts"
+  },
+  "dependencies": {
+    "@brain-core/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@brain-core/testkit": "workspace:*",
+    "typescript": "6.0.3"
+  }
+}

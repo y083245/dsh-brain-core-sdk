@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextBundle",
+  "type": "object",
+  "properties": {
+    "profileVersion": {
+      "type": "number"
+    },
+    "stable": {
+      "type": "string"
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "enum": [
+              "profile",
+              "working",
+              "topics",
+              "facts",
+              "lessons",
+              "recall",
+              "elsewhere",
+              "promises"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "disclosure": {
+                  "type": "object",
+                  "properties": {
+                    "speakable": {
+                      "enum": [
+                        "yes",
+                        "if-subject-raises",
+                        "never"
+                      ]
+                    },
+                    "label": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "speakable",
+                    "label"
+                  ]
+                },
+                "inferred": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "text",
+                "disclosure"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name",
+          "items"
+        ]
+      }
+    },
+    "truncated": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "profileVersion",
+    "stable",
+    "blocks",
+    "truncated"
+  ]
+}

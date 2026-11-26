@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
+import test from 'node:test'
+import { createTestKernel, runPluginContractTests } from '@brain-core/testkit'
+import { apply } from '../src/index.ts'
+
+const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')) as {
+  readonly brain: unknown
+}
+const permissions = (pkg.brain as { readonly permissions: readonly string[] }).permissions
+const writesMemory = permissions.includes('memory.ingest') || permissions.includes('memory.record')
+
+test('the plugin satisfies the SDK contract', async () => {
+  const results = await runPluginContractTests({ apply }, pkg.brain)
+  for (const result of results) {
+    assert.equal(result.ok, true, `${result.name}: ${result.message}`)
+  }
+})
+
+test('the hello tool answers, and a memory-writing plugin has its record', async () => {
+  const kernel = createTestKernel()
+  await kernel.loadPlugin({ apply }, pkg.brain)
+  const output = await kernel.callTool('__ID__' + '__hello', {}, { channel: '__ID__:note:example' })
+  assert.equal(output, 'hello')
+  if (writesMemory) {
+    const records = kernel.records()
+    assert.equal(records.length, 1)
+    assert.equal(records[0]?.source, '__ID__')
+    if (permissions.includes('memory.ingest')) {
+      assert.equal(records[0]?.layer, 'L0')
+      assert.equal(records[0]?.kind, '__ID__.note')
+    }
+  }
+})

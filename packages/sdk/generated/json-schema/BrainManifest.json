@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BrainManifest",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "kinds": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "channel",
+          "activity",
+          "capability",
+          "memory-provider"
+        ]
+      }
+    },
+    "api": {
+      "type": "string"
+    },
+    "runtime": {
+      "enum": [
+        "node",
+        "process"
+      ]
+    },
+    "process": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "eventKinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "defaultVisibility": {
+          "enum": [
+            "open",
+            "subject",
+            "origin",
+            "owner",
+            "internal"
+          ]
+        },
+        "trust": {
+          "enum": [
+            "self",
+            "owner",
+            "member",
+            "external"
+          ]
+        },
+        "retentionDays": {
+          "type": "number"
+        },
+        "rateLimitPerHour": {
+          "type": "number"
+        },
+        "proactiveMessaging": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "channels",
+        "eventKinds",
+        "defaultVisibility",
+        "trust"
+      ]
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "effect": {
+            "enum": [
+              "read",
+              "write",
+              "send"
+            ]
+          },
+          "load": {
+            "enum": [
+              "core",
+              "context",
+              "onDemand"
+            ]
+          },
+          "group": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "when": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sendPerMinute": {
+            "type": "number"
+          },
+          "textArg": {
+            "type": "string"
+          },
+          "audience": {
+            "const": "owner"
+          },
+          "mcpName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "effect",
+          "load",
+          "summary"
+        ]
+      }
+    },
+    "groups": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string"
+          },
+          "usage": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary"
+        ]
+      }
+    },
+    "config": {
+      "type": "string"
+    },
+    "migrations": {
+      "type": "string"
+    },
+    "mcp": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "env": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "command"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "headers": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "url"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "kinds",
+    "api",
+    "runtime",
+    "permissions"
+  ]
+}

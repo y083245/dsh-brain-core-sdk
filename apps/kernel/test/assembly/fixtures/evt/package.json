@@ -1,0 +1,16 @@
+{
+  "name": "brain-plugin-events",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "brain": {
+    "id": "evt",
+    "kinds": [
+      "capability"
+    ],
+    "api": "^1.0.0",
+    "runtime": "node",
+    "permissions": []
+  }
+}
