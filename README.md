@@ -40,3 +40,8 @@ node apps/kernel/src/cli.ts start --port 17345
 项目许可采用 **PolyForm Noncommercial License 1.0.0**，版权归 xiaoyuan 所有（© 2026）。许可允许在条款规定的非商业用途下使用、修改和分发项目。**商业用途须取得版权方的单独授权。** 完整条款见 [LICENSE](LICENSE)。
 
 第三方依赖和资源适用各自的许可证，控制台字体的许可见 [OFL.txt](apps/console/web/public/fonts/OFL.txt)。
+
+# 支持打赏入口。个人开发不易，打赏支持项目，十分感谢🙏🙏🙏。后续插件功能将会持续更新。
+<img width="226" height="354" alt="dc39a43fd178d2c66b989f56e464239c" src="https://github.com/user-attachments/assets/afad3452-028c-456f-a729-a70740983384" />
+<img width="226" height="354" alt="f88d2c9b93426c281f79375c5abfe68a" src="https://github.com/user-attachments/assets/10febd03-7d10-4a8c-956c-642598d3e444" />
+
