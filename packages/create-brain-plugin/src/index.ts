@@ -252,7 +252,9 @@ export async function runCli(argv: readonly string[], io: PromptIo): Promise<num
     const options = await resolveOptions(parsed, io)
     const files = await generateProject(options)
     io.stdout(`created ${options.id} in ${options.dir} (${files.length} files)\n`)
-    io.stdout(`next: cd ${options.dir} && npm install && npm test\n`)
+    io.stdout(options.runtime === 'node'
+      ? `next: cd ${options.dir} && npm install && npm test && brain plugin check .\n`
+      : `next: cd ${options.dir} && uv sync --no-dev && brain plugin check .\n`)
     return 0
   } catch (error) {
     io.stderr(`${messageOf(error)}\n`)

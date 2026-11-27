@@ -1,6 +1,6 @@
 # `@dsh-brain-core/plugin-qq`（QQ 通道插件）
 
-Brain Core 的 Clean-Room 原创 QQ 通道插件（`brain.id = "qq"`）采用项目的 [PolyForm Noncommercial License 1.0.0](../../LICENSE)，商业用途须取得版权方的单独授权。它仅依赖 `@dsh-brain-core/sdk`、`@dsh-brain-core/chat-kit` 与 Node.js 内置模块。
+Brain Core 的 QQ 通道插件（`brain.id = "qq"`）采用项目的 [PolyForm Noncommercial License 1.0.0](https://github.com/y083245/dsh-brain-core-sdk/blob/main/LICENSE)，商业用途须取得版权方的单独授权。它基于 `@dsh-brain-core/sdk`、`@dsh-brain-core/chat-kit` 与 Node.js 内置模块实现。
 
 通过标准 **OneBot v11 HTTP + Forward WebSocket** 协议对接外部独立运行的协议端，让 Brain Core 统一的「她」（全局唯一记忆、人格、PAD 情绪与关系图谱）安全长出 QQ 私聊与群聊感官与四肢。
 
@@ -12,19 +12,40 @@ Brain Core 的 Clean-Room 原创 QQ 通道插件（`brain.id = "qq"`）采用项
   - **OneBot v11 HTTP API**（默认 `http://127.0.0.1:3000`）
   - **OneBot v11 Forward WebSocket**（默认 `ws://127.0.0.1:3001`）
 - 插件以 `runtime: "process"` 子进程运行在 Node.js 24+ 上，支持 **Linux / macOS / Windows** 跨平台：既可连接本机 `127.0.0.1`，也可跨机连接局域网/ZeroTier 上的协议端（跨机携带 Token 时须使用 `https://` 与 `wss://`）。
-- 如需查看超限静态图、GIF 动图拼图（3×2 网格）或启用本地语音发送（`voice.enabled`），需本机安装 `ffmpeg`（可通过 `media.ffmpegPath` 指定绝对路径）；缺少 `ffmpeg` 时图片/GIF 自动优雅降级为文本提示。
+- 图片缩放与动图抽帧优先复用宿主可选 `sharp`，不可用或解码失败时回退到本地 `ffmpeg`。两者均不可用时，字节预算内图片按原图透传，动图提示仅显示首帧；超预算时降级为文本提示。动图拼图按实际帧数、`media.gifFrames` 与 `media.gifCellPx` 自适应布局（默认抽取 6 帧时为 3×2 网格），并受图像尺寸预算限制。
+- 启用本地语音发送（`voice.enabled: true`）须同时安装 **`ffmpeg` 与 `ffprobe`**。通过 `media.ffmpegPath` 指定 `ffmpeg` 绝对路径时，会自动查找同目录下的 `ffprobe` / `ffprobe.exe`；否则从 `PATH` 查找。
 
 ---
 
 ## 2. 安装与启用步骤
 
-```bash
-# 1. 本地安装仓库内的 QQ 通道插件（零外部依赖，支持离线安装）
-brain plugin install ./plugins/qq-channel
-# 或使用 --yes 跳过交互确认：
-brain plugin install ./plugins/qq-channel --yes
+使用 CLI 安装、启停或设置密钥前，须先停止正在运行的 `brain console` / `brain start`。也可以直接在墨潮控制台「印谱」在线安装并启用。
 
-# 2. 在 0600 密钥库中写入 OneBot 双 Token
+### 方式 1：npm 安装（推荐）
+
+当前 npm 预览版为 `1.0.1-rc.1`（`next`）；正式版 `1.0.0` 将发布到 `latest`。核对来源后执行：
+
+```bash
+brain plugin install @dsh-brain-core/plugin-qq@next --yes
+brain plugin enable qq
+```
+
+`--yes` 表示确认授予插件声明的全部权限。CLI 没有交互确认；不加 `--yes` 会预览权限并进入 `pending`，之后执行 `brain plugin confirm qq` 确认，再执行 `brain plugin enable qq`。确认安装后状态为 `disabled`，不会自动启用。npm 包名为 `@dsh-brain-core/plugin-qq`，插件 ID（`brain.id`）为 `qq`。
+
+### 方式 2：从源码目录本地安装
+
+在仓库根目录执行：
+
+```bash
+brain plugin install ./plugins/qq-channel --yes
+brain plugin enable qq
+```
+
+### 设置协议端 Token
+
+在密钥库中写入 OneBot 双 Token（文件权限为 0600），并按下一节完成配置后重启内核：
+
+```bash
 brain secret set plugin.qq.onebot-http-token
 brain secret set plugin.qq.onebot-ws-token
 ```
@@ -39,7 +60,7 @@ brain secret set plugin.qq.onebot-ws-token
 
 ## 3. 配置、主人通道与人物合并
 
-在停用插件后（`brain plugin disable qq`），编辑 `$BRAIN_HOME/state/plugins/qq/config.json`，然后重新启用（`brain plugin enable qq`）：
+使用 CLI 停用、修改配置、启用前，须先停止正在运行的 `brain console` 或 `brain start`。然后执行 `brain plugin disable qq`，编辑 `$BRAIN_HOME/state/plugins/qq/config.json`，执行 `brain plugin enable qq`，改完后再重启内核。墨潮控制台「印谱」支持在线启停，插件配置暂需编辑该 JSON 文件。未设置 `BRAIN_HOME` 时，默认目录为 `~/.brain-core`。
 
 ```json
 {
@@ -65,7 +86,7 @@ brain secret set plugin.qq.onebot-ws-token
 
 QQ 插件支持内核主动投递。内核在已配置为主人通道的 QQ 私聊中送达当天的约定提醒，使用插件现有的白名单、外发和出站记忆记录。配置时将主人的 `qq:private:<QQ号>` 加入内核 `ownerChannels`，并添加到插件的 `allowPrivate`。
 
-1. 在内核全局配置中将主人 QQ 私聊通道 **`qq:private:<ownerQQ>`** 加入 `settings.ownerChannels`，使该通道享有主人通道披露与权限边界。
+1. 停止内核后，编辑 `$BRAIN_HOME/state/settings.json` 的 `ownerChannels` 数组，加入 `"qq:private:<ownerQQ>"`；或启动时传入 `--owner-channel qq:private:<ownerQQ>`（适用于 `brain console` / `brain start`）。同时在插件配置中设置 `ownerQQ` 并将其加入 `allowPrivate`，使该通道享有主人通道披露与权限边界。
 2. 在墨潮控制台（或身份管理界面）将 **`qq:<ownerQQ>`** 与 **`console-chat:owner`** 合并为同一个 `personId`，从而打通控制台与 QQ 的跨通道记忆与人物关系。
 
 ---

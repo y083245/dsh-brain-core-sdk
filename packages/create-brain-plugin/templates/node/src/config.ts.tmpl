@@ -1,6 +1,9 @@
 import { Schema } from '@dsh-brain-core/sdk'
 
-/** The values the console lets the owner edit. Defaults are filled in from here. */
+/**
+ * 内核加载 $BRAIN_HOME/state/plugins/<id>/config.json 时使用此 Schemastery schema 校验并填充默认值。
+ * 修改配置需先停内核再编辑该文件；控制台配置表单将在后续版本接入。
+ */
 export interface Config {
   /** The words the hello tool says. */
   greeting: string

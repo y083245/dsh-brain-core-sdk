@@ -128,12 +128,18 @@ test('a process plugin with a broken manifest still fails at the manifest', asyn
 
 test('AT-5: a plugin that builds its own SQLite database is caught', async (t) => {
   const dir = await createPlugin(t, { files: { 'src/db.ts': "import Database from 'node:sqlite'\n" } })
-  assert.equal(only((await checkPlugin(dir)).findings, 'no-own-database').level, 'must')
+  const finding = only((await checkPlugin(dir)).findings, 'no-own-database')
+  assert.equal(finding.level, 'must')
+  assert.match(finding.message, /plugin rule R1/)
+  assert.doesNotMatch(finding.message, /RFC 8\.7/)
 })
 
 test('AT-5: a plugin that reads the DSH home is caught', async (t) => {
   const dir = await createPlugin(t, { files: { 'src/home.ts': "export const sessions = '/home/u/.dsh/sessions'\n" } })
-  assert.equal(only((await checkPlugin(dir)).findings, 'no-dsh-home').level, 'must')
+  const finding = only((await checkPlugin(dir)).findings, 'no-dsh-home')
+  assert.equal(finding.level, 'must')
+  assert.match(finding.message, /plugin rule R3/)
+  assert.doesNotMatch(finding.message, /RFC 8\.7/)
 })
 
 test('AT-5: a plugin that writes L3 is caught by the contract test', async (t) => {
@@ -260,6 +266,8 @@ test('the CLI answers --help with the usage line', async () => {
   const output = capture()
   assert.equal(await runCheckCli(['--help'], output.io), 0)
   assert.match(output.stdout.join(''), /usage: brain plugin check/)
+  assert.match(output.stdout.join(''), /Brain Core plugin compliance rules/)
+  assert.doesNotMatch(output.stdout.join(''), /RFC 8\.7/)
 })
 
 test('the CLI refuses more than one directory', async () => {

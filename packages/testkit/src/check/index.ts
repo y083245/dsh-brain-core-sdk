@@ -168,7 +168,7 @@ export async function runCheckCli(
   for (const argument of argv) {
     if (argument === '--json') json = true
     else if (argument === '--help' || argument === '-h') {
-      io.stdout(`${USAGE}\nChecks a plugin directory against RFC 8.7 and runs the testkit contract.\n`)
+      io.stdout(`${USAGE}\nChecks a plugin directory against Brain Core plugin compliance rules and runs the testkit contract.\n`)
       return 0
     } else if (argument.startsWith('-')) {
       io.stderr(`unknown option: ${argument}\n${USAGE}`)

@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/testkit",
+  "description": "Fake kernel, plugin contract tests and static checks for Brain Core plugin development.",
+  "keywords": ["brain-core", "dsh-brain-core", "testing", "plugin", "testkit"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

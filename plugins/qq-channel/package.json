@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/plugin-qq",
+  "description": "Brain Core OneBot v11 QQ channel with chat, media tools and proactive messaging.",
+  "keywords": ["brain-core", "dsh-brain-core", "plugin", "qq", "onebot", "channel"],
   "version": "0.1.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

@@ -9,7 +9,7 @@ const CONTEXT_MEMBERS = [
 ] as const
 
 const INTERFACE_METHODS: Readonly<Record<string, readonly string[]>> = {
-  'ctx.memory': ['ingest', 'record', 'update', 'remove', 'search', 'readChannelEvent', 'context', 'forget'],
+  'ctx.memory': ['ingest', 'record', 'update', 'remove', 'search', 'readChannelEvent', 'context', 'forget', 'readL0', 'writeDerived', 'provide'],
   'ctx.agent': ['session', 'wake'],
   'ctx.tools': ['register'],
   'ctx.channel': ['provide', 'send'],
@@ -36,15 +36,8 @@ test('the API document is generated deterministically', () => {
   assert.equal(generateApiDocs(), generateApiDocs())
 })
 
-test('the local api.md matches the generated document when present', async (t) => {
-  const local = await readFile(API_DOC_PATH, 'utf8').catch((error: NodeJS.ErrnoException) => {
-    if (error.code === 'ENOENT') return undefined
-    throw error
-  })
-  if (local === undefined) {
-    t.skip('Local API document is absent in this checkout')
-    return
-  }
+test('the public api.md exists and exactly matches the generated document', async () => {
+  const local = await readFile(API_DOC_PATH, 'utf8')
   assert.equal(local.replace(/\r\n/g, '\n'), generateApiDocs())
 })
 
@@ -69,7 +62,7 @@ test('the permission comments survive into the document', () => {
   const doc = generateApiDocs()
   for (const permission of [
     'memory.ingest', 'memory.record', 'memory.search', 'memory.context', 'memory.forget',
-    'agent.session', 'tools.register', 'channel.provide', 'channel.send', 'identity.link',
+    'memory.readL0', 'memory.writeDerived', 'agent.session', 'tools.register', 'channel.provide', 'channel.send', 'identity.link',
     'schedule.ownTime', 'network:<host>', 'lan:config:<key>', 'secrets:<name>', 'llm.invoke',
   ]) {
     assert.ok(doc.includes(`// ${permission}`), `the document does not mention // ${permission}`)

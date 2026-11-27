@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, symlink, writeFile } from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import test, { type TestContext } from 'node:test'
 import { validateManifest, type PluginKind } from '@dsh-brain-core/sdk'
@@ -14,7 +15,7 @@ const KINDS: readonly PluginKind[] = ['channel', 'activity', 'capability', 'memo
 const RUNTIMES: readonly Runtime[] = ['node', 'process']
 const NODE_FILES = [
   '.github/workflows/ci.yml', 'README.md', 'package.json', 'src/config.ts', 'src/index.ts',
-  'test/plugin.test.ts', 'tsconfig.json',
+  'test/plugin.test.ts', 'tsconfig.build.json', 'tsconfig.json',
 ]
 const PROCESS_FILES = ['README.md', 'main.py', 'package.json', 'pyproject.toml']
 
@@ -92,6 +93,8 @@ for (const runtime of RUNTIMES) {
         assert.equal(text.includes('__ID__'), false, `${file} still contains __ID__`)
         assert.equal(/__[A-Z][A-Z0-9_]*__/.test(text), false, `${file} still contains a template placeholder`)
       }
+      const readme = await readFile(path.join(dir, 'README.md'), 'utf8')
+      assert.doesNotMatch(readme, /not on npm yet|Until `brain plugin check` ships|runCheckCli/)
     })
   }
 }
@@ -149,6 +152,37 @@ for (const kind of KINDS) {
 
     const result = await run(process.execPath, ['--test', 'test/plugin.test.ts'], dir)
     assert.equal(result.code, 0, `${result.stdout}\n${result.stderr}`)
+  })
+}
+
+for (const kind of KINDS) {
+  test(`the node ${kind} template builds clean JavaScript entry points`, async (t) => {
+    const dir = await scaffoldInto(t, kind, 'node')
+    await linkWorkspace(dir)
+    const require = createRequire(import.meta.url)
+    const typesDir = path.join(dir, 'node_modules', '@types')
+    await mkdir(typesDir, { recursive: true })
+    await symlink(path.dirname(require.resolve('@types/node/package.json')), path.join(typesDir, 'node'), 'junction')
+    const pkg = await generatedPackage(dir)
+    assert.equal(pkg.scripts?.build, 'tsc -p tsconfig.build.json')
+    assert.equal(pkg.private, true)
+    // Exercise extension rewriting as well as the current template's external SDK imports.
+    const entry = path.join(dir, 'src', 'index.ts')
+    await writeFile(entry, `${await readFile(entry, 'utf8')}\nexport { default as Config } from './config.ts'\n`)
+    await assert.rejects(readdir(path.join(dir, 'dist')), 'build starts without prior output')
+    const result = await run(process.execPath, [require.resolve('typescript/bin/tsc'), '-p', 'tsconfig.build.json'], dir)
+    assert.equal(result.code, 0, `${result.stdout}\n${result.stderr}`)
+    assert.deepEqual(await treeFiles(path.join(dir, 'dist')), ['config.js', 'index.js'])
+    for (const filename of ['index.js', 'config.js']) {
+      assert.ok((await readFile(path.join(dir, 'dist', filename), 'utf8')).length > 0)
+    }
+    assert.match(await readFile(path.join(dir, 'dist', 'index.js'), 'utf8'), /from ['"]\.\/config\.js['"]/)
+    // Check the actual publication entries after switching both paths to compiled output.
+    await writeFile(path.join(dir, 'package.json'), JSON.stringify({
+      ...pkg, main: './dist/index.js', brain: { ...pkg.brain, config: './dist/config.js' },
+    }, null, 2))
+    const report = await checkPlugin(dir)
+    assert.equal(report.ok, true, JSON.stringify(report.findings, null, 2))
   })
 }
 
@@ -398,3 +432,20 @@ test('the CLI reports a refused generation without a stack trace', async (t) => 
   assert.match(err.join(''), /already exists and is not empty/)
   assert.equal(err.join('').includes('at '), false, 'the CLI must not print a stack trace')
 })
+
+for (const runtime of RUNTIMES) {
+  test(`the CLI prints the next steps for ${runtime}`, async (t) => {
+    const parent = await tempDir(t, 'cli-next')
+    const dir = path.join(parent, 'next-plugin')
+    const out: string[] = []
+    const io: PromptIo = {
+      stdout: (text) => { out.push(text) },
+      stderr: (text) => assert.fail(text),
+      question: async () => { throw new Error('unexpected prompt') },
+    }
+    assert.equal(await runCli([dir, '--runtime', runtime, '--yes'], io), 0)
+    assert.equal(out[1], runtime === 'node'
+      ? `next: cd ${dir} && npm install && npm test && brain plugin check .\n`
+      : `next: cd ${dir} && uv sync --no-dev && brain plugin check .\n`)
+  })
+}

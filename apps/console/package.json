@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/console",
+  "description": "INKTIDE web console for Brain Core plugins, memory, settings and model accounting.",
+  "keywords": ["brain-core", "dsh-brain-core", "console", "inktide", "dashboard"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

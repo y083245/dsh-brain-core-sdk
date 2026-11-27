@@ -203,9 +203,18 @@ function buildOpenApi(components: Record<string, JsonSchema>): JsonSchema {
 
   return {
     openapi: '3.1.0',
-    info: { title: 'Brain Core Memory API', version: '1.0' },
+    info: {
+      title: 'Brain Core Memory API',
+      version: '1.0',
+      description: 'This specification covers the kernel Memory HTTP API (/api/v1/memory/*). All endpoints require authentication via Authorization: Bearer <token>. Console plugin management and plugin-defined routes are outside the scope of this specification.',
+    },
     paths,
-    components: { schemas: components, responses: errorResponses },
+    components: {
+      schemas: components,
+      responses: errorResponses,
+      securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer' } },
+    },
+    security: [{ bearerAuth: [] }],
   }
 }
 

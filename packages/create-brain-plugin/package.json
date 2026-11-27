@@ -1,5 +1,7 @@
 {
   "name": "create-brain-plugin",
+  "description": "Scaffold TypeScript and Python process plugins for Brain Core.",
+  "keywords": ["brain-core", "dsh-brain-core", "create", "scaffold", "plugin", "typescript", "python"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

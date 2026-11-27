@@ -6,3 +6,5 @@
 apps/console/web/public/fonts/OFL.txt text eol=lf
 apps/console/web/public/fonts/manifest.json text eol=lf
 apps/kernel/roles/*.md text eol=lf
+packages/sdk/generated/** text eol=lf
+packages/sdk/guides/api.md text eol=lf

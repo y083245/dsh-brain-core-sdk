@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/plugin-memory-vector",
+  "description": "Brain Core memory provider with local quantized vectors and optional HTTP embeddings.",
+  "keywords": ["brain-core", "dsh-brain-core", "plugin", "vector", "embeddings", "memory"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

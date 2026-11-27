@@ -12,7 +12,7 @@ Brain Core SDK 是一个本地 AI 助手运行时和 TypeScript 插件 SDK。它
 
 支持 macOS、Linux 和 Windows，需要 **Node.js 24.12 或更高版本**。
 
-### 方式 1：通过 npm 安装（推荐，当前预览版 `1.0.0-rc.1`）
+### 方式 1：通过 npm 安装（推荐，当前预览版 `1.0.1-rc.1`）
 
 ```sh
 npm install -g @dsh-brain-core/kernel@next
@@ -72,7 +72,7 @@ Brain Core 的插件运行在 Brain Core 自己的插件宿主中，可以通过
 
 | npm 包名（预览版） | 插件 ID | 说明 |
 | --- | --- | --- |
-| `@dsh-brain-core/plugin-console-chat@next` | `console-chat` | 墨潮控制台内置聊天通道，装完即可在网页里直接对话 |
+| `@dsh-brain-core/plugin-console-chat@next` | `console-chat` | 墨潮控制台内置聊天通道，安装并启用后即可在网页里对话 |
 | `@dsh-brain-core/plugin-qq@next` | `qq` | QQ 私聊/群聊通道（对接 OneBot v11 协议端，支持图片/动图/表情包与主动消息） |
 | `@dsh-brain-core/plugin-web-reader@next` | `web-reader` | 网页正文抓取与阅读工具 |
 | `@dsh-brain-core/plugin-memory-vector@next` | `memory-vector` | 本地 BVEC 量化向量记忆检索增强 |
@@ -81,7 +81,7 @@ Brain Core 的插件运行在 Brain Core 自己的插件宿主中，可以通过
 
 1. 启动 `brain console` 并登录控制台。
 2. 进入 **「印谱」**（插件管理页）→ 点击安装插件。
-3. 在「插件来源」输入框填入 npm 包名（例如 `@dsh-brain-core/plugin-console-chat@next` 或 `@dsh-brain-core/plugin-qq@next`），也支持填本地目录路径或 `git+...` 地址。
+3. 在「插件来源」输入框填入 npm 包名（例如 `@dsh-brain-core/plugin-console-chat@next` 或 `@dsh-brain-core/plugin-qq@next`），也支持填本地目录路径或 `git+...` 地址。第三方 npm 包直接填包名即可（如 `@alice/brain-plugin-weather`）；使用 `git+...` 时，仓库根目录须直接为合法插件包且入口文件已就绪（安装期禁用生命周期脚本，不会自动编译）。
 4. 核对插件申请的权限清单后确认安装，点击开关即可实时启用。
 
 > 若采用「从源码部署」，仓库 `plugins/` 目录下的官方插件会自动出现在「印谱」列表中，直接点击即可一键安装、启用或更新。
@@ -91,17 +91,23 @@ Brain Core 的插件运行在 Brain Core 自己的插件宿主中，可以通过
 > 注意：使用命令行修改插件、模型或密钥前，请先停止正在运行的 `brain console` 或 `brain start`。
 
 ```sh
-# 安装控制台对话插件与 QQ 通道插件（加 --yes 可跳过权限交互确认）
-brain plugin install @dsh-brain-core/plugin-console-chat@next
-brain plugin install @dsh-brain-core/plugin-qq@next
+# 核对插件来源后，确认授予清单中声明的全部权限
+brain plugin install @dsh-brain-core/plugin-console-chat@next --yes
+brain plugin install @dsh-brain-core/plugin-qq@next --yes
+
+# 安装确认后状态为 disabled，须显式启用
+brain plugin enable console-chat
+brain plugin enable qq
 
 # 查看、启停、升级与卸载
 brain plugin list
 brain plugin enable <插件ID>
 brain plugin disable <插件ID>
-brain plugin upgrade <插件ID> <新npm包名或路径>
+brain plugin upgrade <插件ID> <新npm包名或路径> [--yes]
 brain plugin uninstall <插件ID> --keep-data
 ```
+
+`--yes` 表示确认授予插件声明的全部权限。CLI 没有交互确认；不带 `--yes` 时仅预览权限并将插件置为 `pending`，核对后执行 `brain plugin confirm <插件ID>`，再执行 `brain plugin enable <插件ID>`。npm 包名与插件 ID（`brain.id`）不同，例如 `@dsh-brain-core/plugin-qq` 的 ID 是 `qq`。升级新增权限时，若未带 `--yes`，升级会进入 `pendingUpgrade`，同样用 `brain plugin confirm <插件ID>` 确认。完成后重新启动控制台或内核。
 
 ### QQ 插件接入提示
 
@@ -113,17 +119,19 @@ brain plugin uninstall <插件ID> --keep-data
 
 ```sh
 brain --version
-brain console [--port 17346] [--api-port 17345] [--cross-channel off|shadow|on]
-brain start [--port 17345] [--cross-channel off|shadow|on]
+brain console [--port 17346] [--api-port <port>] [--cross-channel off|shadow|on] [--owner-channel <channel>]...
+brain start [--port 17345] [--cross-channel off|shadow|on] [--owner-channel <channel>]...
 brain model set <chat|activity> --provider <p> --model <m> --effort <e>
 brain secret set <name>
-brain plugin install|upgrade|enable|disable|uninstall|list|check ...
+brain plugin install|confirm|upgrade|enable|disable|uninstall|list|check ...
 brain doctor --isolation
 ```
 
+控制台默认端口为 `17346`，其内核 API 默认动态分配空闲端口，如需固定再传 `--api-port`；`brain start` 的 API 默认端口为 `17345`。
+
 ---
 
-## 五、开发自己的插件（SDK 与脚手架）
+## 五、开发与发布自己的插件
 
 使用官方脚手架可以快速创建一个带类型检查、契约测试与静态合规检查的插件项目：
 
@@ -135,7 +143,9 @@ npm test
 brain plugin check .
 ```
 
-插件开发完整指引、`BrainContext` API、清单 Schema、HTTP OpenAPI 与测试工具详见 [SDK 开发者指南](packages/sdk/README.md)。
+当前没有官方插件市场或官方登记流程。第三方开发者可直接发布到自己的 npm scope、无 scope npm 包，或符合安装要求的 Git 仓库。用户停止内核后，可执行 `brain plugin install <包名> --yes && brain plugin enable <插件ID>`，也可在墨潮控制台「印谱」在线安装并启用。
+
+开发入口：[SDK 开发者指南](packages/sdk/README.md)、[插件开发文档目录](packages/sdk/guides/README.md)、[第三方插件发布指南](packages/sdk/guides/publishing.md)。
 
 ---
 

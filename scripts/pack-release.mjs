@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import console from 'node:console'
-import { cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import os from 'node:os'
 import path from 'node:path'
@@ -8,19 +8,19 @@ import process from 'node:process'
 
 const root = path.join(import.meta.dirname, '..')
 const packages = [
-  ['packages/sdk', ['generated', 'README.md']],
-  ['packages/shared', []],
-  ['packages/chat-kit', []],
-  ['packages/testkit', []],
-  ['packages/satellite-bundle', ['patches']],
-  ['packages/satellite-host', []],
-  ['packages/legacy-cleanup', []],
-  ['packages/create-brain-plugin', ['templates']],
-  ['apps/console', ['dist-web']],
+  ['packages/sdk', ['generated', 'guides', 'README.md']],
+  ['packages/shared', ['README.md']],
+  ['packages/chat-kit', ['README.md']],
+  ['packages/testkit', ['README.md']],
+  ['packages/satellite-bundle', ['patches', 'README.md']],
+  ['packages/satellite-host', ['README.md']],
+  ['packages/legacy-cleanup', ['README.md']],
+  ['packages/create-brain-plugin', ['templates', 'README.md']],
+  ['apps/console', ['dist-web', 'README.md']],
   ['apps/kernel', ['roles']],
-  ['plugins/console-chat', []],
-  ['plugins/web-reader', []],
-  ['plugins/memory-vector', []],
+  ['plugins/console-chat', ['README.md']],
+  ['plugins/web-reader', ['README.md']],
+  ['plugins/memory-vector', ['README.md']],
   ['plugins/qq-channel', ['migrations', 'README.md']],
 ]
 
@@ -62,6 +62,106 @@ function writeConsoleNotices(source, staging) {
   writeFileSync(path.join(staging, 'THIRD-PARTY-NOTICES.txt'), notices.join('\n\n----------------------------------------\n\n') + '\n')
 }
 
+/** Keep package-local links; turn links to omitted repository files into public URLs. */
+function rewriteMarkdownLinks(staging, source, relFile = 'README.md') {
+  const filename = path.join(staging, relFile)
+  if (!existsSync(filename)) return
+  const stagingDir = path.dirname(filename)
+  const sourceDir = path.dirname(path.join(source, relFile))
+
+  const inside = (base, target) => {
+    const relative = path.relative(base, target)
+    return relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
+  }
+  function resolveTarget(target) {
+    // External URLs, protocol-relative URLs and same-page anchors need no filesystem lookup.
+    if (target === '' || /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(target)) return target
+    const boundary = target.search(/[?#]/)
+    const pathname = boundary < 0 ? target : target.slice(0, boundary)
+    const suffix = boundary < 0 ? '' : target.slice(boundary)
+    const decoded = decodeURIComponent(pathname.replace(/\\([!"#$%&'()*+,\-./:;<=>?@[\]^_`{|}~\\])/g, '$1'))
+    const packaged = path.resolve(stagingDir, decoded)
+    if (inside(staging, packaged) && existsSync(packaged)) return target
+    const original = path.resolve(sourceDir, decoded)
+    if (!inside(root, original) || !existsSync(original)) {
+      throw new Error(`Broken Markdown link in ${path.relative(root, path.join(source, relFile)) || relFile}: ${target}`)
+    }
+    const kind = statSync(original).isDirectory() ? 'tree' : 'blob'
+    const relative = path.relative(root, original).split(path.sep).map(encodeURIComponent).join('/')
+    return `https://github.com/y083245/dsh-brain-core-sdk/${kind}/main/${relative}${suffix}`
+  }
+
+  function rewriteProse(markdown) {
+    let result = ''
+    let copied = 0
+    for (let i = 0; i < markdown.length; i += 1) {
+      if (markdown[i] === '\\') { i += 1; continue }
+      // Backtick spans may contain examples that look exactly like Markdown links.
+      if (markdown[i] === '`') {
+        const ticks = /^`+/.exec(markdown.slice(i))[0]
+        const runs = /`+/g
+        runs.lastIndex = i + ticks.length
+        let close
+        while ((close = runs.exec(markdown)) !== null && close[0].length !== ticks.length) { /* find matching run */ }
+        i = close === null ? i + ticks.length - 1 : close.index + ticks.length - 1
+        continue
+      }
+      if (markdown[i] !== '[') continue
+      let labelEnd = i + 1
+      let depth = 1
+      for (; labelEnd < markdown.length; labelEnd += 1) {
+        const char = markdown[labelEnd]
+        if (char === '\\') { labelEnd += 1; continue }
+        if (char === '[') depth += 1
+        if (char === ']' && --depth === 0) break
+      }
+      if (depth !== 0 || markdown[labelEnd + 1] !== '(') continue
+      let start = labelEnd + 2
+      while (/\s/.test(markdown[start] ?? '') && start < markdown.length) start += 1
+      const angle = markdown[start] === '<'
+      if (angle) start += 1
+      let end = start
+      let parentheses = 0
+      for (; end < markdown.length; end += 1) {
+        const char = markdown[end]
+        if (char === '\\') { end += 1; continue }
+        if (angle) { if (char === '>') break }
+        else {
+          if (char === '(') parentheses += 1
+          else if (char === ')') { if (parentheses === 0) break; parentheses -= 1 }
+          else if (/\s/.test(char) && parentheses === 0) break
+        }
+      }
+      if (end === markdown.length || (angle && markdown[end] !== '>')) continue
+      const tail = markdown.slice(end + (angle ? 1 : 0))
+      // Preserve optional titles, angle delimiters, whitespace and the label verbatim.
+      const closing = /^(?:\s+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?\s*\)/.exec(tail)
+      if (closing === null) continue
+      const target = markdown.slice(start, end)
+      result += markdown.slice(copied, start) + resolveTarget(target)
+      copied = end
+      i = end + (angle ? 1 : 0) + closing[0].length - 1
+    }
+    return result + markdown.slice(copied)
+  }
+
+  let fence
+  let prose = ''
+  let result = ''
+  for (const line of readFileSync(filename, 'utf8').split(/(?<=\n)/)) {
+    const marker = /^ {0,3}(`{3,}|~{3,})(.*)/.exec(line)
+    if (fence !== undefined) {
+      result += line
+      if (marker !== null && marker[1][0] === fence[0] && marker[1].length >= fence.length && marker[2].trim() === '') fence = undefined
+    } else if (marker !== null || /^(?: {4}|\t)/.test(line)) {
+      result += rewriteProse(prose) + line
+      prose = ''
+      if (marker !== null) fence = marker[1]
+    } else prose += line
+  }
+  writeFileSync(filename, result + rewriteProse(prose))
+}
+
 function pack(source, assets, manifest, version, names, staging, output) {
   const publishable = { ...manifest }
   delete publishable.private
@@ -70,6 +170,8 @@ function pack(source, assets, manifest, version, names, staging, output) {
   publishable.version = version
   publishable.engines = { node: '>=24.12.0' }
   publishable.publishConfig = { access: 'public', registry: 'https://registry.npmjs.org/' }
+  publishable.homepage = 'https://github.com/y083245/dsh-brain-core-sdk#readme'
+  publishable.bugs = { url: 'https://github.com/y083245/dsh-brain-core-sdk/issues' }
   publishable.repository = { type: 'git', url: 'git+https://github.com/y083245/dsh-brain-core-sdk.git', directory: path.relative(root, source).split(path.sep).join('/') }
   publishable.main = publishedPath(manifest.main)
   publishable.bin = rewritePaths(manifest.bin)
@@ -109,6 +211,14 @@ function pack(source, assets, manifest, version, names, staging, output) {
     if (filename !== undefined && !existsSync(path.join(staging, filename))) throw new Error(`Missing entry point ${filename} in ${manifest.name}`)
   }
   writeFileSync(path.join(staging, 'package.json'), JSON.stringify(publishable, null, 2) + '\n')
+  const readmeSource = manifest.name === '@dsh-brain-core/kernel' ? root : source
+  rewriteMarkdownLinks(staging, readmeSource, 'README.md')
+  const guidesDir = path.join(staging, 'guides')
+  if (existsSync(guidesDir)) {
+    for (const entry of readdirSync(guidesDir).sort()) {
+      if (entry.endsWith('.md')) rewriteMarkdownLinks(staging, source, path.join('guides', entry))
+    }
+  }
   const [result] = JSON.parse(execFileSync('npm', ['pack', '--json', '--ignore-scripts'], {
     cwd: staging, encoding: 'utf8', shell: process.platform === 'win32',
   }))

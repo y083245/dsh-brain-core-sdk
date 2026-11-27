@@ -249,13 +249,13 @@ function scanFile(relative: string, text: string, extension: string): CheckFindi
   for (const ref of modules) {
     const bare = bareModule(ref.specifier)
     if (OWN_DATABASE_MODULES.has(bare)) {
-      at(ref.node, 'no-own-database', 'must', `imports "${ref.specifier}"; the kernel's memory is the only long-term store (RFC 8.7 R1)`)
+      at(ref.node, 'no-own-database', 'must', `imports "${ref.specifier}"; the kernel's memory is the only long-term store (plugin rule R1)`)
     }
     if (ref.specifier === DSH_SCOPE || ref.specifier.startsWith(DSH_PREFIX)) {
-      at(ref.node, 'no-dsh', 'must', `imports "${ref.specifier}"; plugins never touch DSH (RFC 8.7 R3)`)
+      at(ref.node, 'no-dsh', 'must', `imports "${ref.specifier}"; plugins never touch DSH (plugin rule R3)`)
     }
     if (isCordisModule(ref.specifier)) {
-      at(ref.node, VENDORED_CORDIS_RULE, 'must', `imports "${ref.specifier}"; a plugin only ever sees BrainContext (RFC 8.7)`)
+      at(ref.node, VENDORED_CORDIS_RULE, 'must', `imports "${ref.specifier}"; a plugin only ever sees BrainContext (plugin compliance rules)`)
     }
     if (DIRECT_NETWORK_MODULES.has(bare)) {
       at(ref.node, 'no-direct-network', 'must', `imports "${ref.specifier}"; use ctx.http.fetch (a long-lived connection belongs in a process plugin)`)
@@ -297,14 +297,14 @@ function scanFile(relative: string, text: string, extension: string): CheckFindi
   const runsDsh = (call: ts.CallExpression): void => {
     const first = call.arguments[0]
     if (first !== undefined && ts.isStringLiteralLike(first) && first.text === 'dsh') {
-      at(call, 'no-dsh', 'must', 'runs the DSH CLI; plugins never touch DSH (RFC 8.7 R3)')
+      at(call, 'no-dsh', 'must', 'runs the DSH CLI; plugins never touch DSH (plugin rule R3)')
     }
   }
   const checkHome = (value: string, node: ts.Node): void => {
     if (value.includes(DSH_HOME_NAME)) {
-      at(node, 'no-dsh-home', 'must', `names ${DSH_HOME_NAME}; plugins never read the DSH home (RFC 8.7 R3)`)
+      at(node, 'no-dsh-home', 'must', `names ${DSH_HOME_NAME}; plugins never read the DSH home (plugin rule R3)`)
     } else if (DSH_PATH.test(value)) {
-      at(node, 'no-dsh-home', 'must', 'contains a .dsh path segment; plugins never read the DSH home (RFC 8.7 R3)')
+      at(node, 'no-dsh-home', 'must', 'contains a .dsh path segment; plugins never read the DSH home (plugin rule R3)')
     }
   }
   const checkLogCall = (callee: ts.PropertyAccessExpression, call: ts.CallExpression): void => {
@@ -318,7 +318,7 @@ function scanFile(relative: string, text: string, extension: string): CheckFindi
     for (const property of fields.properties) {
       const name = objectKeyName(property)
       if (name !== undefined && RAW_LOG_KEYS.has(name.toLowerCase())) {
-        at(property, 'no-raw-log', 'must', `writes "${name}" into the log; logs carry no chat text or secrets (RFC 8.7 R8)`)
+        at(property, 'no-raw-log', 'must', `writes "${name}" into the log; logs carry no chat text or secrets (plugin rule R8)`)
       }
     }
   }
@@ -367,7 +367,7 @@ function scanFile(relative: string, text: string, extension: string): CheckFindi
       for (const span of node.templateSpans) checkHome(span.literal.text, span.literal)
     }
     if (ts.isPropertyAccessExpression(node) && ts.isIdentifier(node.name) && node.name.text === DSH_HOME_NAME) {
-      at(node, 'no-dsh-home', 'must', `reads ${DSH_HOME_NAME}; plugins never read the DSH home (RFC 8.7 R3)`)
+      at(node, 'no-dsh-home', 'must', `reads ${DSH_HOME_NAME}; plugins never read the DSH home (plugin rule R3)`)
     }
     if (!ts.isCallExpression(node)) return
     const callee = node.expression
@@ -478,7 +478,7 @@ export async function scanSources(root: string): Promise<CheckFinding[]> {
     findings.push({
       rule: 'prefer-typescript',
       level: 'should',
-      message: 'no .ts source; RFC 8.7 R10 asks for TypeScript with the SDK types',
+      message: 'no .ts source; plugin rule R10 asks for TypeScript with the SDK types',
     })
   }
   return findings

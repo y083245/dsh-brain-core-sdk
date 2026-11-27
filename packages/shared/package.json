@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/shared",
+  "description": "Shared filesystem, state access, identifier and injection scanning utilities for Brain Core.",
+  "keywords": ["brain-core", "dsh-brain-core", "utilities", "filesystem"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

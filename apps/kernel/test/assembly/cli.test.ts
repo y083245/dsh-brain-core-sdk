@@ -107,19 +107,42 @@ test('plugin install previews without --yes, then installs, lists, enables, disa
   assert.match(upgraded.stdout, /upgraded sample/)
   assert.match(run(dir, ['plugin', 'list']).stdout, /^sample 2\.0\.0 disabled$/m)
 
-  // A version that asks for a new permission waits for the confirmation in `--yes`.
+  // A version that asks for a new permission can be confirmed without unpacking it again.
   const pending = run(dir, ['plugin', 'upgrade', 'sample', SAMPLE_V3])
   assert.equal(pending.status, 0, pending.stderr)
   assert.match(pending.stdout, /new permissions: memory\.forget/)
   assert.match(pending.stdout, /run with --yes to confirm/)
   assert.match(run(dir, ['plugin', 'list']).stdout, /^sample 2\.0\.0 disabled$/m)
-  const confirmed = run(dir, ['plugin', 'upgrade', 'sample', SAMPLE_V3, '--yes'])
+  assert.match(pending.stdout, /brain plugin confirm sample/)
+  const confirmed = run(dir, ['plugin', 'confirm', 'sample'])
   assert.equal(confirmed.status, 0, confirmed.stderr)
-  assert.match(confirmed.stdout, /upgraded sample/)
+  assert.equal(confirmed.stdout, 'confirmed sample\n')
   assert.match(run(dir, ['plugin', 'list']).stdout, /^sample 3\.0\.0 disabled$/m)
 
   assert.equal(run(dir, ['plugin', 'uninstall', 'sample', '--keep-data']).status, 0)
   assert.equal(run(dir, ['plugin', 'list']).stdout, '')
+})
+
+test('plugin confirm completes a pending install, permits enable and rejects missing or confirmed plugins', async (t) => {
+  const dir = await home(t)
+  const missing = run(dir, ['plugin', 'confirm', 'missing'])
+  assert.equal(missing.status, 1, missing.stderr)
+
+  const preview = run(dir, ['plugin', 'install', SAMPLE_PLUGIN])
+  assert.equal(preview.status, 0, preview.stderr)
+  assert.match(preview.stdout, /brain plugin confirm sample/)
+  assert.match(run(dir, ['plugin', 'list']).stdout, /^sample 1\.0\.0 pending$/m)
+
+  const confirmed = run(dir, ['plugin', 'confirm', 'sample'])
+  assert.equal(confirmed.status, 0, confirmed.stderr)
+  assert.equal(confirmed.stdout, 'confirmed sample\n')
+  assert.match(run(dir, ['plugin', 'list']).stdout, /^sample 1\.0\.0 disabled$/m)
+  const repeated = run(dir, ['plugin', 'confirm', 'sample'])
+  assert.equal(repeated.status, 1, repeated.stderr)
+  assert.match(repeated.stderr, /not waiting for confirmation/)
+  assert.equal(run(dir, ['plugin', 'enable', 'sample']).status, 0)
+  assert.match(run(dir, ['plugin', 'list']).stdout, /^sample 1\.0\.0 enabled$/m)
+  assert.equal(run(dir, ['plugin', 'confirm', 'sample']).status, 1)
 })
 
 test('plugin check needs no kernel and passes for the sample plugin', async (t) => {
@@ -166,6 +189,7 @@ test('while a kernel is running plugin, model and secret changes are refused but
   await writeFileAtomic(path.join(dir, 'state', 'kernel.pid'), `${process.pid}\n`)
 
   for (const args of [
+    ['plugin', 'confirm', 'sample'],
     ['plugin', 'enable', 'sample'],
     ['model', 'set', 'chat', '--provider', 'deepseek-official', '--model', 'deepseek-flash', '--effort', 'low'],
     ['secret', 'set', 'deepseek-api-key'],
@@ -218,6 +242,11 @@ test('argument errors exit 2 and print the usage', async (t) => {
   for (const args of [
     ['plugin'],
     ['plugin', 'install'],
+    ['plugin', 'confirm'],
+    ['plugin', 'confirm', 'sample', 'extra'],
+    ['plugin', 'confirm', 'sample', '--unknown'],
+    ['plugin', 'confirm', 'sample', '--keep-data'],
+    ['plugin', 'confirm', 'sample', '--yes'],
     ['plugin', 'uninstall'],
     ['model', 'set'],
     ['secret', 'set'],
@@ -227,6 +256,7 @@ test('argument errors exit 2 and print the usage', async (t) => {
   ]) {
     const result = run(dir, args)
     assert.equal(result.status, 2, `${args.join(' ')}: ${result.stderr}`)
+    assert.match(result.stderr, /Usage: brain/)
   }
 })
 

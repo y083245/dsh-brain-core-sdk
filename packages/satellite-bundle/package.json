@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/satellite-bundle",
+  "description": "DSH child-process tool bridge bundle and hardening patches for Brain Core.",
+  "keywords": ["brain-core", "dsh-brain-core", "dsh", "bridge", "satellite"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

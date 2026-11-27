@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/legacy-cleanup",
+  "description": "Plan, back up and remove legacy QQ bridge integration from DSH profiles.",
+  "keywords": ["brain-core", "dsh-brain-core", "migration", "cleanup", "dsh"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

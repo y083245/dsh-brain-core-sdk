@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/sdk",
+  "description": "Plugin context, manifests, schemas and public API types for Brain Core.",
+  "keywords": ["brain-core", "dsh-brain-core", "plugin", "sdk", "typescript"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

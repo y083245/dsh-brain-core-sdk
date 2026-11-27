@@ -21,10 +21,11 @@ const USAGE = VERSION_USAGE
   + '       brain console [--port <n>] [--api-port <n>] [--cross-channel off|shadow|on] [--owner-channel <channel>]...\n'
   + '       brain plugin install <spec> [--yes]\n'
   + '       brain plugin upgrade <id> <spec> [--yes]\n'
+  + '       brain plugin confirm <id>\n'
   + '       brain plugin enable|disable <id>\n'
   + '       brain plugin uninstall <id> [--keep-data]\n'
   + '       brain plugin list\n'
-  + '       brain plugin check <dir> [--json]\n'
+  + '       brain plugin check [dir] [--json]\n'
   + '       brain model set <chat|activity> --provider <p> --model <m> --effort <e>\n'
   + '       brain secret set <name>\n'
   + '       brain import --from <dir> --mode <all|memory|fresh> [--role <name>] [--dry-run]\n'
@@ -366,7 +367,13 @@ async function pluginInstall(args: readonly string[], io: Io, upgrade: boolean):
         const match = requested === undefined
           ? undefined
           : pending.find((entry) => entry.id === requested.id && entry.version === requested.version)
-        if (match === undefined) throw error
+        if (match === undefined) {
+          if (requested === undefined && pending.length > 0
+            && /^plugin .+ is already installed; use upgrade or uninstall$/.test(error.message)) {
+            throw new BrainError('CONFLICT', `${error.message}; pending plugins can be confirmed explicitly: ${pending.map((entry) => `brain plugin confirm ${entry.id}`).join(', ')}`)
+          }
+          throw error
+        }
         await lifecycle.confirm(match.id)
         io.stdout(`installed ${match.id}\n`)
         return 0
@@ -381,7 +388,7 @@ async function pluginInstall(args: readonly string[], io: Io, upgrade: boolean):
       : await lifecycle.install(positionals[0] as string)
     printPreview(io, preview)
     if (values.yes !== true) {
-      io.stdout('run with --yes to confirm\n')
+      io.stdout(`run "brain plugin confirm ${preview.id}" (or re-run with --yes to confirm)\n`)
       return 0
     }
     // An upgrade with no new permission is applied by the lifecycle itself; only a pending one needs confirm.
@@ -408,7 +415,7 @@ async function pluginCommand(args: readonly string[], io: Io): Promise<number> {
   try {
     ({ values, positionals } = parseArgs({
       args: [...rest],
-      options: { 'keep-data': { type: 'boolean' } },
+      options: action === 'confirm' ? {} : { 'keep-data': { type: 'boolean' } },
       allowPositionals: true,
       strict: true,
     }))
@@ -424,7 +431,7 @@ async function pluginCommand(args: readonly string[], io: Io): Promise<number> {
     return 0
   }
 
-  if (action !== 'enable' && action !== 'disable' && action !== 'uninstall') {
+  if (action !== 'confirm' && action !== 'enable' && action !== 'disable' && action !== 'uninstall') {
     io.stderr(USAGE)
     return 2
   }
@@ -435,10 +442,11 @@ async function pluginCommand(args: readonly string[], io: Io): Promise<number> {
   try {
     await assertKernelStopped(paths)
     const lifecycle = await cliLifecycle()
-    if (action === 'enable') await lifecycle.enable(id)
+    if (action === 'confirm') await lifecycle.confirm(id)
+    else if (action === 'enable') await lifecycle.enable(id)
     else if (action === 'disable') await lifecycle.disable(id)
     else await lifecycle.uninstall(id, { keepData: values['keep-data'] === true })
-    io.stdout(`${action === 'uninstall' ? 'uninstalled' : action === 'enable' ? 'enabled' : 'disabled'} ${id}\n`)
+    io.stdout(`${action === 'confirm' ? 'confirmed' : action === 'uninstall' ? 'uninstalled' : action === 'enable' ? 'enabled' : 'disabled'} ${id}\n`)
     return 0
   } catch (error) {
     return ioError(io, error instanceof Error ? error.message : String(error))

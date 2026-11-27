@@ -7,13 +7,14 @@
   "scripts": {
     "test": "node --test \"test/*.test.ts\"",
     "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
     "check": "brain plugin check"
   },
   "dependencies": {
-    "@dsh-brain-core/sdk": "^1.0.0"
+    "@dsh-brain-core/sdk": "^1.0.1-rc.1"
   },
   "devDependencies": {
-    "@dsh-brain-core/testkit": "^1.0.0",
+    "@dsh-brain-core/testkit": "^1.0.1-rc.1",
     "@types/node": "24.19.2",
     "typescript": "6.0.3"
   },

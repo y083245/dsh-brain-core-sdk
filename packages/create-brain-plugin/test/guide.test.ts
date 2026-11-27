@@ -6,12 +6,12 @@ import test from 'node:test'
 import ts from 'typescript'
 import { PACKAGE_DIR, REPO_DIR } from './helpers.ts'
 
-const GUIDE_DIR = path.join(REPO_DIR, 'docs', 'plugin-guide')
-const guideOptions = { skip: existsSync(path.join(GUIDE_DIR, 'README.md')) ? false : 'Local plugin guide is absent' }
+const SDK_DIR = path.join(REPO_DIR, 'packages', 'sdk')
+const GUIDE_DIR = path.join(REPO_DIR, 'packages', 'sdk', 'guides')
 
 const PAGES = [
   'README.md', 'kinds.md', 'manifest.md', 'permissions.md', 'tools.md',
-  'testing.md', 'process-plugins.md', 'mcp.md', 'rules.md', 'api.md',
+  'testing.md', 'process-plugins.md', 'proactive-messaging.md', 'publishing.md', 'mcp.md', 'rules.md', 'api.md',
 ]
 
 /** Only fenced blocks tagged `ts` are examples meant to compile; JSON and shell blocks are data. */
@@ -25,14 +25,14 @@ test('example extraction does not depend on the host line ending', () => {
   assert.deepEqual(typescriptBlocks('```ts\r\nconst answer = 42\r\n```\r\n'), ['const answer = 42\n'])
 })
 
-test('the guide has every promised page', guideOptions, async () => {
+test('the guide has every promised page', async () => {
   for (const page of PAGES) {
     const text = await readFile(path.join(GUIDE_DIR, page), 'utf8')
     assert.ok(text.trim().length > 200, `${page} looks empty`)
   }
 })
 
-test('every TypeScript example in the guide compiles', guideOptions, async (t) => {
+test('every TypeScript example in the guide compiles', async (t) => {
   const markdown = await readdir(GUIDE_DIR)
   const blocks: { readonly file: string; readonly code: string }[] = []
   for (const name of markdown.filter((entry) => entry.endsWith('.md')).sort()) {
@@ -75,4 +75,35 @@ test('every TypeScript example in the guide compiles', guideOptions, async (t) =
     return `${label}:${position.line + 1}:${position.character + 1} ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`
   })
   assert.deepEqual(messages, [])
+})
+
+test('public SDK documentation has valid local links and no private references', async () => {
+  const files = [
+    path.join(SDK_DIR, 'README.md'),
+    ...(await readdir(GUIDE_DIR)).filter((name) => name.endsWith('.md')).map((name) => path.join(GUIDE_DIR, name)),
+  ]
+  for (const file of files) {
+    const markdown = await readFile(file, 'utf8')
+    const label = path.relative(SDK_DIR, file)
+    assert.doesNotMatch(markdown, /\bRFC\s*(?:第\s*)?8\.7\b/i, `${label}: unpublished specification reference`)
+    assert.doesNotMatch(markdown, /(?:^|[\s`"'(/])(?:\.\.\/)*docs\//m, `${label}: private documentation reference`)
+    assert.doesNotMatch(markdown, /\.\.\/design\//, `${label}: private design reference`)
+
+    // Inline links/images and reference-style destinations; code fences are examples, not links.
+    const prose = markdown.replace(/```[^\n]*\n[\s\S]*?```/g, '')
+    const destinations = [
+      ...Array.from(prose.matchAll(/!?\[[^\]\n]*\]\(\s*(<[^>]+>|[^\s)]+)(?:\s+["'][^\n]*?["'])?\s*\)/g), (match) => match[1]!),
+      ...Array.from(prose.matchAll(/^\s*\[[^\]\n]+\]:\s*(<[^>]+>|\S+)/gm), (match) => match[1]!),
+    ]
+    for (const destination of destinations) {
+      const href = destination.replace(/^<|>$/g, '')
+      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(href)) continue
+      const relative = decodeURIComponent(href.split(/[?#]/, 1)[0]!)
+      if (relative === '') continue
+      assert.doesNotMatch(relative, /(?:^|\/)docs(?:\/|$)|\.\.\/design\//, `${label}: private link ${href}`)
+      const target = path.resolve(path.dirname(file), relative)
+      assert.ok(target.startsWith(`${SDK_DIR}${path.sep}`), `${label}: link escapes the published SDK: ${href}`)
+      assert.ok(existsSync(target), `${label}: broken relative link ${href}`)
+    }
+  }
 })

@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/kernel",
+  "description": "Brain Core runtime and CLI with persistent memory, plugin hosting and isolated DSH sessions.",
+  "keywords": ["brain-core", "dsh-brain-core", "runtime", "cli", "memory", "dsh"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

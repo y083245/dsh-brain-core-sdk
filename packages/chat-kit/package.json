@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/chat-kit",
+  "description": "Reusable chat wake decisions, message batching, read cursors and conversation helpers for Brain Core channels.",
+  "keywords": ["brain-core", "dsh-brain-core", "chat", "channel", "debounce"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

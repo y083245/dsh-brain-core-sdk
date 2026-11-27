@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/plugin-web-reader",
+  "description": "Brain Core activity plugin for scheduled public web reading and evidence-backed memory.",
+  "keywords": ["brain-core", "dsh-brain-core", "plugin", "activity", "web", "memory"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

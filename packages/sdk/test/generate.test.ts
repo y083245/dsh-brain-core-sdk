@@ -110,6 +110,20 @@ test('openapi covers the eight RFC 7.1 actions', () => {
   }
 })
 
+test('openapi declares Memory API scope and requires Bearer authentication for all operations', () => {
+  const openapi = JSON.parse(generateFiles()['openapi.json']!) as Json
+  const info = openapi.info as Json
+  assert.match(info.description as string, /Memory HTTP API \(\/api\/v1\/memory\/\*\)/)
+  assert.match(info.description as string, /All endpoints require authentication via Authorization: Bearer <token>/)
+  assert.match(info.description as string, /Console plugin management and plugin-defined routes are outside the scope/)
+  const components = openapi.components as Json
+  assert.deepEqual(components.securitySchemes, { bearerAuth: { type: 'http', scheme: 'bearer' } })
+  assert.deepEqual(openapi.security, [{ bearerAuth: [] }])
+  for (const item of Object.values(openapi.paths as Record<string, Record<string, Json>>)) {
+    for (const operation of Object.values(item)) assert.equal(operation.security, undefined)
+  }
+})
+
 test('ingest is the only action accepted asynchronously', () => {
   const openapi = JSON.parse(generateFiles()['openapi.json']!) as Json
   const paths = openapi.paths as Record<string, Record<string, Json>>

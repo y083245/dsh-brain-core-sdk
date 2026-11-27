@@ -1,5 +1,7 @@
 {
   "name": "@dsh-brain-core/plugin-console-chat",
+  "description": "Brain Core console chat channel with identity linking, message ingestion and agent wakeups.",
+  "keywords": ["brain-core", "dsh-brain-core", "plugin", "channel", "chat"],
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",

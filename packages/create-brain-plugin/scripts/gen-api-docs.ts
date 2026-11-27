@@ -1,10 +1,12 @@
+/** Generate the public packages/sdk/guides/api.md reference from SDK contracts. */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import ts from 'typescript'
 
 export const PLUGIN_SOURCE_PATH = fileURLToPath(new URL('../../sdk/src/plugin.ts', import.meta.url))
-export const API_DOC_PATH = fileURLToPath(new URL('../../../docs/plugin-guide/api.md', import.meta.url))
+/** Public reference, shipped in the SDK: packages/sdk/guides/api.md. */
+export const API_DOC_PATH = fileURLToPath(new URL('../../sdk/guides/api.md', import.meta.url))
 
 const HEADER = [
   '# 插件 API 参考',
@@ -71,7 +73,10 @@ function nameOf(node: ts.TypeElement): string {
 function membersOf(declaration: ts.InterfaceDeclaration, source: ts.SourceFile): readonly MemberDoc[] {
   const members: MemberDoc[] = []
   for (const member of declaration.members) {
-    const doc = docOf(member)
+    // This source comment predates model accounting; the public contract describes the shipped behavior.
+    const doc = declaration.name.text === 'PluginLlm' && nameOf(member) === 'complete'
+      ? 'Calls the host model service with accounting and limits; UNAVAILABLE when the service or model is not configured.'
+      : docOf(member)
     members.push({
       name: nameOf(member),
       signature: signatureOf(member, source),
@@ -133,7 +138,7 @@ function renderContextMember(
   return lines
 }
 
-/** Reads `plugin.ts` and returns the `api.md` contents. */
+/** Reads `plugin.ts` and returns `packages/sdk/guides/api.md`. */
 export function generateApiDocs(sourcePath = PLUGIN_SOURCE_PATH): string {
   const text = readFileSync(sourcePath, 'utf8')
   const source = ts.createSourceFile(sourcePath, text, ts.ScriptTarget.Latest, true)
