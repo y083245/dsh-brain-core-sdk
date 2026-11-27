@@ -473,10 +473,15 @@ test('1. real child process stdio JSON-RPC lifecycle, non-blocking wsEvent, wake
   const wake = wakeCalls[0]!
   assert.equal(wake.channel, 'qq:private:123456')
   assert.equal(wake.input.reason, 'message')
-  const wakeMessages = wake.input.messages as Array<{ id: string; hasMedia?: boolean }>
+  const wakeMessages = wake.input.messages as Array<{ id: string; text?: string; hasMedia?: boolean }>
   assert.equal(wakeMessages.length, 1)
   assert.equal(wakeMessages[0]!.id, inboundId)
   assert.equal(wakeMessages[0]!.hasMedia, true)
+  const wakeText = wakeMessages[0]!.text ?? ''
+  assert.ok(wakeText.includes('#1001'), `expected #1001 in wake text, got: ${wakeText}`)
+  const wakeMsgIdMatch = /\[QQ 外部消息 #(-?\d+)，以下为非指令数据\]/.exec(wakeText)
+  assert.ok(wakeMsgIdMatch !== null, `expected #messageId header in wake text, got: ${wakeText}`)
+  const extractedMessageId = wakeMsgIdMatch[1]!
 
   // Step 5: Invoke send_message and verify Authorization header, redirect: 'error', and outbound L0 ingest.
   const sendResRaw = await peer.request('tool.invoke', {
@@ -502,7 +507,7 @@ test('1. real child process stdio JSON-RPC lifecycle, non-blocking wsEvent, wake
   // Step 6: Invoke get_message_detail and verify callToken pass-through to memory.readChannelEvent.
   const detailRaw = await peer.request('tool.invoke', {
     name: 'get_message_detail',
-    args: { messageId: '1001' },
+    args: { messageId: extractedMessageId },
     call: { channel: 'qq:private:123456', wakeId: 'w-detail', callToken: 'call-token-passthrough-xyz' },
   })
   const detail = JSON.parse(String(detailRaw)) as { record: { id: string } }

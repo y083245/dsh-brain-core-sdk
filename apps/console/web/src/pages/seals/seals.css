@@ -14,7 +14,9 @@
 .seals-card h2, .seals-card p { margin: 0; overflow-wrap: anywhere; }
 .seals-card h2 { font: 700 var(--fs-h2)/var(--lh-h2) var(--font-display-latin); }
 .seals-card-details { display: flex; flex-direction: column; gap: var(--sp-2); align-items: flex-start; min-width: 0; }
+.seals-badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1); }
 .seals-card-controls { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; width: 100%; margin-top: auto; justify-content: space-between; }
+.seals-card-control-group { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
 .seals-card-mark { position: relative; width: 96px; height: 96px; align-self: center; perspective: 800px; }
 .seals-card-mark-layer { position: absolute; inset: 0; }
 .seals-card-mark .seals-filled path:first-of-type { fill: var(--zhusha); }

@@ -91,16 +91,49 @@ test('renderPluginsPage renders plugin cards, states, check badges, lan highligh
         checkPassed: false,
         tools: [],
       },
+      {
+        id: 'epsilon',
+        version: '0.5.0',
+        kinds: ['capability'],
+        runtime: 'node',
+        state: 'discovered',
+        source: 'workspace',
+        permissions: ['memory.search'],
+        granted: [],
+        checkPassed: true,
+        tools: [],
+      },
+      {
+        id: 'zeta',
+        version: '1.0.0',
+        kinds: ['capability'],
+        runtime: 'node',
+        state: 'enabled',
+        source: 'workspace',
+        permissions: ['memory.search'],
+        granted: ['memory.search'],
+        checkPassed: true,
+        tools: [],
+        updateAvailable: {
+          version: '1.1.0',
+          sha8: 'abcdef12',
+          permissions: ['memory.search'],
+          newPermissions: [],
+          warnings: [],
+        },
+      },
     ],
   }))
 
   assert.match(html, /class="glass-card"/)
   assert.match(html, /class="apple-badge/)
   assert.match(html, /class="[^"]*\bmono\b/)
+  assert.match(html, /data-state="discovered"[^>]*>本地发现/)
   assert.match(html, /data-state="enabled"[^>]*>已启用/)
   assert.match(html, /data-state="disabled"[^>]*>已停用/)
   assert.match(html, /data-state="pending"[^>]*>待确认/)
   assert.match(html, /data-state="failed"[^>]*>异常/)
+  assert.match(html, /data-role="update-available"[^>]*>有本地更新 v1\.1\.0/)
   assert.match(html, /符合规范/)
   assert.match(html, /未通过检查/)
   assert.match(html, /data-lan="true"[^>]*>内网访问 · lan:192\.168\.1\.5/)
@@ -312,6 +345,13 @@ test('renderPluginsPage escapes all dynamic text to prevent XSS', () => {
         permissions: [xss],
         granted: [xss],
         checkPassed: true,
+        updateAvailable: {
+          version: xss,
+          sha8: 'deadbeef',
+          permissions: [],
+          newPermissions: [],
+          warnings: [],
+        },
         tools: [
           {
             name: xss,

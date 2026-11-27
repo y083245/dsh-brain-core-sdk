@@ -180,3 +180,94 @@ test('createHttpPluginsPageApi encodes plugin ids and converts error envelopes i
     )
   })
 })
+
+test('createHttpPluginsPageApi calls scan and applyLocal endpoints with exact methods, paths, and JSON bodies', async () => {
+  await withFakeServer((req) => {
+    if (req.url === '/api/v1/console/plugins/scan' && req.method === 'POST') {
+      return {
+        status: 200,
+        payload: {
+          ok: true,
+          data: {
+            plugins: [
+              {
+                id: 'local-plugin',
+                version: '0.1.0',
+                kinds: ['capability'],
+                runtime: 'node',
+                state: 'discovered',
+                permissions: ['memory.search'],
+                granted: [],
+                checkPassed: true,
+                tools: [],
+                source: 'workspace',
+              },
+            ],
+            coreBudgets: [],
+          },
+          meta: META,
+        },
+      }
+    }
+    if (req.url === '/api/v1/console/plugins/local-plugin/apply-local' && req.method === 'POST') {
+      return {
+        status: 200,
+        payload: {
+          ok: true,
+          data: {
+            id: 'local-plugin',
+            version: '0.1.0',
+            permissions: ['memory.search'],
+            newPermissions: [],
+            warnings: [],
+            applied: true,
+            state: 'enabled',
+          },
+          meta: META,
+        },
+      }
+    }
+    if (req.url === '/api/v1/console/plugins/scope%2Fname/apply-local' && req.method === 'POST') {
+      return {
+        status: 200,
+        payload: {
+          ok: true,
+          data: {
+            id: 'scope/name',
+            version: '0.2.0',
+            permissions: ['memory.search', 'memory.ingest'],
+            newPermissions: ['memory.ingest'],
+            warnings: [],
+            applied: false,
+            state: 'disabled',
+          },
+          meta: META,
+        },
+      }
+    }
+    return { status: 404, payload: { ok: false, error: { code: 'NOT_FOUND', message: 'not found', details: {} }, meta: META } }
+  }, async (baseUrl, requests) => {
+    const api = createHttpPluginsPageApi(baseUrl, 'secret-token')
+
+    const scanned = await api.scan?.()
+    assert.equal(scanned?.plugins.length, 1)
+    assert.equal(scanned?.plugins[0]?.state, 'discovered')
+
+    const enabled = await api.applyLocal?.('local-plugin', { action: 'enable', confirmPermissions: true })
+    assert.equal(enabled?.applied, true)
+    assert.equal(enabled?.state, 'enabled')
+
+    const updated = await api.applyLocal?.('scope/name', { action: 'update' })
+    assert.equal(updated?.applied, false)
+    assert.equal(updated?.state, 'disabled')
+
+    assert.deepEqual(requests.map((r) => `${r.method} ${r.url}`), [
+      'POST /api/v1/console/plugins/scan',
+      'POST /api/v1/console/plugins/local-plugin/apply-local',
+      'POST /api/v1/console/plugins/scope%2Fname/apply-local',
+    ])
+    assert.equal(requests[0]?.body, undefined)
+    assert.deepEqual(requests[1]?.body, { action: 'enable', confirmPermissions: true })
+    assert.deepEqual(requests[2]?.body, { action: 'update' })
+  })
+})

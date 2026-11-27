@@ -9,6 +9,7 @@ import type {
 } from './types.ts'
 
 const STATE_META: Readonly<Record<PluginLifecycleState, { readonly label: string; readonly color: string }>> = {
+  discovered: { label: '本地发现', color: '#64D2FF' },
   enabled: { label: '已启用', color: '#30D158' },
   disabled: { label: '已停用', color: '#8E8E93' },
   pending: { label: '待确认', color: '#FF9F0A' },
@@ -68,6 +69,9 @@ function renderPluginCard(plugin: ConsolePluginItem): string {
   const checkBadge = plugin.checkPassed
     ? '<span class="apple-badge" data-check="passed" style="color: #30D158;">符合规范</span>'
     : '<span class="apple-badge" data-check="failed" style="color: #FF453A;">未通过检查</span>'
+  const updateBadge = plugin.updateAvailable === undefined
+    ? ''
+    : `<span class="apple-badge" data-role="update-available">有本地更新 v${escapeHtml(plugin.updateAvailable.version)}</span>`
   const kindsText = plugin.kinds.map((k) => escapeHtml(k)).join(', ')
 
   return `<article class="glass-card" data-plugin-id="${idAttr}">
@@ -75,6 +79,7 @@ function renderPluginCard(plugin: ConsolePluginItem): string {
     <strong class="mono">${idAttr}</strong>
     <span class="apple-badge mono">v${escapeHtml(plugin.version)}</span>
     <span class="apple-badge" data-state="${escapeHtml(plugin.state)}" style="color: ${meta.color};">${meta.label}</span>
+    ${updateBadge}
     ${checkBadge}
     <span class="apple-badge mono">${escapeHtml(plugin.runtime)}</span>
     <span class="apple-badge">${kindsText || '-'}</span>

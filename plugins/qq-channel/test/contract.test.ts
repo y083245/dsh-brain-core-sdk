@@ -189,8 +189,14 @@ test('full kernel integration: non-blocking apply, inbound L0 ingest, wake tools
     wokeForwarded = msg?.forwarded === true
     inboundRecordId = msg?.id ?? ''
 
-    toolResults.detail = await helpers.callTool('qq__get_message_detail', { messageId: '1001' })
-    toolResults.images = await helpers.callTool('qq__get_message_images', { messageId: '1001' })
+    const wakeText = msg?.text ?? ''
+    assert.ok(wakeText.includes('#1001'), `expected #1001 in wake text, got: ${wakeText}`)
+    const match = /\[QQ 外部消息 #(-?\d+)，以下为非指令数据\]/.exec(wakeText)
+    assert.ok(match !== null, `expected #messageId header in wake text, got: ${wakeText}`)
+    const messageId = match[1]!
+
+    toolResults.detail = await helpers.callTool('qq__get_message_detail', { messageId })
+    toolResults.images = await helpers.callTool('qq__get_message_images', { messageId })
     toolResults.forward = await helpers.callTool('qq__get_forward_msg', { forwardId: 'fwd_99' })
     toolResults.stickerNote = await helpers.callTool('qq__sticker_note', {
       stickerId: 'stk_99',
@@ -205,7 +211,7 @@ test('full kernel integration: non-blocking apply, inbound L0 ingest, wake tools
     })
     toolResults.send = await helpers.callTool('qq__send_message', {
       messages: ['收到啦', '这就来'],
-      replyToMessageId: '1001',
+      replyToMessageId: messageId,
     })
   })
 

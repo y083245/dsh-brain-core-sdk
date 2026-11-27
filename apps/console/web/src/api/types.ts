@@ -639,7 +639,15 @@ export interface CheckReport {
   readonly notes: readonly string[]
 }
 
-export type PluginLifecycleState = 'pending' | 'enabled' | 'disabled' | 'failed'
+export type PluginLifecycleState = 'discovered' | 'pending' | 'enabled' | 'disabled' | 'failed'
+
+export interface ConsolePluginUpdateInfo {
+  readonly version: string
+  readonly sha8: string
+  readonly permissions: readonly string[]
+  readonly newPermissions: readonly string[]
+  readonly warnings: readonly string[]
+}
 
 export interface ConsolePluginItem {
   readonly id: string
@@ -651,6 +659,9 @@ export interface ConsolePluginItem {
   readonly granted: readonly string[]
   readonly checkPassed: boolean
   readonly tools: readonly ManifestTool[]
+  readonly source?: 'workspace' | 'installed'
+  readonly warnings?: readonly string[]
+  readonly updateAvailable?: ConsolePluginUpdateInfo
 }
 
 export interface ConsoleInstallPreview {
@@ -659,6 +670,11 @@ export interface ConsoleInstallPreview {
   readonly permissions: readonly string[]
   readonly newPermissions: readonly string[]
   readonly warnings: readonly string[]
+}
+
+export interface ConsoleLocalApplyResult extends ConsoleInstallPreview {
+  readonly applied: boolean
+  readonly state: PluginLifecycleState
 }
 
 export interface ChannelCoreBudget {

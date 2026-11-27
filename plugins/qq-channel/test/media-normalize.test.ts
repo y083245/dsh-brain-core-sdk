@@ -3,11 +3,18 @@
 
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { copyFile, mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { delimiter, join } from 'node:path'
 import { test } from 'node:test'
 import { deflateSync } from 'node:zlib'
 import type { PluginHttp } from '@brain-core/sdk'
-import { DEFAULT_QQ_CONFIG } from '../src/config.ts'
-import { normalizeImage, readMessageImages } from '../src/outbound/media-normalize.ts'
+import { DEFAULT_QQ_CONFIG, type QqMediaSettings } from '../src/config.ts'
+import { normalizeImage, normalizeImageDetailed, planAnimation, readMessageImages, resolveFfmpegPath, resolveSharp, sampleFrameIndices, type SharpLoader } from '../src/outbound/media-normalize.ts'
+
+import { COLORS, makeApng, makeGif, makeWebp, sharp } from './media-fixtures.ts'
 
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jXxkAAAAASUVORK5CYII=', 'base64')
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEACgAALAAAAAABAAEAAAIBRAA7', 'base64')
@@ -16,13 +23,15 @@ const media = DEFAULT_QQ_CONFIG.media
 const pngResponse = { status: 200, headers: {}, text: () => '', bytes: () => png }
 
 function resolveTestFfmpeg(): string | undefined {
-  const configured = process.env['BRAIN_QQ_TEST_FFMPEG']
-  const candidate = configured && configured.length > 0 ? configured : 'ffmpeg'
-  try {
-    execFileSync(candidate, ['-version'], { stdio: 'ignore' })
-    return candidate
-  } catch {
-    return undefined
+  const candidates = [process.env['BRAIN_QQ_TEST_FFMPEG'], process.env['FFMPEG_PATH'],
+    ...(process.platform === 'darwin' ? ['/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg'] : []),
+    ...(process.env['PATH'] ?? '').split(delimiter).map((dir) => join(dir, process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'))]
+  for (const candidate of candidates) {
+    if (!candidate || !existsSync(candidate)) continue
+    try {
+      execFileSync(candidate, ['-version'], { stdio: 'ignore', windowsHide: true })
+      return candidate
+    } catch { /* Try the next installed executable. */ }
   }
 }
 
@@ -72,17 +81,17 @@ function makePng(width: number, height: number, options: { readonly animated?: b
 }
 
 function makeJpegHeader(width: number, height: number): Buffer {
-  const sof = Buffer.alloc(11)
+  const sof = Buffer.alloc(13)
   sof[0] = 0xff; sof[1] = 0xc0
   sof.writeUInt16BE(11, 2)
   sof[4] = 8
   sof.writeUInt16BE(height, 5)
   sof.writeUInt16BE(width, 7)
   sof[9] = 1
-  return Buffer.concat([Buffer.from([0xff, 0xd8]), sof, Buffer.from([0xff, 0xd9])])
+  return Buffer.concat([Buffer.from([0xff, 0xd8]), sof, Buffer.from([0xff, 0xda, 0x00, 0x02, 0xff, 0xd9])])
 }
 
-function makeAnimatedWebp(width: number, height: number): Buffer {
+function makeAnimatedWebp(width: number, height: number, anmfCount = 0): Buffer {
   const vp8x = Buffer.alloc(10)
   vp8x[0] = 0x02 // ANIM bit
   vp8x.writeUIntLE(width - 1, 4, 3)
@@ -90,7 +99,20 @@ function makeAnimatedWebp(width: number, height: number): Buffer {
   const chunkHeader = Buffer.alloc(8)
   chunkHeader.write('VP8X', 0, 'ascii')
   chunkHeader.writeUInt32LE(10, 4)
-  const payload = Buffer.concat([Buffer.from('WEBP', 'ascii'), chunkHeader, vp8x, Buffer.from([0])])
+  const anmfChunks: Buffer[] = []
+  for (let i = 0; i < anmfCount; i++) {
+    const anmfHeader = Buffer.alloc(8)
+    anmfHeader.write('ANMF', 0, 'ascii')
+    anmfHeader.writeUInt32LE(16, 4)
+    anmfChunks.push(anmfHeader, Buffer.alloc(16))
+  }
+  const payload = Buffer.concat([
+    Buffer.from('WEBP', 'ascii'),
+    chunkHeader,
+    vp8x,
+    ...anmfChunks,
+    ...(anmfCount === 0 ? [Buffer.from([0])] : []),
+  ])
   const riff = Buffer.alloc(8)
   riff.write('RIFF', 0, 'ascii')
   riff.writeUInt32LE(payload.length, 4)
@@ -105,86 +127,261 @@ test('QQ image normalization passes through small static images and rejects inva
   assert.equal(await normalizeImage(png, { ...media, maxDownloadBytes: png.length - 1 }), undefined)
 })
 
-test('animated GIFs degrade cleanly without FFmpeg', async () => {
-  assert.equal(await normalizeImage(animatedGif, { ...media, ffmpegPath: 'brain-test-ffmpeg-does-not-exist' }), undefined)
-})
+const noFfmpeg = { ...media, ffmpegPath: 'nonexistent' }
+const noSharp = { sharp: null }
 
-test('animated GIFs render a 3-by-2 grid when FFmpeg is available', async (t) => {
-  const ffmpegPath = resolveTestFfmpeg()
-  if (ffmpegPath === undefined) {
-    t.skip('ffmpeg not installed')
-    return
+test('animation plans use adaptive row-major layouts without clone-padding', () => {
+  for (const [frames, cols, rows] of [[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 2, 2], [5, 3, 2], [6, 3, 2], [7, 4, 2], [8, 4, 2], [9, 3, 3], [10, 5, 2], [11, 4, 3], [12, 4, 3]]) {
+    const plan = planAnimation(frames!, { ...media, gifFrames: 12 })
+    assert.equal(plan.sampleFrames, frames)
+    assert.deepEqual([plan.cols, plan.rows], [cols, rows])
+    assert.equal(plan.cellPx, 240)
+    assert.equal(plan.width, cols! * 240 + (cols! + 1) * 4)
+    assert.equal(plan.height, rows! * 240 + (rows! + 1) * 4)
   }
-  const grid = await normalizeImage(animatedGif, { ...media, ffmpegPath })
-  assert.equal(grid?.mediaType, 'image/jpeg')
-  const jpeg = Buffer.from(grid!.base64, 'base64')
-  const frame = jpeg.indexOf(Buffer.from([0xff, 0xc0]))
-  assert.ok(frame > 0)
-  assert.equal(jpeg.readUInt16BE(frame + 5), 480)
-  assert.equal(jpeg.readUInt16BE(frame + 7), 720)
+  assert.deepEqual(sampleFrameIndices(10, 1), [0])
+  assert.deepEqual(sampleFrameIndices(2, 6), [0, 1])
+  assert.deepEqual(sampleFrameIndices(9, 4), [0, 3, 5, 8])
+  assert.deepEqual(sampleFrameIndices(20, 6), [0, 4, 8, 11, 15, 19])
+  assert.equal(planAnimation(2, media).sampleFrames, 2)
+  assert.equal(planAnimation(20, media).sampleFrames, 6)
+  assert.equal(planAnimation(20, { ...media, gifFrames: 0 }).sampleFrames, 2)
+  assert.equal(planAnimation(20, { ...media, gifFrames: 100 }).sampleFrames, 12)
+  assert.equal(planAnimation(20, { ...media, gifFrames: NaN, gifCellPx: NaN }).sampleFrames, 6)
+  assert.equal(planAnimation(2, { ...media, gifCellPx: 0 }).cellPx, 64)
+  assert.equal(planAnimation(2, { ...media, gifCellPx: 1000 }).cellPx, 400)
+  const capped = planAnimation(9, { ...media, gifFrames: 9, gifCellPx: 400, maxImageDimension: 300 })
+  assert.equal(capped.cellPx, 94)
+  assert.ok(capped.width <= 300 && capped.height <= 300)
 })
 
-test('oversized >1280px static PNG/JPEG never pass raw without FFmpeg', async () => {
-  const bigPng = makePng(1600, 900)
-  const bigJpeg = makeJpegHeader(1600, 900)
-
-  // Kills OUT-15 even without FFmpeg: >1280px static PNG and JPEG must degrade rather than return raw.
-  assert.equal(await normalizeImage(bigPng, { ...media, ffmpegPath: 'brain-test-ffmpeg-does-not-exist' }), undefined)
-  assert.equal(await normalizeImage(bigJpeg, { ...media, ffmpegPath: 'brain-test-ffmpeg-does-not-exist' }), undefined)
-  const degraded = await readMessageImages({
-    media: { ...media, ffmpegPath: 'brain-test-ffmpeg-does-not-exist' },
-    fetch: async () => ({ status: 200, headers: {}, text: () => '', bytes: () => bigPng }),
-    authorize: async () => ({ recordId: 'l0_big', locations: [{ url: 'https://h.qpic.cn/big.png' }] }),
-  })
-  assert.equal(degraded.images, undefined)
-  assert.match(degraded.text, /没有可显示的 QQ 图片/)
-})
-
-test('oversized >1280px static PNG/JPEG downscale to <=1280px JPEG when FFmpeg is available', async (t) => {
-  const ffmpegPath = resolveTestFfmpeg()
-  if (ffmpegPath === undefined) {
-    t.skip('ffmpeg not installed')
-    return
+async function assertGrid(input: Buffer, frames: number, ffmpegPath = 'nonexistent', disableSharp = false, patch: Partial<QqMediaSettings> = {}): Promise<void> {
+  assert.ok(sharp, 'sharp required to inspect output pixels')
+  const settings = { ...media, ffmpegPath, gifCellPx: 64, ...patch }
+  const result = await normalizeImageDetailed(input, settings, disableSharp ? noSharp : { sharp })
+  assert.equal(result?.image.mediaType, 'image/jpeg')
+  const jpeg = Buffer.from(result!.image.base64, 'base64')
+  const plan = planAnimation(frames, settings)
+  const metadata = await sharp(jpeg).metadata()
+  assert.deepEqual([metadata.width, metadata.height], [plan.width, plan.height])
+  const pixels = await sharp(jpeg).removeAlpha().raw().toBuffer()
+  for (let i = 0; i < plan.sampleFrames; i++) {
+    const x = 4 + i % plan.cols * (plan.cellPx + 4) + Math.floor(plan.cellPx / 2)
+    const y = 4 + Math.floor(i / plan.cols) * (plan.cellPx + 4) + Math.floor(plan.cellPx / 2)
+    const offset = (y * plan.width + x) * 3
+    const expected = COLORS[plan.indices[i]! % COLORS.length]!
+    for (let c = 0; c < 3; c++) assert.ok(Math.abs(pixels[offset + c]! - expected[c]!) < 25, `cell ${i}, channel ${c}: ${pixels[offset + c]} vs ${expected[c]}`)
   }
-  const bigPng = makePng(1600, 900)
-  const downscaled = await normalizeImage(bigPng, { ...media, ffmpegPath })
-  assert.equal(downscaled?.mediaType, 'image/jpeg')
-  const jpeg = Buffer.from(downscaled!.base64, 'base64')
-  const sof = jpeg.indexOf(Buffer.from([0xff, 0xc0]))
-  assert.ok(sof > 0)
-  assert.equal(jpeg.readUInt16BE(sof + 5), 720)
-  assert.equal(jpeg.readUInt16BE(sof + 7), 1280)
+  assert.match(result!.note!, new RegExp(`已抽 ${plan.sampleFrames} 帧拼成 ${plan.cols}×${plan.rows} 网格，行优先 左上→右下`))
+  assert.ok(!result!.note!.includes('（'))
+}
+
+test('sharp resolves through the SDK host and renders real 2/4-frame GIF grids with distinct colors without FFmpeg', async (t) => {
+  if (!sharp) return t.skip('optional host sharp not installed')
+  assert.equal(resolveSharp(), sharp)
+  assert.equal(resolveSharp(), resolveSharp())
+  for (const count of [2, 4]) {
+    const input = makeGif(count)
+    const metadata = await sharp(input, { page: 0, pages: 1, limitInputPixels: 40_000_000 }).metadata()
+    assert.equal(metadata.pages, count)
+    assert.deepEqual(metadata.delay, Array.from({ length: count }, () => 100))
+    await assertGrid(input, count)
+  }
+  await assertGrid(makeGif(9), 9, 'nonexistent', false, { gifFrames: 5, gifCellPx: 100 })
+  const note = (await normalizeImageDetailed(makeGif(4), noFfmpeg))?.note
+  assert.equal(note, '动图 4 帧/0.4s，已抽 4 帧拼成 2×2 网格，行优先 左上→右下')
 })
 
-test('rejects >40 MP pixel bombs, APNG, and animated WebP even when FFmpeg is present', async () => {
-  const ffmpegPath = resolveTestFfmpeg() ?? 'ffmpeg'
-  const bombPng = makePng(7000, 7000, { idat: deflateSync(Buffer.from([0, 0])) })
-  const apng = makePng(16, 16, { animated: true })
-  const animatedWebp = makeAnimatedWebp(16, 16)
+test('offline-installed plugin discovers sharp via the realpath of its SDK junction', async (t) => {
+  if (!sharp) return t.skip('optional host sharp not installed')
+  const directory = await mkdtemp(join(tmpdir(), 'brain-qq-sharp-resolution-'))
+  t.after(() => rm(directory, { recursive: true, force: true, maxRetries: 3 }))
+  const plugin = join(directory, '.installed', 'qq', 'version')
+  const outbound = join(plugin, 'src', 'outbound')
+  await mkdir(outbound, { recursive: true })
+  await mkdir(join(plugin, 'node_modules', '@brain-core'), { recursive: true })
+  await writeFile(join(plugin, 'package.json'), JSON.stringify({ type: 'module', dependencies: { '@brain-core/sdk': 'workspace:*' } }))
+  await symlink(fileURLToPath(new URL('../../../packages/sdk', import.meta.url)), join(plugin, 'node_modules', '@brain-core', 'sdk'), 'junction')
+  const target = join(outbound, 'media-normalize.ts')
+  await copyFile(new URL('../src/outbound/media-normalize.ts', import.meta.url), target)
+  const output = execFileSync(process.execPath, ['--input-type=module', '-e',
+    `const { resolveSharp } = await import(${JSON.stringify(pathToFileURL(target).href)}); console.log(typeof resolveSharp())`],
+    { cwd: directory, windowsHide: true, encoding: 'utf8', timeout: 10_000 })
+  assert.equal(output.trim(), 'function')
+})
 
-  assert.equal(await normalizeImage(bombPng, { ...media, ffmpegPath }), undefined)
-  assert.equal(await normalizeImage(apng, { ...media, ffmpegPath }), undefined)
-  assert.equal(await normalizeImage(animatedWebp, { ...media, ffmpegPath }), undefined)
+test('sharp coalesces delta GIF regions and disposal 2/3 when decoding individual pages', async (t) => {
+  if (!sharp) return t.skip('optional host sharp not installed')
+  const input = makeGif(4, true)
+  const settings = { ...noFfmpeg, gifCellPx: 64 }
+  const result = await normalizeImageDetailed(input, settings, { sharp })
+  assert.equal(result?.image.mediaType, 'image/jpeg')
+  const plan = planAnimation(4, settings)
+  const grid = await sharp(Buffer.from(result!.image.base64, 'base64')).raw().toBuffer()
+  const expected = [
+    [0, 0, 0, 0], // Full red canvas.
+    [1, 0, 0, 0], // Green top-left delta, then disposal 2 clears to red background.
+    [0, 0, 0, 2], // Blue bottom-right delta, then disposal 3 restores red canvas.
+    [0, 3, 0, 0], // Yellow top-right delta.
+  ]
+  for (let page = 0; page < 4; page++) {
+    const pixels = await sharp(input, { page, pages: 1, limitInputPixels: 40_000_000 }).removeAlpha().raw().toBuffer()
+    assert.equal(pixels.length, 32 * 32 * 3)
+    for (let quadrant = 0; quadrant < 4; quadrant++) {
+      const x = 8 + (quadrant % 2) * 16
+      const y = 8 + Math.floor(quadrant / 2) * 16
+      const offset = (y * 32 + x) * 3
+      const color = COLORS[expected[page]![quadrant]!]!
+      assert.deepEqual([...pixels.subarray(offset, offset + 3)], [...color], `page ${page}, quadrant ${quadrant}`)
+      const gx = 4 + (page % 2) * 68 + x * 2
+      const gy = 4 + Math.floor(page / 2) * 68 + y * 2
+      for (let c = 0; c < 3; c++) assert.ok(Math.abs(grid[(gy * plan.width + gx) * 3 + c]! - color[c]!) < 25)
+    }
+  }
+})
 
-  const degraded = await readMessageImages({
-    media: { ...media, ffmpegPath },
-    fetch: async (url) => ({
-      status: 200,
-      headers: {},
-      text: () => '',
-      bytes: () => url.endsWith('apng') ? apng : url.endsWith('webp') ? animatedWebp : bombPng,
-    }),
-    authorize: async () => ({
-      recordId: 'l0_bad',
-      locations: [
-        { url: 'https://h.qpic.cn/bomb' },
-        { url: 'https://h.qpic.cn/apng' },
-        { url: 'https://h.qpic.cn/webp' },
-      ],
-    }),
+test('sharp renders animated WebP pages with distinct colors and parses ANMF duration including zero fallback', async (t) => {
+  if (!sharp) return t.skip('optional host sharp not installed')
+  const input = await makeWebp()
+  const metadata = await sharp(input, { page: 0, pages: 1, limitInputPixels: 40_000_000 }).metadata()
+  assert.equal(metadata.pages, 4)
+  assert.deepEqual(metadata.delay, [100, 200, 0, 300])
+  await assertGrid(input, 4)
+  assert.equal((await normalizeImageDetailed(input, noFfmpeg))?.note,
+    '动图 4 帧/0.7s，已抽 4 帧拼成 2×2 网格，行优先 左上→右下')
+})
+
+test('sharp coalesces animated WebP subrectangles and background disposal per page', async (t) => {
+  if (!sharp) return t.skip('optional host sharp not installed')
+  const input = await makeWebp([100, 100, 100, 100], true)
+  const white = [255, 255, 255]
+  const expected = [
+    [COLORS[0], COLORS[0], COLORS[0], COLORS[0]],
+    [COLORS[1], COLORS[0], COLORS[0], COLORS[0]],
+    [white, COLORS[0], COLORS[0], COLORS[2]],
+    [white, COLORS[3], COLORS[0], COLORS[2]],
+  ]
+  for (let page = 0; page < 4; page++) {
+    const pixels = await sharp(input, { page, pages: 1, limitInputPixels: 40_000_000 })
+      .flatten({ background: '#ffffff' }).raw().toBuffer()
+    assert.equal(pixels.length, 32 * 32 * 3)
+    for (let quadrant = 0; quadrant < 4; quadrant++) {
+      const offset = ((8 + Math.floor(quadrant / 2) * 16) * 32 + 8 + quadrant % 2 * 16) * 3
+      assert.deepEqual([...pixels.subarray(offset, offset + 3)], [...expected[page]![quadrant]!], `page ${page}, quadrant ${quadrant}`)
+    }
+  }
+  assert.equal((await normalizeImageDetailed(input, noFfmpeg))?.image.mediaType, 'image/jpeg')
+})
+
+test('sharp downscales real oversized static PNG without FFmpeg and enforces byte/dimension budgets', async (t) => {
+  if (!sharp) return t.skip('optional host sharp not installed')
+  const input = await sharp({ create: { width: 1600, height: 900, channels: 3, background: '#aabbcc' } }).png().toBuffer()
+  const result = await normalizeImageDetailed(input, noFfmpeg)
+  assert.equal(result?.image.mediaType, 'image/jpeg')
+  const output = Buffer.from(result!.image.base64, 'base64')
+  const metadata = await sharp(output).metadata()
+  assert.deepEqual([metadata.width, metadata.height], [1280, 720])
+  assert.ok(output.length <= media.maxImageBytes)
+  const tinyBudget = await normalizeImageDetailed(input, { ...noFfmpeg, maxImageBytes: 1 })
+  assert.equal(tinyBudget, undefined)
+})
+
+test('FFmpeg renders real 2/6-frame GIF grids without cloned cells and APNG with parsed fcTL delays', async (t) => {
+  const ffmpegPath = resolveTestFfmpeg()
+  if (!ffmpegPath) return t.skip('ffmpeg not installed')
+  if (!sharp) return t.skip('optional host sharp required to inspect pixels')
+  for (const count of [2, 6]) await assertGrid(makeGif(count), count, ffmpegPath, true)
+  const apng = makeApng()
+  await assertGrid(apng, 4, ffmpegPath, true)
+  const result = await normalizeImageDetailed(apng, { ...media, ffmpegPath }, noSharp)
+  assert.equal(result?.note, '动图 4 帧/0.7s，已抽 4 帧拼成 2×2 网格，行优先 左上→右下')
+  // APNG must bypass sharp's frame-zero-only PNG loader.
+  let sharpCalled = false
+  const forbiddenSharp: SharpLoader = () => { sharpCalled = true; throw new Error('APNG should not invoke sharp') }
+  assert.equal((await normalizeImageDetailed(apng, { ...media, ffmpegPath }, { sharp: forbiddenSharp }))?.image.mediaType, 'image/jpeg')
+  assert.equal(sharpCalled, false)
+})
+
+test('FFmpeg animated WebP fallback uses the animation demuxer when supported', async (t) => {
+  const ffmpegPath = resolveTestFfmpeg()
+  if (!ffmpegPath) return t.skip('ffmpeg not installed')
+  if (!sharp) return t.skip('optional host sharp required to encode and inspect WebP')
+  const demuxers = execFileSync(ffmpegPath, ['-hide_banner', '-demuxers'], { encoding: 'utf8', windowsHide: true })
+  if (!demuxers.includes('webp_anim')) return t.skip('host FFmpeg lacks animated WebP support')
+  await assertGrid(await makeWebp(), 4, ffmpegPath, true)
+})
+
+test('FFmpeg resizes static PNG when sharp is disabled or throws', async (t) => {
+  const ffmpegPath = resolveTestFfmpeg()
+  if (!ffmpegPath) return t.skip('ffmpeg not installed')
+  for (const options of [noSharp, { sharp: (() => { throw new Error('native failure') }) as SharpLoader }]) {
+    const output = await normalizeImageDetailed(makePng(1600, 900), { ...media, ffmpegPath }, options)
+    assert.equal(output?.image.mediaType, 'image/jpeg')
+    const jpeg = Buffer.from(output!.image.base64, 'base64')
+    const sof = jpeg.indexOf(Buffer.from([0xff, 0xc0]))
+    assert.deepEqual([jpeg.readUInt16BE(sof + 7), jpeg.readUInt16BE(sof + 5)], [1280, 720])
+  }
+})
+
+test('both decoders disabled: bounded GIF/WebP/APNG/static passthrough notes and strict byte rejection', async () => {
+  for (const [input, note] of [
+    [animatedGif, '动图 2 帧，未能抽帧拼图，当前仅显示首帧'],
+    [makeAnimatedWebp(16, 16, 3), '动图 3 帧，未能抽帧拼图，当前仅显示首帧'],
+    [makeAnimatedWebp(16, 16), '动图未能抽帧拼图，当前仅显示首帧'],
+    [makeApng(), '动图 4 帧，未能抽帧拼图，当前仅显示首帧'],
+    [makePng(1600, 900), '原图 1600×900，未能缩放，按原图提供'],
+    [makeJpegHeader(1600, 900), '原图 1600×900，未能缩放，按原图提供'],
+  ] as const) {
+    const output = await normalizeImageDetailed(input, noFfmpeg, noSharp)
+    assert.equal(output?.note, note)
+    assert.equal(output?.image.base64, input.toString('base64'))
+    assert.equal(await normalizeImageDetailed(input, { ...noFfmpeg, maxImageBytes: input.length - 1 }, noSharp), undefined)
+  }
+  const secretUrl = 'https://h.qpic.cn/sticker/path?token=super-secret-token'
+  const output = await readMessageImages({
+    media: noFfmpeg,
+    fetch: async () => ({ ...pngResponse, bytes: () => makeAnimatedWebp(16, 16, 3) }),
+    authorize: async () => ({ recordId: 'l0_gif', locations: [{ url: secretUrl }] }),
   })
-  assert.equal(degraded.images, undefined)
-  assert.match(degraded.text, /没有可显示的 QQ 图片/)
+  assert.equal(output.text, 'QQ 消息图片（动图 3 帧，未能抽帧拼图，当前仅显示首帧）')
+  assert.ok(!output.text.includes('qpic.cn') && !output.text.includes('super-secret-token'))
+})
+
+test('pixel-bomb headers and zero dimensions are rejected before invoking sharp', async () => {
+  let called = false
+  const fakeSharp: SharpLoader = () => { called = true; throw new Error('must not decode') }
+  for (const input of [makePng(7000, 7000, { idat: Buffer.from([0]) }), makePng(0, 1), makeJpegHeader(7000, 7000), makeAnimatedWebp(7000, 7000, 2)]) {
+    assert.equal(await normalizeImageDetailed(input, media, { sharp: fakeSharp }), undefined)
+    assert.equal(await normalizeImageDetailed(input, noFfmpeg, noSharp), undefined)
+  }
+  assert.equal(called, false)
+  // The boundary is strictly greater than 40 MP, not greater than or equal.
+  const boundary = makeJpegHeader(8000, 5000)
+  assert.equal((await normalizeImageDetailed(boundary, noFfmpeg, noSharp))?.image.mediaType, 'image/jpeg')
+})
+
+test('FFMPEG_PATH precedence and explicit executable path validation', async (t) => {
+  const previous = process.env['FFMPEG_PATH']
+  t.after(() => {
+    if (previous === undefined) delete process.env['FFMPEG_PATH']
+    else process.env['FFMPEG_PATH'] = previous
+  })
+  process.env['FFMPEG_PATH'] = '  /configured/ffmpeg  '
+  assert.equal(resolveFfmpegPath({ ...media, ffmpegPath: ' ' }), '/configured/ffmpeg')
+  assert.equal(resolveFfmpegPath({ ...media, ffmpegPath: ' /preferred/ffmpeg.exe ' }), '/preferred/ffmpeg.exe')
+  for (const unsafe of ['ffmpeg', 'nonexistent', './ffmpeg', '../ffmpeg', '/tmp/node', '/tmp/ffmpeg --version', 'C:ffmpeg.exe']) {
+    assert.equal(resolveFfmpegPath({ ...media, ffmpegPath: unsafe }), undefined)
+    process.env['FFMPEG_PATH'] = unsafe
+    assert.equal(resolveFfmpegPath({ ...media, ffmpegPath: '' }), undefined)
+  }
+  process.env['FFMPEG_PATH'] = ''
+  assert.equal(resolveFfmpegPath({ ...media, ffmpegPath: '' }), 'ffmpeg')
+  if (process.platform === 'win32') assert.equal(resolveFfmpegPath({ ...media, ffmpegPath: 'C:\\tools\\ffmpeg.exe' }), 'C:\\tools\\ffmpeg.exe')
+  const ffmpegPath = resolveTestFfmpeg()
+  if (ffmpegPath) {
+    process.env['FFMPEG_PATH'] = ` ${ffmpegPath} `
+    assert.equal((await normalizeImageDetailed(makeGif(2), { ...media, ffmpegPath: ' ' }, noSharp))?.image.mediaType, 'image/jpeg')
+  }
 })
 
 test('readMessageImages trims multi-image payloads under budget and enforces the 8 MiB JSON-RPC line cap', async (t) => {

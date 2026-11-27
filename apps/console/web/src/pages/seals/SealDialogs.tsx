@@ -143,10 +143,12 @@ function Report({ report }: { readonly report: CheckReport }) {
   )
 }
 
-export function PermissionCovenant({ open, preview, plugin, onClose, onConfirmed }: {
+export function PermissionCovenant({ open, preview, plugin, actionLabel, onConfirmAction, onClose, onConfirmed }: {
   readonly open: boolean
   readonly preview: ConsoleInstallPreview | null
   readonly plugin?: ConsolePluginItem
+  readonly actionLabel?: string
+  readonly onConfirmAction?: () => Promise<void>
   readonly onClose: () => void
   readonly onConfirmed: () => void
 }) {
@@ -173,7 +175,8 @@ export function PermissionCovenant({ open, preview, plugin, onClose, onConfirmed
     if (!preview) return
     setPhase('pending')
     try {
-      await pluginsApi.confirm(preview.id)
+      if (onConfirmAction) await onConfirmAction()
+      else await pluginsApi.confirm(preview.id)
       setPhase('confirmed')
     } catch (err) {
       setPhase('reading')
@@ -189,7 +192,7 @@ export function PermissionCovenant({ open, preview, plugin, onClose, onConfirmed
 
   return (
     <Covenant title="契约" open={open && preview !== null} onClose={onClose} closeOnBackdrop={canClose} closeOnEscape={canClose}
-      subtitle={preview ? <>{preview.id} <span className="num">v{preview.version}</span>{plugin?.kinds.length ? ` · ${plugin.kinds.join(' / ')}` : ''}</> : undefined}
+      subtitle={preview ? <>{preview.id} <span className="num">v{preview.version}</span>{plugin?.kinds.length ? ` · ${plugin.kinds.join(' / ')}` : ''}{actionLabel ? ` · ${actionLabel}` : ''}</> : undefined}
       footer={preview ? <div className="seals-form" style={{ justifyItems: 'center' }}>
         <HoldToStamp key={preview.id} label="准" disabled={locked} ariaLabel={`按住 0.9 秒以确认：授权插件 ${preview.id}`} ariaDescribedBy={noticeId} onConfirm={confirm} onComplete={onConfirmed} />
         <BrushButton variant="ghost" disabled={!canClose} onClick={onClose}>算了</BrushButton>

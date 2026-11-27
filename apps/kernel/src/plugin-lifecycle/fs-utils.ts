@@ -59,13 +59,16 @@ function byName(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0
 }
 
+const EMPTY_SKIP: ReadonlySet<string> = new Set()
+
 /** SHA-256 over sorted relative paths and file bytes, so identical trees give identical hashes. */
-export async function contentHash8(root: string): Promise<string> {
+export async function contentHash8(root: string, skipNames: ReadonlySet<string> = EMPTY_SKIP): Promise<string> {
   const hash = createHash('sha256')
   async function walk(dir: string, prefix: string): Promise<void> {
     const entries = await readdir(dir, { withFileTypes: true })
     entries.sort((a, b) => byName(a.name, b.name))
     for (const entry of entries) {
+      if (skipNames.has(entry.name)) continue
       const relative = prefix === '' ? entry.name : `${prefix}/${entry.name}`
       const full = path.join(dir, entry.name)
       if (entry.isDirectory()) {

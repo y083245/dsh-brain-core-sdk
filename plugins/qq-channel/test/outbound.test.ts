@@ -278,3 +278,47 @@ test('StickerLibrary.note writes full L2.3 origin record, trims tags, and reject
     visibility: 'origin',
   })
 })
+
+test('StickerLibrary.list supports SnowLuma-style QQ CDN URL string arrays and keeps disk cache ID-only', async () => {
+  const { StickerLibrary } = await import('../src/outbound/stickers.ts')
+  let diskCache = ''
+  const validUrl1 = 'https://p.qpic.cn/qq_expression/1000000001/1000000001_0_0_0_0123456789ABCDEF0123456789ABCDEF_0_0/0?token=secret-token#frag'
+  const validUrl1Clean = 'https://p.qpic.cn/qq_expression/1000000001/1000000001_0_0_0_0123456789ABCDEF0123456789ABCDEF_0_0/0?token=secret-token'
+  const validUrl2 = 'https://gxh.vip.qq.com/club/item/123.png'
+  const lib = new StickerLibrary({
+    action: async () => [
+      validUrl1,
+      validUrl1Clean, // duplicate after hash stripping -> deduplicated
+      validUrl2,
+      'https://evil.example/sticker.png',
+      'https://p.qpic.cn.evil.test/sticker.png',
+      'http://user:pass@p.qpic.cn/sticker.png',
+      'https://p.qpic.cn:8443/sticker.png',
+      'file:///etc/passwd',
+      'not-a-url',
+      `https://p.qpic.cn/${'a'.repeat(4100)}`,
+    ],
+    storage: { read: async () => undefined, write: async (_path, data) => { diskCache = String(data) } },
+    memory: { readChannelEvent: async () => ({} as never), record: async () => ({} as never), search: async () => ({ items: [], degraded: false }) },
+  })
+
+  const first = await lib.list()
+  assert.equal(first.length, 2)
+  assert.match(first[0]!.id, /^cf_[0-9a-f]{24}$/)
+  assert.equal(first[0]!.url, validUrl1Clean)
+  assert.match(first[1]!.id, /^cf_[0-9a-f]{24}$/)
+  assert.equal(first[1]!.url, validUrl2)
+  assert.notEqual(first[0]!.id, first[1]!.id)
+
+  // Deterministic across refreshes and available in detail() even if detail RPC is unsupported.
+  const refreshed = await lib.list(true)
+  assert.deepEqual(refreshed, first)
+  assert.deepEqual(await lib.detail(first[0]!.id), first[0])
+
+  // Security rule: disk cache must strictly persist { id } only, zero URLs or tokens.
+  assert.equal(diskCache, JSON.stringify([{ id: first[0]!.id }, { id: first[1]!.id }]))
+  assert.ok(!diskCache.includes('http'))
+  assert.ok(!diskCache.includes('qpic.cn'))
+  assert.ok(!diskCache.includes('qq.com'))
+  assert.ok(!diskCache.includes('secret-token'))
+})

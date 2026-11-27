@@ -24,6 +24,8 @@ import { StickerLibrary } from '../src/outbound/stickers.ts'
 import { VoiceLibrary } from '../src/outbound/voice.ts'
 import { QQ_TOOL_NAMES, registerQqTools, type GroupMemberInfo, type QqToolsDeps } from '../src/tools/index.ts'
 
+import { makeApng, makeGif, sharp } from './media-fixtures.ts'
+
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const TINY_PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jXxkAAAAASUVORK5CYII=',
@@ -780,6 +782,37 @@ test('get_sticker_image enforces QQ CDN allowlist, redirect:error, normalizes im
   assert.equal(h.ingested.length, 0)
 })
 
+test('get_sticker_image includes animated preview notes in JSON without leaking URL/token and retains RPC budget', async (t) => {
+  let input = makeApng()
+  const h = createHarness({
+    config: { media: { ...DEFAULT_QQ_CONFIG.media, ffmpegPath: 'nonexistent' } },
+    fetchImpl: async () => ({ status: 200, headers: {}, text: () => '', bytes: () => input }),
+    actionImpl: async (name) => name === 'fetch_custom_face'
+      ? [{ id: 'stk_animated' }]
+      : { id: 'stk_animated', url: 'https://p.qpic.cn/sticker/secret-path?token=super-secret-token' },
+  })
+  const tool = h.tools.get('get_sticker_image')!
+  const call: ToolCallContext = { channel: 'qq:group:10001', wakeId: 'w1' }
+  const result = await tool.handler({ stickerId: 'stk_animated' }, call) as { text: string; images?: unknown[] }
+  assert.equal(result.images?.length, 1)
+  assert.equal((JSON.parse(result.text) as { note: string }).note, '已获取归一化表情预览图（动图 4 帧，未能抽帧拼图，当前仅显示首帧）')
+  assert.ok(!result.text.includes('qpic.cn') && !result.text.includes('super-secret-token') && !result.text.includes('secret-path'))
+  if (sharp) {
+    input = makeGif(4)
+    const grid = await tool.handler({ stickerId: 'stk_animated' }, call) as { text: string; images?: { mediaType: string }[] }
+    assert.equal(grid.images?.[0]?.mediaType, 'image/jpeg')
+    assert.equal((JSON.parse(grid.text) as { note: string }).note, '已获取归一化表情预览图（动图 4 帧/0.4s，已抽 4 帧拼成 2×2 网格，行优先 左上→右下）')
+  }
+  const byteLength = Buffer.byteLength.bind(Buffer)
+  t.mock.method(Buffer, 'byteLength', (value: Parameters<typeof Buffer.byteLength>[0], encoding?: BufferEncoding) => {
+    if (typeof value === 'string' && value.startsWith('{"jsonrpc":')) return 8 * 1024 * 1024 + 1
+    return byteLength(value, encoding)
+  })
+  const overflow = await tool.handler({ stickerId: 'stk_animated' }, call) as { text: string; images?: unknown[] }
+  assert.equal(overflow.images, undefined)
+  assert.equal((JSON.parse(overflow.text) as { note: string }).note, '该表情暂无可用预览图或图片处理失败')
+})
+
 test('send_sticker verifies existence, sends, and surfaces SentMessageError partial warning', async () => {
   let shouldPartial = false
   const h = createHarness({
@@ -1031,4 +1064,21 @@ test('get_message_detail requires exactly one of recordId/messageId, never calls
   await assert.rejects(tool.handler({ messageId: '-505' }, call), { code: 'NOT_FOUND' })
   h.memoryRecords.set(rec.id, { record: { ...rec, status: 'tombstoned' }, disclosure })
   await assert.rejects(tool.handler({ recordId: 'l0_detail_1' }, call), { code: 'NOT_FOUND' })
+})
+
+test('messageId and replyToMessageId schemas document #<messageId> header origin', () => {
+  const h = createHarness()
+  const checks: readonly [string, string][] = [
+    ['send_message', 'replyToMessageId'],
+    ['get_message_images', 'messageId'],
+    ['send_sticker', 'replyToMessageId'],
+    ['collect_sticker', 'messageId'],
+    ['get_message_detail', 'messageId'],
+  ]
+  for (const [toolName, paramName] of checks) {
+    const props = h.tools.get(toolName)?.parameters.properties as Record<string, { description?: string }> | undefined
+    const desc = props?.[paramName]?.description ?? ''
+    assert.match(desc, /#<messageId>/, `${toolName}.${paramName} description should mention #<messageId>`)
+  }
+  h.dispose()
 })

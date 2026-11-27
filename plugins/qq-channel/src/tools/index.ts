@@ -22,7 +22,7 @@ import type { MediaStore } from '../inbound/media-store.ts'
 import { cleanText } from '../inbound/segments.ts'
 import { OneBotHttpError } from '../onebot/http-client.ts'
 import { normalizeAccountId, normalizeMessageId } from '../onebot/types.ts'
-import { normalizeImage, readMessageImages, type ImageLocation } from '../outbound/media-normalize.ts'
+import { normalizeImageDetailed, readMessageImages, type ImageLocation } from '../outbound/media-normalize.ts'
 import { SendRateLimit } from '../outbound/rate-limit.ts'
 import { SentMessageError, type QqSender } from '../outbound/sender.ts'
 import type { StickerLibrary } from '../outbound/stickers.ts'
@@ -327,7 +327,7 @@ export function registerQqTools(ctx: Pick<BrainContext<unknown>, 'tools'>, deps:
           },
           replyToMessageId: {
             type: 'string',
-            description: '可选，引用回复的当前通道 QQ 消息 ID',
+            description: '可选，引用回复的当前通道 QQ 消息 ID（见消息头中的 #<messageId>）',
           },
           atUserId: {
             type: 'string',
@@ -566,7 +566,7 @@ export function registerQqTools(ctx: Pick<BrainContext<unknown>, 'tools'>, deps:
         properties: {
           messageId: {
             type: 'string',
-            description: '当前通道内的 QQ 消息 ID',
+            description: '当前通道内的 QQ 消息 ID（见消息头中的 #<messageId>）',
           },
         },
         required: ['messageId'],
@@ -974,11 +974,11 @@ export function registerQqTools(ctx: Pick<BrainContext<unknown>, 'tools'>, deps:
               maxBytes: Math.min(config.media.maxDownloadBytes, 5 * 1024 * 1024),
             })
             if (response.status >= 200 && response.status < 300) {
-              const image = await normalizeImage(response.bytes(), config.media)
-              if (image !== undefined) {
+              const result = await normalizeImageDetailed(response.bytes(), config.media)
+              if (result !== undefined) {
                 const output: ToolOutput = {
-                  text: buildText('已获取归一化表情预览图'),
-                  images: [image],
+                  text: buildText(result.note ? `已获取归一化表情预览图（${result.note}）` : '已获取归一化表情预览图'),
+                  images: [result.image],
                 }
                 if (fitsRpcLineBudget(output)) {
                   return output
@@ -1006,7 +1006,7 @@ export function registerQqTools(ctx: Pick<BrainContext<unknown>, 'tools'>, deps:
           },
           replyToMessageId: {
             type: 'string',
-            description: '可选，引用回复的当前通道 QQ 消息 ID',
+            description: '可选，引用回复的当前通道 QQ 消息 ID（见消息头中的 #<messageId>）',
           },
           atUserId: {
             type: 'string',
@@ -1082,7 +1082,7 @@ export function registerQqTools(ctx: Pick<BrainContext<unknown>, 'tools'>, deps:
         properties: {
           messageId: {
             type: 'string',
-            description: '包含目标表情的当前通道 QQ 消息 ID',
+            description: '包含目标表情的当前通道 QQ 消息 ID（见消息头中的 #<messageId>）',
           },
           stickerId: {
             type: 'string',
@@ -1339,7 +1339,7 @@ export function registerQqTools(ctx: Pick<BrainContext<unknown>, 'tools'>, deps:
           },
           messageId: {
             type: 'string',
-            description: '当前通道内的 QQ 消息 ID（与 recordId 二选一）',
+            description: '当前通道内的 QQ 消息 ID（见消息头中的 #<messageId>，与 recordId 二选一）',
           },
         },
         additionalProperties: false,

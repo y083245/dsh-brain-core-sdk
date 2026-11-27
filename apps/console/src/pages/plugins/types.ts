@@ -34,7 +34,15 @@ export interface CheckReport {
   readonly notes: readonly string[]
 }
 
-export type PluginLifecycleState = 'pending' | 'enabled' | 'disabled' | 'failed'
+export type PluginLifecycleState = 'discovered' | 'pending' | 'enabled' | 'disabled' | 'failed'
+
+export interface ConsolePluginUpdateInfo {
+  readonly version: string
+  readonly sha8: string
+  readonly permissions: readonly string[]
+  readonly newPermissions: readonly string[]
+  readonly warnings: readonly string[]
+}
 
 export interface ConsolePluginItem {
   readonly id: string
@@ -46,6 +54,9 @@ export interface ConsolePluginItem {
   readonly granted: readonly string[]
   readonly checkPassed: boolean
   readonly tools: readonly ManifestTool[]
+  readonly source?: 'workspace' | 'installed'
+  readonly warnings?: readonly string[]
+  readonly updateAvailable?: ConsolePluginUpdateInfo
 }
 
 export interface ConsoleInstallPreview {
@@ -54,6 +65,11 @@ export interface ConsoleInstallPreview {
   readonly permissions: readonly string[]
   readonly newPermissions: readonly string[]
   readonly warnings: readonly string[]
+}
+
+export interface ConsoleLocalApplyResult extends ConsoleInstallPreview {
+  readonly applied: boolean
+  readonly state: PluginLifecycleState
 }
 
 export interface ChannelCoreBudget {
@@ -65,11 +81,16 @@ export interface ChannelCoreBudget {
 
 export interface PluginsPageApi {
   list(): Promise<{ readonly plugins: readonly ConsolePluginItem[]; readonly coreBudgets: readonly ChannelCoreBudget[] }>
+  scan?(): Promise<{ readonly plugins: readonly ConsolePluginItem[]; readonly coreBudgets: readonly ChannelCoreBudget[] }>
   install(spec: string): Promise<ConsoleInstallPreview>
   confirm(id: string): Promise<void>
   enable(id: string): Promise<void>
   disable(id: string): Promise<void>
   upgrade(id: string, spec: string): Promise<ConsoleInstallPreview & { readonly applied: boolean }>
+  applyLocal?(
+    id: string,
+    input: { readonly action: 'enable' | 'update'; readonly confirmPermissions?: boolean },
+  ): Promise<ConsoleLocalApplyResult>
   uninstall(id: string, options: { readonly keepData: boolean }): Promise<void>
   check(dir: string): Promise<CheckReport>
 }
@@ -102,6 +123,9 @@ export function createHttpPluginsPageApi(
     list() {
       return request('/api/v1/console/plugins', { method: 'GET' })
     },
+    scan() {
+      return request('/api/v1/console/plugins/scan', { method: 'POST' })
+    },
     install(spec) {
       return request('/api/v1/console/plugins/install', { method: 'POST', body: { spec } })
     },
@@ -116,6 +140,9 @@ export function createHttpPluginsPageApi(
     },
     upgrade(id, spec) {
       return request(`/api/v1/console/plugins/${encodeURIComponent(id)}/upgrade`, { method: 'POST', body: { spec } })
+    },
+    applyLocal(id, input) {
+      return request(`/api/v1/console/plugins/${encodeURIComponent(id)}/apply-local`, { method: 'POST', body: input })
     },
     async uninstall(id, options) {
       await request<unknown>(`/api/v1/console/plugins/${encodeURIComponent(id)}/uninstall`, {

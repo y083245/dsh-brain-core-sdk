@@ -25,7 +25,15 @@ export interface InteropStatus {
   readonly debugView: DebugViewStatus
 }
 
-export type PluginLifecycleState = 'pending' | 'enabled' | 'disabled' | 'failed'
+export type PluginLifecycleState = 'discovered' | 'pending' | 'enabled' | 'disabled' | 'failed'
+
+export interface ConsolePluginUpdateInfo {
+  readonly version: string
+  readonly sha8: string
+  readonly permissions: readonly string[]
+  readonly newPermissions: readonly string[]
+  readonly warnings: readonly string[]
+}
 
 export interface ConsolePluginItem {
   readonly id: string
@@ -37,6 +45,9 @@ export interface ConsolePluginItem {
   readonly granted: readonly string[]
   readonly checkPassed: boolean
   readonly tools: readonly ManifestTool[]
+  readonly source?: 'workspace' | 'installed'
+  readonly warnings?: readonly string[]
+  readonly updateAvailable?: ConsolePluginUpdateInfo
 }
 
 export interface ConsoleInstallPreview {
@@ -45,6 +56,11 @@ export interface ConsoleInstallPreview {
   readonly permissions: readonly string[]
   readonly newPermissions: readonly string[]
   readonly warnings: readonly string[]
+}
+
+export interface ConsoleLocalApplyResult extends ConsoleInstallPreview {
+  readonly applied: boolean
+  readonly state: PluginLifecycleState
 }
 
 export interface ChannelCoreBudget {
@@ -132,11 +148,16 @@ export interface MemoryApiConsoleDeps {
   }
   readonly plugins?: {
     list(): Promise<{ readonly plugins: readonly ConsolePluginItem[]; readonly coreBudgets: readonly ChannelCoreBudget[] }>
+    scan?(): Promise<{ readonly plugins: readonly ConsolePluginItem[]; readonly coreBudgets: readonly ChannelCoreBudget[] }>
     install(spec: string): Promise<ConsoleInstallPreview>
     confirm(id: string): Promise<void>
     enable(id: string): Promise<void>
     disable(id: string): Promise<void>
     upgrade(id: string, spec: string): Promise<ConsoleInstallPreview & { readonly applied: boolean }>
+    applyLocal?(
+      id: string,
+      input: { readonly action: 'enable' | 'update'; readonly confirmPermissions?: boolean },
+    ): Promise<ConsoleLocalApplyResult>
     uninstall(id: string, options: { readonly keepData: boolean }): Promise<void>
     check(dir: string): Promise<CheckReport>
   }
@@ -187,6 +208,7 @@ const JOB_PATH = /^\/memory\/jobs\/(.+)$/
 const PROPOSAL_APPROVE_PATH = /^\/console\/memory\/consolidation\/proposals\/([^/]+)\/approve$/
 const PROPOSAL_REJECT_PATH = /^\/console\/memory\/consolidation\/proposals\/([^/]+)\/reject$/
 const WORKING_ITEM_PATH = /^\/memory\/working\/([^/]+)$/
+const PLUGIN_APPLY_LOCAL_PATH = /^\/console\/plugins\/([^/]+)\/apply-local$/
 const PLUGIN_ACTION_PATH = /^\/console\/plugins\/([^/]+)\/(confirm|enable|disable|upgrade|uninstall)$/
 const CONSOLE_RECORD_PATH = /^\/console\/memory\/records\/([^/]+)$/
 const CONSOLE_RECORD_DEPENDENTS_PATH = /^\/console\/memory\/records\/([^/]+)\/dependents$/
@@ -782,6 +804,12 @@ export function createMemoryApiServer(memory: Memory, options: {
       return respond(await plugins.list())
     }
 
+    if (method === 'POST' && tail === '/console/plugins/scan') {
+      const plugins = options.console?.plugins
+      if (plugins === undefined) throw new BrainError('UNAVAILABLE', 'plugins console is not available')
+      return respond(await (plugins.scan ? plugins.scan() : plugins.list()))
+    }
+
     if (method === 'POST' && tail === '/console/plugins/install') {
       const plugins = options.console?.plugins
       if (plugins === undefined) throw new BrainError('UNAVAILABLE', 'plugins console is not available')
@@ -794,6 +822,28 @@ export function createMemoryApiServer(memory: Memory, options: {
       if (plugins === undefined) throw new BrainError('UNAVAILABLE', 'plugins console is not available')
       const dir = requireStringField(body, 'dir')
       return respond(await plugins.check(dir))
+    }
+
+    const pluginApplyLocalMatch = PLUGIN_APPLY_LOCAL_PATH.exec(tail)
+    if (method === 'POST' && pluginApplyLocalMatch !== null) {
+      const plugins = options.console?.plugins
+      if (plugins === undefined || plugins.applyLocal === undefined) {
+        throw new BrainError('UNAVAILABLE', 'plugins console is not available')
+      }
+      const id = requireSegment(pluginApplyLocalMatch[1] as string, 'plugin id')
+      if (!isPlainObject(body)) {
+        throw new BrainError('INVALID_ARGUMENT', 'apply-local body must be an object')
+      }
+      if (body.action !== 'enable' && body.action !== 'update') {
+        throw new BrainError('INVALID_ARGUMENT', 'action must be enable or update')
+      }
+      if (body.confirmPermissions !== undefined && typeof body.confirmPermissions !== 'boolean') {
+        throw new BrainError('INVALID_ARGUMENT', 'confirmPermissions must be a boolean')
+      }
+      return respond(await plugins.applyLocal(id, {
+        action: body.action,
+        ...(body.confirmPermissions === undefined ? {} : { confirmPermissions: body.confirmPermissions }),
+      }))
     }
 
     const pluginActionMatch = PLUGIN_ACTION_PATH.exec(tail)

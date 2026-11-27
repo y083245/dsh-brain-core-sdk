@@ -63,11 +63,13 @@ test('console routes enforce Bearer auth and 503 UNAVAILABLE when console deps a
   try {
     for (const [method, route, body] of [
       ['GET', '/console/plugins'],
+      ['POST', '/console/plugins/scan'],
       ['POST', '/console/plugins/install', { spec: '/tmp/p' }],
       ['POST', '/console/plugins/demo/confirm'],
       ['POST', '/console/plugins/demo/enable'],
       ['POST', '/console/plugins/demo/disable'],
       ['POST', '/console/plugins/demo/upgrade', { spec: '/tmp/p' }],
+      ['POST', '/console/plugins/demo/apply-local', { action: 'enable', confirmPermissions: true }],
       ['POST', '/console/plugins/demo/uninstall', { keepData: false }],
       ['POST', '/console/plugins/check', { dir: '/tmp/p' }],
       ['POST', '/console/memory/search', { query: 'hello', scope: 'all' }],
@@ -92,7 +94,9 @@ test('console routes enforce Bearer auth and 503 UNAVAILABLE when console deps a
 
     for (const [method, route, body] of [
       ['GET', '/console/plugins'],
+      ['POST', '/console/plugins/scan'],
       ['POST', '/console/plugins/install', { spec: '/tmp/p' }],
+      ['POST', '/console/plugins/demo/apply-local', { action: 'enable', confirmPermissions: true }],
       ['POST', '/console/plugins/check', { dir: '/tmp/p' }],
       ['GET', '/console/memory/cross-channel'],
       ['PUT', '/console/memory/cross-channel', { mode: 'on' }],
@@ -171,6 +175,13 @@ test('all 21 console routes validate parameters, decode segments, and return exp
             coreBudgets: [{ pattern: 'qq:group', count: 1, tokens: 120, over: false }],
           }
         },
+        async scan() {
+          pluginCalls.push('scan')
+          return {
+            plugins: [samplePlugin],
+            coreBudgets: [{ pattern: 'qq:group', count: 1, tokens: 120, over: false }],
+          }
+        },
         async install(spec) {
           pluginCalls.push(`install:${spec}`)
           return { id: 'demo/plugin', version: '1.0.0', permissions: ['tools.register'], newPermissions: ['tools.register'], warnings: [] }
@@ -194,6 +205,18 @@ test('all 21 console routes validate parameters, decode segments, and return exp
             newPermissions: hasNew ? ['channel.send'] : [],
             warnings: [],
             applied: !hasNew,
+          }
+        },
+        async applyLocal(id, input) {
+          pluginCalls.push(`apply-local:${id}:${input.action}:${String(input.confirmPermissions)}`)
+          return {
+            id,
+            version: '1.1.0',
+            permissions: ['tools.register'],
+            newPermissions: [],
+            warnings: [],
+            applied: true,
+            state: input.action === 'enable' ? 'enabled' : 'disabled',
           }
         },
         async uninstall(id, options) {
@@ -252,6 +275,12 @@ test('all 21 console routes validate parameters, decode segments, and return exp
     assert.equal((await req(port, 'tok', 'POST', '/console/plugins/check', { dir: '' })).status, 400)
     assert.equal((await req(port, 'tok', 'POST', '/console/plugins/%ZZ/confirm')).status, 400)
     assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/upgrade', {})).status, 400)
+    assert.equal((await req(port, 'tok', 'POST', '/console/plugins/%ZZ/apply-local', { action: 'enable' })).status, 400)
+    assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/apply-local')).status, 400)
+    assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/apply-local', ['bad'] as unknown)).status, 400)
+    assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/apply-local', {})).status, 400)
+    assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/apply-local', { action: 'delete' })).status, 400)
+    assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/apply-local', { action: 'enable', confirmPermissions: 'yes' })).status, 400)
     assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/uninstall', { keepData: 'yes' })).status, 400)
     assert.equal((await req(port, 'tok', 'POST', '/console/plugins/demo/uninstall', 'bad-array' as unknown)).status, 400)
 
@@ -259,6 +288,11 @@ test('all 21 console routes validate parameters, decode segments, and return exp
     assert.equal(plist.status, 200)
     validate('Envelope', plist.json)
     assert.equal((plist.json.data as { plugins: ConsolePluginItem[] }).plugins.length, 1)
+
+    const pscan = await req(port, 'tok', 'POST', '/console/plugins/scan')
+    assert.equal(pscan.status, 200)
+    validate('Envelope', pscan.json)
+    assert.equal((pscan.json.data as { plugins: ConsolePluginItem[] }).plugins.length, 1)
 
     assert.equal((await req(port, 'tok', 'POST', '/console/plugins/install', { spec: '/abs/demo' })).status, 200)
     const encodedId = encodeURIComponent('demo/plugin')
@@ -274,16 +308,33 @@ test('all 21 console routes validate parameters, decode segments, and return exp
     assert.equal(up2.status, 200)
     assert.equal((up2.json.data as { applied: boolean }).applied, false)
 
+    const alEnable = await req(port, 'tok', 'POST', `/console/plugins/${encodedId}/apply-local`, {
+      action: 'enable',
+      confirmPermissions: true,
+    })
+    assert.equal(alEnable.status, 200)
+    assert.equal((alEnable.json.data as { applied: boolean; state: string }).applied, true)
+    assert.equal((alEnable.json.data as { state: string }).state, 'enabled')
+
+    const alUpdate = await req(port, 'tok', 'POST', `/console/plugins/${encodedId}/apply-local`, {
+      action: 'update',
+    })
+    assert.equal(alUpdate.status, 200)
+    assert.equal((alUpdate.json.data as { state: string }).state, 'disabled')
+
     assert.equal((await req(port, 'tok', 'POST', `/console/plugins/${encodedId}/uninstall`, { keepData: true })).status, 200)
     assert.equal((await req(port, 'tok', 'POST', `/console/plugins/${encodedId}/uninstall`)).status, 200)
     assert.equal((await req(port, 'tok', 'POST', '/console/plugins/check', { dir: '/abs/demo' })).status, 200)
     assert.deepEqual(pluginCalls, [
+      'scan',
       'install:/abs/demo',
       'confirm:demo/plugin',
       'enable:demo/plugin',
       'disable:demo/plugin',
       'upgrade:demo/plugin:/abs/v2',
       'upgrade:demo/plugin:/abs/new-perm',
+      'apply-local:demo/plugin:enable:true',
+      'apply-local:demo/plugin:update:undefined',
       'uninstall:demo/plugin:true',
       'uninstall:demo/plugin:false',
       'check:/abs/demo',
@@ -392,4 +443,51 @@ test('all 21 console routes validate parameters, decode segments, and return exp
 
 test('BrainError propagation check', () => {
   assert.ok(new BrainError('INVALID_ARGUMENT', 'x') instanceof BrainError)
+})
+
+test('console/plugins/scan falls back to list() and apply-local returns 503 when optional methods are omitted', async () => {
+  const brain = await openTempBrain()
+  const server = createMemoryApiServer(brain.memory, {
+    token: 'tok',
+    port: 0,
+    log: silentLog,
+    console: {
+      plugins: {
+        async list() {
+          return { plugins: [], coreBudgets: [] }
+        },
+        async install() {
+          return { id: 'x', version: '1.0.0', permissions: [], newPermissions: [], warnings: [] }
+        },
+        async confirm() {},
+        async enable() {},
+        async disable() {},
+        async upgrade(id) {
+          return { id, version: '1.0.0', permissions: [], newPermissions: [], warnings: [], applied: true }
+        },
+        async uninstall() {},
+        async check() {
+          return {
+            ok: true,
+            manifest: { ok: true, manifest: { id: 'x', kinds: ['capability'], api: '^1.0.0', runtime: 'node', permissions: [] } },
+            contract: [],
+            findings: [],
+            notes: [],
+          }
+        },
+      },
+    },
+  })
+  const { port } = await server.listen()
+  try {
+    const scanRes = await req(port, 'tok', 'POST', '/console/plugins/scan')
+    assert.equal(scanRes.status, 200)
+    assert.deepEqual(scanRes.json.data, { plugins: [], coreBudgets: [] })
+
+    const applyRes = await req(port, 'tok', 'POST', '/console/plugins/x/apply-local', { action: 'enable', confirmPermissions: true })
+    assert.equal(applyRes.status, 503)
+  } finally {
+    await server.close()
+    await brain.close()
+  }
 })

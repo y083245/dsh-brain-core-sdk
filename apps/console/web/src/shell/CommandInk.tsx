@@ -108,7 +108,7 @@ const QUALITY_LABEL_ZH: Readonly<Record<QualityPreference, string>> = {
 }
 
 function pluginStateToSealVariant(state: ConsolePluginItem['state']): PluginSealVariant {
-  if (state === 'disabled') return 'hollow'
+  if (state === 'disabled' || state === 'discovered') return 'hollow'
   if (state === 'pending') return 'pending'
   if (state === 'failed') return 'failed'
   return 'auto'
@@ -116,6 +116,8 @@ function pluginStateToSealVariant(state: ConsolePluginItem['state']): PluginSeal
 
 function pluginStateZh(state: ConsolePluginItem['state']): string {
   switch (state) {
+    case 'discovered':
+      return '本地未启用'
     case 'enabled':
       return '已启用'
     case 'disabled':

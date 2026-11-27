@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, readdir, readFile, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { removeTree } from '@brain-core/satellite-host'
+import { encodeSessionId, removeTree } from '@brain-core/satellite-host'
 import { validate, type ContextBundle } from '@brain-core/sdk'
 import { createKernel, type Kernel } from '../../src/assembly.ts'
 import { createSettingsStore } from '../../src/runtime-stores/settings.ts'
@@ -119,6 +119,7 @@ test('createKernel exposes all 21 console APIs end-to-end with isolated DSH_HOME
     port: 0,
     crossChannel: 'off',
     ownerChannels: ['qq:private:owner'],
+    workspacePluginsDir: null,
     clock: { now: () => now },
     log: capturingLogger(logs),
     token: TOKEN,
@@ -426,4 +427,238 @@ test('createKernel exposes all 21 console APIs end-to-end with isolated DSH_HOME
       tools: [],
     },
   ])
+})
+
+async function writeWorkspaceLivePlugin(dir: string, options: {
+  readonly version: string
+  readonly tag: string
+  readonly permissions: readonly string[]
+  readonly sentinelFile: string
+}): Promise<void> {
+  await mkdir(dir, { recursive: true })
+  const manifest = {
+    id: 'live-demo',
+    kinds: ['capability'],
+    api: '^1.0.0',
+    runtime: 'node',
+    permissions: options.permissions,
+    tools: [
+      {
+        name: 'ping',
+        effect: 'read',
+        load: 'core',
+        summary: '实时插件探测工具',
+      },
+    ],
+  }
+  await writeFile(
+    path.join(dir, 'package.json'),
+    JSON.stringify({
+      name: 'brain-plugin-live-demo',
+      version: options.version,
+      private: true,
+      type: 'module',
+      main: 'index.js',
+      brain: manifest,
+    }, null, 2),
+    'utf8',
+  )
+  await writeFile(
+    path.join(dir, 'index.js'),
+    `import { writeFileSync } from 'node:fs'\n`
+      + `writeFileSync(${JSON.stringify(options.sentinelFile)}, ${JSON.stringify(options.tag)}, 'utf8')\n`
+      + `export function apply(ctx) {\n`
+      + `  ctx.console.page({ id: 'live-page', title: '实时测试页', entry: 'index.html' })\n`
+      + `  ctx.http.route('GET', '/info', async () => ({ tag: ${JSON.stringify(options.tag)} }))\n`
+      + `  ctx.tools.register({\n`
+      + `    name: 'ping',\n`
+      + `    description: 'ping',\n`
+      + `    parameters: { type: 'object', properties: {} },\n`
+      + `    async handler() { return ${JSON.stringify(`pong-${options.tag}`)} },\n`
+      + `  })\n`
+      + `}\n`,
+    'utf8',
+  )
+}
+
+test('workspace plugin auto-discovery, live enable, state-preserving local update, and uninstall end-to-end', async (t) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'brain-discovery-e2e-'))
+  const brainHome = path.join(root, 'brain-home')
+  const workspaceDir = path.join(root, 'workspace-plugins')
+  const sentinelFile = path.join(root, 'executed-sentinel.txt')
+  await mkdir(path.join(brainHome, 'state'), { recursive: true })
+  await mkdir(workspaceDir, { recursive: true })
+
+  const logs: LogEntry[] = []
+  const kernel = await createKernel({
+    env: { ...process.env, BRAIN_HOME: brainHome },
+    userHome: root,
+    port: 0,
+    crossChannel: 'off',
+    workspacePluginsDir: workspaceDir,
+    log: capturingLogger(logs),
+    token: TOKEN,
+  })
+
+  t.after(async () => {
+    await kernel.close()
+    await removeTree(root)
+  })
+
+  // 1. Empty workspacePluginsDir -> GET /console/plugins returns []
+  const emptyList = await apiJson(kernel, 'GET', '/console/plugins')
+  assert.equal(emptyList.status, 200)
+  assert.deepEqual(emptyList.json.data, { plugins: [], coreBudgets: [] })
+
+  // 2. Drop a new plugin directory while kernel is running -> discovered, disabled by default, code NOT executed
+  const pluginDir = path.join(workspaceDir, 'live-demo')
+  await writeWorkspaceLivePlugin(pluginDir, {
+    version: '1.0.0',
+    tag: 'v1',
+    permissions: ['tools.register'],
+    sentinelFile,
+  })
+
+  const scanRes = await apiJson(kernel, 'POST', '/console/plugins/scan')
+  assert.equal(scanRes.status, 200)
+  const scanPlugins = (scanRes.json.data as {
+    plugins: { id: string; state: string; source?: string; granted: string[]; permissions: string[]; updateAvailable?: unknown }[]
+  }).plugins
+  assert.equal(scanPlugins.length, 1)
+  assert.equal(scanPlugins[0]?.id, 'live-demo')
+  assert.equal(scanPlugins[0]?.state, 'discovered')
+  assert.equal(scanPlugins[0]?.source, 'workspace')
+  assert.deepEqual(scanPlugins[0]?.granted, [])
+  assert.deepEqual(scanPlugins[0]?.permissions, ['tools.register'])
+  assert.equal(scanPlugins[0]?.updateAvailable, undefined)
+
+  // Code must NOT have executed and no tools/routes/pages registered yet
+  await assert.rejects(readFile(sentinelFile, 'utf8'), { code: 'ENOENT' })
+  assert.equal(kernel.gateway.catalog().some((tool) => tool.name === 'live-demo__ping'), false)
+  assert.notEqual((await apiJson(kernel, 'GET', '/plugins/live-demo/info')).status, 200)
+  assert.deepEqual((await apiJson(kernel, 'GET', '/console/pages')).json.data, { items: [] })
+
+  // 3. apply-local enable without confirmPermissions: true -> 403 PERMISSION_DENIED
+  const deniedEnable = await apiJson(kernel, 'POST', '/console/plugins/live-demo/apply-local', { action: 'enable' })
+  assert.equal(deniedEnable.status, 403)
+  assert.equal((deniedEnable.json.error as { code: string }).code, 'PERMISSION_DENIED')
+
+  // 4. apply-local enable with confirmPermissions: true -> live immediately without restarting kernel
+  const enabledRes = await apiJson(kernel, 'POST', '/console/plugins/live-demo/apply-local', {
+    action: 'enable',
+    confirmPermissions: true,
+  })
+  assert.equal(enabledRes.status, 200)
+  assert.equal((enabledRes.json.data as { applied: boolean; state: string }).applied, true)
+  assert.equal((enabledRes.json.data as { state: string }).state, 'enabled')
+
+  assert.equal(await readFile(sentinelFile, 'utf8'), 'v1')
+  assert.equal(kernel.gateway.catalog().some((tool) => tool.name === 'live-demo__ping'), true)
+  const sessionId = encodeSessionId({ agentClass: 'chat', channel: 'qq:private:owner', generation: 0 })
+  kernel.gateway.planWake({
+    sessionId,
+    wakeId: 'wake-live-1',
+    features: { message: { hasMedia: false, hasForward: false }, event: { poke: false }, channel: { kind: 'private' } },
+    mode: 'addition-only',
+    silent: false,
+    participants: [],
+    evidence: [],
+    peerTexts: [],
+  })
+  assert.equal(await kernel.gateway.dispatch({ sessionId, toolName: 'live-demo__ping', args: {} }), 'pong-v1')
+  const routeV1 = await apiJson(kernel, 'GET', '/plugins/live-demo/info')
+  assert.equal(routeV1.status, 200)
+  assert.deepEqual(routeV1.json.data, { tag: 'v1' })
+  assert.deepEqual((await apiJson(kernel, 'GET', '/console/pages')).json.data, {
+    items: [{ pluginId: 'live-demo', id: 'live-page', title: '实时测试页', entry: 'index.html' }],
+  })
+
+  // 5. Exact sha8 parity: right after enable, updateAvailable must be omitted
+  const afterEnableList = await apiJson(kernel, 'GET', '/console/plugins')
+  const afterEnableItem = (afterEnableList.json.data as { plugins: Record<string, unknown>[] }).plugins[0]
+  assert.equal(afterEnableItem?.state, 'enabled')
+  assert.equal(afterEnableItem?.source, 'workspace')
+  assert.equal('updateAvailable' in (afterEnableItem ?? {}), false)
+
+  // 6. Modify plugin code in workspacePluginsDir -> updateAvailable appears, old v1 code keeps running untouched
+  await writeWorkspaceLivePlugin(pluginDir, {
+    version: '1.0.0',
+    tag: 'v2',
+    permissions: ['tools.register'],
+    sentinelFile,
+  })
+  const updateDetectedList = await apiJson(kernel, 'GET', '/console/plugins')
+  const updateDetectedItem = (updateDetectedList.json.data as {
+    plugins: { updateAvailable?: { version: string; sha8: string; newPermissions: string[] } }[]
+  }).plugins[0]
+  assert.ok(updateDetectedItem?.updateAvailable !== undefined)
+  assert.equal(updateDetectedItem.updateAvailable.version, '1.0.0')
+  assert.deepEqual(updateDetectedItem.updateAvailable.newPermissions, [])
+
+  assert.deepEqual((await apiJson(kernel, 'GET', '/plugins/live-demo/info')).json.data, { tag: 'v1' })
+  assert.equal(await kernel.gateway.dispatch({ sessionId, toolName: 'live-demo__ping', args: {} }), 'pong-v1')
+
+  // 7. apply-local update -> live-reloads v2 while remaining enabled
+  const updateV2Res = await apiJson(kernel, 'POST', '/console/plugins/live-demo/apply-local', { action: 'update' })
+  assert.equal(updateV2Res.status, 200)
+  assert.equal((updateV2Res.json.data as { applied: boolean; state: string }).applied, true)
+  assert.equal((updateV2Res.json.data as { state: string }).state, 'enabled')
+  assert.deepEqual((await apiJson(kernel, 'GET', '/plugins/live-demo/info')).json.data, { tag: 'v2' })
+  assert.equal(await kernel.gateway.dispatch({ sessionId, toolName: 'live-demo__ping', args: {} }), 'pong-v2')
+
+  // 8. Disable plugin, modify code with new permission -> apply-local update preserves disabled state
+  assert.equal((await apiJson(kernel, 'POST', '/console/plugins/live-demo/disable')).status, 200)
+  await writeWorkspaceLivePlugin(pluginDir, {
+    version: '1.1.0',
+    tag: 'v3',
+    permissions: ['tools.register', 'memory.search'],
+    sentinelFile,
+  })
+  const disabledUpdateList = await apiJson(kernel, 'GET', '/console/plugins')
+  const disabledUpdateItem = (disabledUpdateList.json.data as {
+    plugins: { state: string; updateAvailable?: { version: string; newPermissions: string[] } }[]
+  }).plugins[0]
+  assert.equal(disabledUpdateItem?.state, 'disabled')
+  assert.equal(disabledUpdateItem?.updateAvailable?.version, '1.1.0')
+  assert.deepEqual(disabledUpdateItem?.updateAvailable?.newPermissions, ['memory.search'])
+
+  const pendingUpdate = await apiJson(kernel, 'POST', '/console/plugins/live-demo/apply-local', { action: 'update' })
+  assert.equal(pendingUpdate.status, 200)
+  assert.equal((pendingUpdate.json.data as { applied: boolean; state: string; newPermissions: string[] }).applied, false)
+  assert.equal((pendingUpdate.json.data as { state: string }).state, 'disabled')
+  assert.deepEqual((pendingUpdate.json.data as { newPermissions: string[] }).newPermissions, ['memory.search'])
+
+  const confirmedDisabledUpdate = await apiJson(kernel, 'POST', '/console/plugins/live-demo/apply-local', {
+    action: 'update',
+    confirmPermissions: true,
+  })
+  assert.equal(confirmedDisabledUpdate.status, 200)
+  assert.equal((confirmedDisabledUpdate.json.data as { applied: boolean; state: string }).applied, true)
+  assert.equal((confirmedDisabledUpdate.json.data as { state: string }).state, 'disabled')
+  assert.notEqual((await apiJson(kernel, 'GET', '/plugins/live-demo/info')).status, 200)
+
+  const afterDisabledUpdateList = await apiJson(kernel, 'GET', '/console/plugins')
+  const afterDisabledItem = (afterDisabledUpdateList.json.data as {
+    plugins: { version: string; state: string; granted: string[]; updateAvailable?: unknown }[]
+  }).plugins[0]
+  assert.equal(afterDisabledItem?.version, '1.1.0')
+  assert.equal(afterDisabledItem?.state, 'disabled')
+  assert.deepEqual(afterDisabledItem?.granted, ['tools.register', 'memory.search'])
+  assert.equal(afterDisabledItem?.updateAvailable, undefined)
+
+  // Enabling afterwards runs v3
+  assert.equal((await apiJson(kernel, 'POST', '/console/plugins/live-demo/enable')).status, 200)
+  assert.deepEqual((await apiJson(kernel, 'GET', '/plugins/live-demo/info')).json.data, { tag: 'v3' })
+
+  // 9. Uninstall -> plugin returns to discovered state
+  assert.equal((await apiJson(kernel, 'POST', '/console/plugins/live-demo/uninstall', { keepData: false })).status, 200)
+  const afterUninstall = await apiJson(kernel, 'GET', '/console/plugins')
+  const rediscovered = (afterUninstall.json.data as {
+    plugins: { id: string; state: string; source?: string; granted: string[] }[]
+  }).plugins
+  assert.equal(rediscovered.length, 1)
+  assert.equal(rediscovered[0]?.id, 'live-demo')
+  assert.equal(rediscovered[0]?.state, 'discovered')
+  assert.equal(rediscovered[0]?.source, 'workspace')
+  assert.deepEqual(rediscovered[0]?.granted, [])
 })

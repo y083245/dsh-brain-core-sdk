@@ -45,13 +45,16 @@ export function parseSegments(segments: readonly Segment[]): ParsedSegments {
       const hasEmojiId = emojiId !== '' && emojiId !== '0'
       const url = typeof data.url === 'string' && data.url.length <= 4096 ? data.url : undefined
       const file = typeof data.file === 'string' && data.file.length <= 256 ? data.file : undefined
+      const isSticker = data.sub_type === 1 || data.subType === 1 || data.sub_type === '1' || data.subType === '1'
+      const summary = cleanText(data.summary).trim().slice(0, 96)
       if (media.length < MAX_LOCATIONS) {
         media.push({
           type, ...(url === undefined ? {} : { url }), ...(file === undefined ? {} : { file }),
           isMarketSticker: type === 'mface' || hasEmojiId,
+          ...(isSticker ? { isSticker: true } : {}),
+          ...(summary ? { summary } : {}),
           ...(hasEmojiId && /^[A-Za-z0-9_+=/-]{1,128}$/.test(emojiId) ? { emojiId } : {}),
         })
-        const summary = type === 'mface' ? cleanText(data.summary).slice(0, 96) : ''
         text.push(`[图片#${media.length}]${summary ? ` ${summary}` : ''}`)
       } else {
         text.push('[图片]')
@@ -73,7 +76,10 @@ export function parseSegments(segments: readonly Segment[]): ParsedSegments {
         text.push('[引用]')
       }
     } else if (type === 'at') text.push(`[@${cleanText(data.qq)}]`)
-    else if (type === 'record') {
+    else if (type === 'face') {
+      const faceId = cleanText(data.id).trim()
+      text.push(/^\d{1,10}$/.test(faceId) ? `[表情#${faceId}]` : '[表情]')
+    } else if (type === 'record') {
       const duration = Number(cleanText(data.duration))
       text.push(duration > 0 && Number.isFinite(duration) ? `[语音 ${Math.round(duration)}s]` : '[语音]')
     }

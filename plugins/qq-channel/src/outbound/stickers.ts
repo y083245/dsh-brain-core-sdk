@@ -1,8 +1,11 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-import { BrainError, type PluginMemory, type PluginStorage, type ToolCallContext } from '@brain-core/sdk'
+import { createHash } from 'node:crypto'
+import { BrainError, hostAllowed, type PluginMemory, type PluginStorage, type ToolCallContext } from '@brain-core/sdk'
 import { SendRateLimit } from './rate-limit.ts'
 import { cleanText } from '../inbound/segments.ts'
+
+const STICKER_URL_HOSTS = ['*.qpic.cn', '*.qq.com', '*.qq.com.cn', '*.gtimg.cn', '*.qlogo.cn'] as const
 
 export interface Sticker { readonly id: string; readonly url?: string }
 export interface StickerDependencies {
@@ -17,6 +20,18 @@ export interface StickerDependencies {
 }
 function clean(value: string): string { return cleanText(value).replace(/\n/g, '').trim().slice(0, 500).trim() }
 function validId(id: string): boolean { return /^[A-Za-z0-9_-]{1,128}$/.test(id) }
+function stickerCdnUrl(value: string): string | undefined {
+  if (value.length === 0 || value.length > 4096) return undefined
+  try {
+    const url = new URL(value)
+    if (!['https:', 'http:'].includes(url.protocol) || url.username !== '' || url.password !== '' || url.port !== '') return undefined
+    if (!STICKER_URL_HOSTS.some((pattern) => hostAllowed(pattern, url.hostname.toLowerCase()))) return undefined
+    url.hash = ''
+    return url.href
+  } catch {
+    return undefined
+  }
+}
 function containsSticker(value: unknown, id: string): boolean {
   if (!Array.isArray(value)) return false
   return value.some((item) => {
@@ -38,12 +53,27 @@ export class StickerLibrary {
       const raw = await this.deps.action('fetch_custom_face')
       const list = Array.isArray(raw) ? raw : (raw as { faces?: unknown })?.faces
       if (!Array.isArray(list)) throw new Error('Unsupported response')
-      this.cached = list.flatMap((entry): Sticker[] => {
-        if (!entry || typeof entry !== 'object') return []
-        const item = entry as Record<string, unknown>, id = String(item.id ?? item.emoji_id ?? '')
-        if (!validId(id)) return []
-        return [{ id, ...(typeof item.url === 'string' ? { url: item.url } : {}) }]
-      }).slice(0, 1000)
+      const seen = new Set<string>()
+      const entries: Sticker[] = []
+      for (const entry of list) {
+        let sticker: Sticker | undefined
+        if (typeof entry === 'string') {
+          const normalizedUrl = stickerCdnUrl(entry)
+          if (normalizedUrl !== undefined) {
+            const id = `cf_${createHash('sha256').update(normalizedUrl).digest('hex').slice(0, 24)}`
+            if (validId(id)) sticker = { id, url: normalizedUrl }
+          }
+        } else if (entry && typeof entry === 'object') {
+          const item = entry as Record<string, unknown>
+          const id = String(item.id ?? item.emoji_id ?? '')
+          if (validId(id)) sticker = { id, ...(typeof item.url === 'string' ? { url: item.url } : {}) }
+        }
+        if (!sticker || seen.has(sticker.id)) continue
+        seen.add(sticker.id)
+        entries.push(sticker)
+        if (entries.length >= 1000) break
+      }
+      this.cached = entries
       this.refreshed = now
       await this.deps.storage.write('stickers-cache.json', JSON.stringify(this.cached.map(({ id }) => ({ id }))))
     } catch {

@@ -34,7 +34,7 @@ import type { Logger } from './log/index.ts'
 import {
   openMemory, createMemoryApiServer,
   type ChannelCoreBudget, type ConsoleAgentProcessStatus, type ConsoleIsolationDoctorStatus, type ConsolePluginItem,
-  type ConsoleSessionSurfaceInfo, type InteropStatus,
+  type ConsolePluginUpdateInfo, type ConsoleSessionSurfaceInfo, type InteropStatus, type PluginLifecycleState,
 } from './memory-api/index.ts'
 import type { Memory } from './memory-api/index.ts'
 import { createMemoryProviderRegistry } from './memory-provider/index.ts'
@@ -43,7 +43,9 @@ import {
 } from './model-accounting/index.ts'
 import { createExternalApply, attachMcp } from './plugin-external/index.ts'
 import type { ExternalDeps } from './plugin-external/index.ts'
-import { createPluginLifecycle, loadNodeEntry } from './plugin-lifecycle/index.ts'
+import {
+  createPluginLifecycle, discoverWorkspacePlugins, loadNodeEntry, resolveWorkspacePluginsDir,
+} from './plugin-lifecycle/index.ts'
 import type { PluginLifecycle } from './plugin-lifecycle/index.ts'
 import { createPluginRuntime, createPluginStorage } from './plugin-runtime/index.ts'
 import { createProactiveOwnLife } from './proactive-life.ts'
@@ -71,6 +73,7 @@ export interface KernelOptions {
   readonly crossChannel: CrossChannelMode
   readonly crossChannelOverride?: boolean
   readonly ownerChannels?: readonly string[]
+  readonly workspacePluginsDir?: string | null
   readonly clock?: Clock
   readonly log: Logger
   readonly token: string
@@ -662,6 +665,38 @@ export async function createKernel(options: KernelOptions): Promise<Kernel> {
       runner.invalidate('activity')
     })
 
+    const workspacePluginsDir = resolveWorkspacePluginsDir({
+      workspacePluginsDir: options.workspacePluginsDir,
+      env: options.env,
+      sdkDir: sdkDirectory(),
+    })
+
+    function computeCoreWarnings(manifest: BrainManifest): readonly string[] {
+      const warnings: string[] = []
+      // coreBudget looks at `<source>:<kind>`; the manifest names full channels with an id in the last part.
+      const kindsOf = (patterns: readonly string[]): readonly string[] =>
+        patterns.map((pattern) => pattern.split(':').slice(0, 2).join(':'))
+      const defaultKinds = kindsOf(manifest.source?.channels ?? [])
+      const kinds = new Set(defaultKinds)
+      // A candidate is not registered yet, so its own core tools are only visible in the manifest.
+      const declared = (manifest.tools ?? []).filter((tool) => tool.load === 'core')
+      for (const tool of declared) for (const kind of kindsOf(tool.channels ?? defaultKinds)) kinds.add(kind)
+      for (const kind of kinds) {
+        const budget = gateway.coreBudget(kind)
+        const own = declared.filter((tool) => kindsOf(tool.channels ?? defaultKinds).includes(kind))
+        const ownTokens = own.reduce(
+          (sum, tool) => sum + Math.ceil(Buffer.byteLength(`${tool.name}${tool.summary}${JSON.stringify(tool.keywords ?? [])}`, 'utf8') / 3),
+          0,
+        )
+        const count = budget.count + own.length
+        const tokens = budget.tokens + ownTokens
+        if (count > 8 || tokens > 2_000) {
+          warnings.push(`通道 ${kind} 的 core 工具过多：${count} 个、约 ${tokens} token（上限 8 个、2 000 token）`)
+        }
+      }
+      return warnings
+    }
+
     const lifecycle = createPluginLifecycle({
       pluginsDir: paths.plugins,
       sdkDir: sdkDirectory(),
@@ -674,31 +709,7 @@ export async function createKernel(options: KernelOptions): Promise<Kernel> {
         error: (event) => log.error(event, { plugin: id }),
       }),
       run: runCommand,
-      coreWarnings: (manifest) => {
-        const warnings: string[] = []
-        // coreBudget looks at `<source>:<kind>`; the manifest names full channels with an id in the last part.
-        const kindsOf = (patterns: readonly string[]): readonly string[] =>
-          patterns.map((pattern) => pattern.split(':').slice(0, 2).join(':'))
-        const defaultKinds = kindsOf(manifest.source?.channels ?? [])
-        const kinds = new Set(defaultKinds)
-        // A candidate is not registered yet, so its own core tools are only visible in the manifest.
-        const declared = (manifest.tools ?? []).filter((tool) => tool.load === 'core')
-        for (const tool of declared) for (const kind of kindsOf(tool.channels ?? defaultKinds)) kinds.add(kind)
-        for (const kind of kinds) {
-          const budget = gateway.coreBudget(kind)
-          const own = declared.filter((tool) => kindsOf(tool.channels ?? defaultKinds).includes(kind))
-          const ownTokens = own.reduce(
-            (sum, tool) => sum + Math.ceil(Buffer.byteLength(`${tool.name}${tool.summary}${JSON.stringify(tool.keywords ?? [])}`, 'utf8') / 3),
-            0,
-          )
-          const count = budget.count + own.length
-          const tokens = budget.tokens + ownTokens
-          if (count > 8 || tokens > 2_000) {
-            warnings.push(`通道 ${kind} 的 core 工具过多：${count} 个、约 ${tokens} token（上限 8 个、2 000 token）`)
-          }
-        }
-        return warnings
-      },
+      coreWarnings: computeCoreWarnings,
       clock,
       log,
     })
@@ -806,6 +817,87 @@ export async function createKernel(options: KernelOptions): Promise<Kernel> {
       return status
     }
 
+    async function listConsolePlugins() {
+      const [entries, registryPlugins, discovered] = await Promise.all([
+        lifecycle.list(),
+        readRegistryPlugins(paths.plugins),
+        workspacePluginsDir !== undefined ? discoverWorkspacePlugins(workspacePluginsDir, { log }) : Promise.resolve([]),
+      ])
+      const discoveredById = new Map(discovered.map((item) => [item.id, item]))
+      const installedIds = new Set(entries.map((entry) => entry.id))
+      const plugins: ConsolePluginItem[] = []
+      const patterns = new Set<string>()
+      for (const entry of entries) {
+        const manifest = await readPluginManifest(paths.plugins, entry.id, registryPlugins)
+        const local = discoveredById.get(entry.id)
+        let updateAvailable: ConsolePluginUpdateInfo | undefined
+        if (local !== undefined) {
+          const currentRef = registryPlugins[entry.id]?.current
+          if (currentRef?.version !== local.version || currentRef?.sha8 !== local.sha8) {
+            updateAvailable = {
+              version: local.version,
+              sha8: local.sha8,
+              permissions: [...local.manifest.permissions],
+              newPermissions: local.manifest.permissions.filter((permission) => !entry.granted.includes(permission)),
+              warnings: [...computeCoreWarnings(local.manifest)],
+            }
+          }
+        }
+        plugins.push({
+          id: entry.id,
+          version: entry.version,
+          kinds: manifest !== null ? [...manifest.kinds] : [],
+          runtime: manifest !== null ? manifest.runtime : 'node',
+          state: entry.state,
+          permissions: [...entry.permissions],
+          granted: [...entry.granted],
+          checkPassed: manifest !== null,
+          tools: manifest !== null ? [...(manifest.tools ?? [])] : [],
+          ...(local === undefined ? {} : { source: 'workspace' as const }),
+          ...(updateAvailable === undefined ? {} : { updateAvailable }),
+        })
+        if (entry.state === 'enabled' && manifest !== null) {
+          const defaultKinds = (manifest.source?.channels ?? [])
+            .map((pattern) => pattern.split(':').slice(0, 2).join(':'))
+            .filter((pattern) => pattern !== '')
+          for (const kind of defaultKinds) patterns.add(kind)
+          for (const tool of manifest.tools ?? []) {
+            if (tool.load !== 'core') continue
+            if (tool.channels !== undefined) {
+              for (const channel of tool.channels) {
+                const prefix = channel.split(':').slice(0, 2).join(':')
+                if (prefix !== '') patterns.add(prefix)
+              }
+            } else if (defaultKinds.length === 0) {
+              patterns.add('*:*')
+            }
+          }
+        }
+      }
+      for (const local of discovered) {
+        if (installedIds.has(local.id)) continue
+        const warnings = [...computeCoreWarnings(local.manifest)]
+        plugins.push({
+          id: local.id,
+          version: local.version,
+          kinds: [...local.manifest.kinds],
+          runtime: local.manifest.runtime,
+          state: 'discovered',
+          permissions: [...local.manifest.permissions],
+          granted: [],
+          checkPassed: true,
+          tools: [...(local.manifest.tools ?? [])],
+          source: 'workspace',
+          ...(warnings.length > 0 ? { warnings } : {}),
+        })
+      }
+      plugins.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+      const coreBudgets: ChannelCoreBudget[] = [...patterns]
+        .sort()
+        .map((pattern) => ({ pattern, ...gateway.coreBudget(pattern) }))
+      return { plugins, coreBudgets }
+    }
+
     const server = createMemoryApiServer(memory, {
       token: options.token,
       port: options.port,
@@ -878,47 +970,8 @@ export async function createKernel(options: KernelOptions): Promise<Kernel> {
           }),
         },
         plugins: {
-          async list() {
-            const entries = await lifecycle.list()
-            const registryPlugins = await readRegistryPlugins(paths.plugins)
-            const plugins: ConsolePluginItem[] = []
-            const patterns = new Set<string>()
-            for (const entry of entries) {
-              const manifest = await readPluginManifest(paths.plugins, entry.id, registryPlugins)
-              plugins.push({
-                id: entry.id,
-                version: entry.version,
-                kinds: manifest !== null ? [...manifest.kinds] : [],
-                runtime: manifest !== null ? manifest.runtime : 'node',
-                state: entry.state,
-                permissions: [...entry.permissions],
-                granted: [...entry.granted],
-                checkPassed: manifest !== null,
-                tools: manifest !== null ? [...(manifest.tools ?? [])] : [],
-              })
-              if (entry.state === 'enabled' && manifest !== null) {
-                const defaultKinds = (manifest.source?.channels ?? [])
-                  .map((pattern) => pattern.split(':').slice(0, 2).join(':'))
-                  .filter((pattern) => pattern !== '')
-                for (const kind of defaultKinds) patterns.add(kind)
-                for (const tool of manifest.tools ?? []) {
-                  if (tool.load !== 'core') continue
-                  if (tool.channels !== undefined) {
-                    for (const channel of tool.channels) {
-                      const prefix = channel.split(':').slice(0, 2).join(':')
-                      if (prefix !== '') patterns.add(prefix)
-                    }
-                  } else if (defaultKinds.length === 0) {
-                    patterns.add('*:*')
-                  }
-                }
-              }
-            }
-            const coreBudgets: ChannelCoreBudget[] = [...patterns]
-              .sort()
-              .map((pattern) => ({ pattern, ...gateway.coreBudget(pattern) }))
-            return { plugins, coreBudgets }
-          },
+          list: listConsolePlugins,
+          scan: listConsolePlugins,
           install: (spec) => lifecycle.install(spec),
           confirm: (id) => lifecycle.confirm(id),
           enable: (id) => lifecycle.enable(id),
@@ -926,6 +979,58 @@ export async function createKernel(options: KernelOptions): Promise<Kernel> {
           async upgrade(id, spec) {
             const preview = await lifecycle.upgrade(id, spec)
             return { ...preview, applied: preview.newPermissions.length === 0 }
+          },
+          async applyLocal(id, input) {
+            const discovered = workspacePluginsDir !== undefined
+              ? await discoverWorkspacePlugins(workspacePluginsDir, { log })
+              : []
+            const local = discovered.find((item) => item.id === id)
+            if (local === undefined) {
+              throw new BrainError('NOT_FOUND', `workspace plugin ${id} not found`)
+            }
+            const existing = (await lifecycle.list()).find((entry) => entry.id === id)
+            if (input.action === 'enable') {
+              if (input.confirmPermissions !== true) {
+                throw new BrainError('PERMISSION_DENIED', 'confirmPermissions must be true to enable a discovered plugin')
+              }
+              if (existing === undefined) {
+                await lifecycle.install(local.dir)
+                await lifecycle.confirm(id)
+                await lifecycle.enable(id)
+              } else if (existing.state === 'pending') {
+                await lifecycle.confirm(id)
+                await lifecycle.enable(id)
+              } else if (existing.state === 'disabled' || existing.state === 'failed') {
+                await lifecycle.enable(id)
+              }
+              return {
+                id,
+                version: local.version,
+                permissions: [...local.manifest.permissions],
+                newPermissions: [],
+                warnings: [...computeCoreWarnings(local.manifest)],
+                applied: true,
+                state: 'enabled',
+              }
+            }
+            if (existing === undefined) {
+              throw new BrainError('NOT_FOUND', `plugin ${id} is not installed`)
+            }
+            const preview = await lifecycle.upgrade(id, local.dir)
+            if (preview.newPermissions.length > 0) {
+              if (input.confirmPermissions === true) {
+                await lifecycle.confirm(id)
+                const updated = (await lifecycle.list()).find((entry) => entry.id === id)
+                const state: PluginLifecycleState = updated?.state ?? existing.state
+                return { ...preview, applied: true, state }
+              }
+              const current = (await lifecycle.list()).find((entry) => entry.id === id)
+              const state: PluginLifecycleState = current?.state ?? existing.state
+              return { ...preview, applied: false, state }
+            }
+            const updated = (await lifecycle.list()).find((entry) => entry.id === id)
+            const state: PluginLifecycleState = updated?.state ?? existing.state
+            return { ...preview, applied: true, state }
           },
           uninstall: (id, uninstallOptions) => lifecycle.uninstall(id, uninstallOptions),
           check: (dir) => checkPlugin(dir),

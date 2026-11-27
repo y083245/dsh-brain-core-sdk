@@ -26,9 +26,11 @@ const KIND_LABELS: Readonly<Record<PluginKind, string>> = {
   channel: '通道', activity: '活动', capability: '能力', 'memory-provider': '记忆提供方',
 }
 
+type LocalAction = 'enable' | 'update'
+
 type Dialog =
   | { readonly kind: 'source'; readonly mode: SourceMode; readonly plugin?: ConsolePluginItem }
-  | { readonly kind: 'permission'; readonly preview: ConsoleInstallPreview }
+  | { readonly kind: 'permission'; readonly preview: ConsoleInstallPreview; readonly localAction?: LocalAction }
   | { readonly kind: 'manifest' | 'uninstall'; readonly plugin: ConsolePluginItem }
 
 interface SavedPreview {
@@ -71,6 +73,7 @@ function PluginCard({ plugin, selected, carving, savedPreview, register, onOpen,
     [rotX, rotY],
     ([x, y]) => `linear-gradient(${125 + Number(y) * 8}deg, transparent ${40 + Number(x) * 2}%, var(--hair-strong), transparent ${60 + Number(x) * 2}%)`,
   )
+  const discovered = plugin.state === 'discovered'
   const mountedEnabled = plugin.state === 'enabled'
   const enabled = manualEnabled ?? mountedEnabled
   const pending = plugin.state === 'pending'
@@ -162,6 +165,42 @@ function PluginCard({ plugin, selected, carving, savedPreview, register, onOpen,
     onOpen(dialog)
   }
 
+  async function handleLocalUpdate(): Promise<void> {
+    const update = plugin.updateAvailable
+    if (!update || busyRef.current) return
+    if (update.newPermissions.length > 0) {
+      open({
+        kind: 'permission',
+        preview: {
+          id: plugin.id,
+          version: update.version,
+          permissions: update.permissions,
+          newPermissions: update.newPermissions,
+          warnings: update.warnings,
+        },
+        localAction: 'update',
+      })
+      return
+    }
+    busyRef.current = true
+    setBusy(true)
+    setToggleError(null)
+    try {
+      const res = await pluginsApi.applyLocal(plugin.id, { action: 'update' })
+      await refresh()
+      toast.success(`已更新 ${plugin.id}（${res.state === 'enabled' ? '已实时重载' : '保持停用状态'}）`)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '应用本地更新失败'
+      setErrorTick((tick) => tick + 1)
+      setToggleError(message)
+      toast.error(message, { code: err instanceof ApiError ? err.code : undefined, requestId: err instanceof ApiError ? err.requestId : undefined })
+      await refresh()
+    } finally {
+      busyRef.current = false
+      setBusy(false)
+    }
+  }
+
   const variant = pending ? 'pending' : failed && !enabled ? 'failed' : 'hollow'
   const stamp = getPreset('stamp', level)
   return (
@@ -172,7 +211,7 @@ function PluginCard({ plugin, selected, carving, savedPreview, register, onOpen,
       <motion.div key={errorTick} initial={errorTick > 0 && level === 'full' ? { x: 0 } : false}
         animate={errorTick > 0 && level === 'full' ? { x: [0, -3, 3, -2, 2, 0] } : { x: 0 }} transition={{ duration: DUR.quick }}>
         <Plate ref={setArticle} as="article" interactive className="seals-card" aria-label={plugin.id} data-enabled={enabled || undefined}
-          data-disabled={!enabled && !pending || undefined} data-selected={selected || undefined} data-hovered={hovered || undefined}
+          data-disabled={(!enabled && !pending) || undefined} data-selected={selected || undefined} data-hovered={hovered || undefined}
           onPointerEnter={() => { if (level === 'full') setHovered(true) }}
           onPointerMove={tilt} onPointerLeave={() => { setHovered(false); rotXRaw.set(0); rotYRaw.set(0) }}>
           <div ref={mark} className="seals-card-mark" aria-hidden="true">
@@ -203,21 +242,57 @@ function PluginCard({ plugin, selected, carving, savedPreview, register, onOpen,
           <div className="seals-card-details">
             <h2>{plugin.id}</h2>
             <div className="seals-muted"><InkNumber value={`v${plugin.version}`} />{plugin.kinds.length ? ` · ${plugin.kinds.map((kind) => KIND_LABELS[kind]).join(' / ')}` : ''}</div>
-            <Badge tone={pending ? 'tenghuang' : enabled ? 'shilv' : failed ? 'yanzhi' : 'neutral'}>
-              {pending ? '等你确认权限' : enabled ? '已启用' : failed ? '启用失败' : '已停用'}
-            </Badge>
+            <div className="seals-badges">
+              <Badge tone={pending ? 'tenghuang' : enabled ? 'shilv' : failed ? 'yanzhi' : 'neutral'}>
+                {discovered ? '本地发现 · 未启用' : pending ? '等你确认权限' : enabled ? '已启用' : failed ? '启用失败' : '已停用'}
+              </Badge>
+              {plugin.updateAvailable ? (
+                <Badge tone="tenghuang">
+                  {plugin.updateAvailable.version !== plugin.version ? `有本地更新 v${plugin.updateAvailable.version}` : '本地代码已更新'}
+                </Badge>
+              ) : null}
+            </div>
             <p className="seals-muted">{plugin.tools.length} 个工具 · {plugin.permissions.length} 项权限</p>
             {toggleError ? <p role="alert" style={{ color: 'var(--yanzhi)' }}>{toggleError}</p> : null}
             <div className="seals-card-controls">
-              {pending || savedPreview?.upgrading ? <BrushButton variant="secondary" size="sm" onClick={() => open({ kind: 'permission', preview: savedPreview?.preview ?? revealPermission(plugin) })}>查看契约</BrushButton> :
-                <InkSwitch checked={enabled} disabled={busy} ariaLabel={`启用 ${plugin.id}`} onChange={(checked) => { void toggle(checked) }} />}
+              <div className="seals-card-control-group">
+                {discovered ? (
+                  <InkSwitch
+                    checked={false}
+                    disabled={busy}
+                    ariaLabel={`启用 ${plugin.id}`}
+                    onChange={(checked) => {
+                      if (checked) {
+                        open({
+                          kind: 'permission',
+                          preview: {
+                            id: plugin.id,
+                            version: plugin.version,
+                            permissions: plugin.permissions,
+                            newPermissions: plugin.permissions,
+                            warnings: plugin.warnings ?? [],
+                          },
+                          localAction: 'enable',
+                        })
+                      }
+                    }}
+                  />
+                ) : pending || savedPreview?.upgrading ? (
+                  <BrushButton variant="secondary" size="sm" onClick={() => open({ kind: 'permission', preview: savedPreview?.preview ?? revealPermission(plugin) })}>查看契约</BrushButton>
+                ) : (
+                  <InkSwitch checked={enabled} disabled={busy} ariaLabel={`启用 ${plugin.id}`} onChange={(checked) => { void toggle(checked) }} />
+                )}
+                {plugin.updateAvailable ? (
+                  <BrushButton variant="secondary" size="sm" disabled={busy} onClick={() => { void handleLocalUpdate() }}>应用更新</BrushButton>
+                ) : null}
+              </div>
               <div ref={menu} style={{ position: 'relative' }}>
                 <BrushButton variant="ghost" size="sm" aria-expanded={menuOpen} aria-label={`${plugin.id} 操作`} onClick={() => setMenuOpen(!menuOpen)}><MoreHorizontal size={18} aria-hidden="true" /></BrushButton>
                 {menuOpen ? <Plate className="seals-menu" level="raised" role="group" aria-label="插件操作">
-                  <BrushButton variant="ghost" size="sm" onClick={() => open({ kind: 'source', mode: 'upgrade', plugin })} disabled={busy || pending}>升级…</BrushButton>
-                  <BrushButton variant="ghost" size="sm" onClick={() => open({ kind: 'source', mode: 'check', plugin })}>规范检查</BrushButton>
+                  {!discovered ? <BrushButton variant="ghost" size="sm" onClick={() => open({ kind: 'source', mode: 'upgrade', plugin })} disabled={busy || pending}>升级…</BrushButton> : null}
+                  {!discovered ? <BrushButton variant="ghost" size="sm" onClick={() => open({ kind: 'source', mode: 'check', plugin })}>规范检查</BrushButton> : null}
                   <BrushButton variant="ghost" size="sm" onClick={() => open({ kind: 'manifest', plugin })}>查看清单</BrushButton>
-                  <BrushButton variant="danger" size="sm" onClick={() => open({ kind: 'uninstall', plugin })} disabled={busy}>卸载…</BrushButton>
+                  {!discovered ? <BrushButton variant="danger" size="sm" onClick={() => open({ kind: 'uninstall', plugin })} disabled={busy}>卸载…</BrushButton> : null}
                 </Plate> : null}
               </div>
             </div>
@@ -236,20 +311,24 @@ export function SealsPage() {
   const ink = useInk()
   const cards = useRef(new Map<string, HTMLElement>())
   const revealed = useRef<string | null>(null)
+  const scanningRef = useRef(false)
   const [dialog, setDialog] = useState<Dialog | null>(null)
-  const [lastPermissionPreview, setLastPermissionPreview] = useState<ConsoleInstallPreview | null>(null)
+  const [lastPermissionDialog, setLastPermissionDialog] = useState<Extract<Dialog, { readonly kind: 'permission' }> | null>(null)
   const [lastUninstallPlugin, setLastUninstallPlugin] = useState<ConsolePluginItem | null>(null)
   const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set())
   const [previews, setPreviews] = useState<ReadonlyMap<string, SavedPreview>>(new Map())
   const [carvingId, setCarvingId] = useState<string | null>(null)
+  const [scanning, setScanning] = useState(false)
   const close = useCallback(() => setDialog(null), [])
 
   useEffect(() => {
-    if (dialog?.kind === 'permission') setLastPermissionPreview(dialog.preview)
+    if (dialog?.kind === 'permission') setLastPermissionDialog(dialog)
     if (dialog?.kind === 'uninstall') setLastUninstallPlugin(dialog.plugin)
   }, [dialog])
 
-  const activePermissionPreview = dialog?.kind === 'permission' ? dialog.preview : lastPermissionPreview
+  const activePermissionDialog = dialog?.kind === 'permission' ? dialog : lastPermissionDialog
+  const activePermissionPreview = activePermissionDialog?.preview ?? null
+  const activeLocalAction = activePermissionDialog?.localAction
   const activeUninstallPlugin = dialog?.kind === 'uninstall' ? dialog.plugin : lastUninstallPlugin
   const register = useCallback((id: string, node: HTMLElement | null) => {
     if (node) cards.current.set(id, node)
@@ -299,6 +378,23 @@ export function SealsPage() {
     void refresh()
   }
 
+  async function handleScan(): Promise<void> {
+    if (scanningRef.current) return
+    scanningRef.current = true
+    setScanning(true)
+    try {
+      const res = await pluginsApi.scan()
+      await refresh()
+      toast.success(`已扫描本地插件目录（共 ${res.plugins.length} 个）`)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '扫描本地插件目录失败'
+      toast.error(message, { code: err instanceof ApiError ? err.code : undefined, requestId: err instanceof ApiError ? err.requestId : undefined })
+    } finally {
+      scanningRef.current = false
+      setScanning(false)
+    }
+  }
+
   function removed(id: string): void {
     clearPreview(id)
     const rect = cards.current.get(id)?.getBoundingClientRect()
@@ -314,7 +410,7 @@ export function SealsPage() {
     setHidden((current) => new Set([...current, id]))
     close()
     void refresh().then((updated) => {
-      if (updated && !updated.plugins.some((plugin) => plugin.id === id)) {
+      if (updated && !updated.plugins.some((plugin) => plugin.id === id && plugin.state !== 'discovered')) {
         setHidden((current) => {
           const next = new Set(current)
           next.delete(id)
@@ -327,13 +423,16 @@ export function SealsPage() {
   return (
     <section className="seals-page">
       <PageHeader label="SEALS · PLUGINS" title="印谱" actions={
-        <MagneticButton>
-          <BrushButton variant="primary" onClick={() => setDialog({ kind: 'source', mode: 'install' })}>安装插件</BrushButton>
-        </MagneticButton>
+        <div className="seals-actions">
+          <BrushButton variant="secondary" loading={scanning} onClick={() => { void handleScan() }}>扫描插件</BrushButton>
+          <MagneticButton>
+            <BrushButton variant="primary" onClick={() => setDialog({ kind: 'source', mode: 'install' })}>安装插件</BrushButton>
+          </MagneticButton>
+        </div>
       } />
       {pluginsError instanceof Error ? <ErrorState message={pluginsError.message} code={pluginsError instanceof ApiError ? pluginsError.code : undefined} onRetry={() => { void refresh() }} /> : null}
       {!plugins && !pluginsError ? <InkSkeleton rows={2} height={180} /> : null}
-      {plugins && items.length === 0 ? <EmptyState glyph="无印" description="已安装的插件会列在印谱上。" /> : null}
+      {plugins && items.length === 0 ? <EmptyState glyph="无印" description="plugins/ 目录发现或手动安装的插件会列在印谱上。" /> : null}
       <div className="seals-grid">
         <AnimatePresence>
           {items.map((plugin) => (
@@ -357,8 +456,35 @@ export function SealsPage() {
         open={dialog?.kind === 'permission'}
         preview={activePermissionPreview}
         plugin={activePermissionPreview ? items.find((item) => item.id === activePermissionPreview.id) : undefined}
+        actionLabel={
+          activeLocalAction === 'enable'
+            ? '本地发现 · 授权并实时启用'
+            : activeLocalAction === 'update'
+              ? '本地更新 · 授权新权限并应用'
+              : undefined
+        }
+        onConfirmAction={
+          activeLocalAction && activePermissionPreview
+            ? async () => {
+                await pluginsApi.applyLocal(activePermissionPreview.id, {
+                  action: activeLocalAction,
+                  confirmPermissions: true,
+                })
+              }
+            : undefined
+        }
         onClose={close}
-        onConfirmed={() => { if (activePermissionPreview) finish(activePermissionPreview.id) }}
+        onConfirmed={() => {
+          if (!activePermissionPreview) return
+          const action = activeLocalAction
+          const id = activePermissionPreview.id
+          finish(id)
+          if (action === 'enable') {
+            toast.success(`已启用 ${id}（已实时生效）`)
+          } else if (action === 'update') {
+            toast.success(`已更新 ${id}（保持原启停状态）`)
+          }
+        }}
       />
       {dialog?.kind === 'manifest' ? <ManifestDrawer plugin={dialog.plugin} onClose={close} /> : null}
       <UninstallCovenant

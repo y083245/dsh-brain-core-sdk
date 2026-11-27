@@ -8,6 +8,7 @@ import {
   type ChatMessagesResponse,
   type CheckReport,
   type ConsoleInstallPreview,
+  type ConsoleLocalApplyResult,
   type ConsolePageItem,
   type ConsoleSearchRequest,
   type ConsoleSettingsView,
@@ -664,6 +665,12 @@ export const pluginsApi = {
     return apiRequest<PluginsListResponse>('/api/v1/console/plugins')
   },
 
+  async scan(): Promise<PluginsListResponse> {
+    return apiRequest<PluginsListResponse>('/api/v1/console/plugins/scan', {
+      method: 'POST',
+    })
+  },
+
   async install(spec: string): Promise<ConsoleInstallPreview> {
     return apiRequest<ConsoleInstallPreview>('/api/v1/console/plugins/install', {
       method: 'POST',
@@ -695,6 +702,19 @@ export const pluginsApi = {
       {
         method: 'POST',
         body: { spec },
+      },
+    )
+  },
+
+  async applyLocal(
+    id: string,
+    input: { readonly action: 'enable' | 'update'; readonly confirmPermissions?: boolean },
+  ): Promise<ConsoleLocalApplyResult> {
+    return apiRequest<ConsoleLocalApplyResult>(
+      `/api/v1/console/plugins/${encodeURIComponent(id)}/apply-local`,
+      {
+        method: 'POST',
+        body: input,
       },
     )
   },
