@@ -1,6 +1,6 @@
 # __ID__
 
-由 `create-brain-plugin` 生成的 Brain Core 进程外插件，适用于 npm 预览版 `1.0.1-rc.1`。
+由 `create-brain-plugin` 生成的 Brain Core 进程外插件，适用于 npm 预览版 `1.0.2-rc.1`。
 通过 stdio 上逐行传输的 JSON-RPC 2.0 与内核通信（protocol v0）。
 
 ## 本地运行与检查

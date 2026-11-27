@@ -1,6 +1,6 @@
 # @dsh-brain-core/legacy-cleanup
 
-旧 QQ bridge 接入的迁移清理工具，提供清理计划、修改前备份和恢复能力，当前预览版 `1.0.1-rc.1`。
+旧 QQ bridge 接入的迁移清理工具，提供清理计划、修改前备份和恢复能力，当前预览版 `1.0.2-rc.1`。
 这是可独立使用的维护工具；普通安装 `@dsh-brain-core/kernel` 不需要执行清理。
 
 CLI 为 `brain-legacy-cleanup`，包含 `plan`、`apply`、`restore`。

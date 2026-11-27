@@ -44,7 +44,7 @@ async function packArchive(deps: PrepareDeps, spec: string, tmp: string): Promis
   const archives = (await readdir(tmp)).filter((name) => name.endsWith('.tgz')).sort()
   const archive = archives[0]
   if (archive === undefined) throw new BrainError('UNAVAILABLE', 'npm pack produced no archive')
-  await deps.run('tar', ['-xzf', path.join(tmp, archive), '-C', tmp], { cwd: tmp })
+  await deps.run('tar', ['-xzf', archive.startsWith('-') ? `./${archive}` : archive, '-C', '.'], { cwd: tmp })
 }
 
 async function assertCompatible(manifest: BrainManifest, pkg: Record<string, unknown>): Promise<void> {

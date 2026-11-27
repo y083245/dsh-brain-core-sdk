@@ -2,7 +2,7 @@
 
 为 Brain Core 开发独立插件的 TypeScript 契约与运行时校验库：包含 `BrainContext`、清单与权限校验、工具定义、记忆记录和请求响应类型，并导出配置 Schema。支持 channel、activity、capability、memory-provider 四类插件。
 
-需要 **Node.js ≥ 24.12**。当前 npm 预览版为 `1.0.1-rc.1`，使用 `next` 标签。SDK 用于编写插件；运行和管理插件使用 `@dsh-brain-core/kernel` 提供的 `brain` CLI。
+需要 **Node.js ≥ 24.12**。当前 npm 预览版为 `1.0.2-rc.1`，使用 `next` 标签。SDK 用于编写插件；运行和管理插件使用 `@dsh-brain-core/kernel` 提供的 `brain` CLI。
 
 ## 快速开发并发布插件
 

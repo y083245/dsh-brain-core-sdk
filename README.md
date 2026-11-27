@@ -12,7 +12,7 @@ Brain Core SDK 是一个本地 AI 助手运行时和 TypeScript 插件 SDK。它
 
 支持 macOS、Linux 和 Windows，需要 **Node.js 24.12 或更高版本**。
 
-### 方式 1：通过 npm 安装（推荐，当前预览版 `1.0.1-rc.1`）
+### 方式 1：通过 npm 安装（推荐，当前预览版 `1.0.2-rc.1`）
 
 ```sh
 npm install -g @dsh-brain-core/kernel@next

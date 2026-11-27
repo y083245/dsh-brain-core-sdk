@@ -1,6 +1,6 @@
 # 第三方插件发布与用户安装
 
-当前 npm 预览版为 `1.0.1-rc.1`（`next`）。插件 API 范围写 `^1.0.0`，它与 npm 包的预发布版本号分别管理。先阅读[快速开始](README.md)并准备 Node.js ≥ 24.12 与 `brain` CLI。
+当前 npm 预览版为 `1.0.2-rc.1`（`next`）。插件 API 范围写 `^1.0.0`，它与 npm 包的预发布版本号分别管理。先阅读[快速开始](README.md)并准备 Node.js ≥ 24.12 与 `brain` CLI。
 
 ## 插件发布到哪儿
 
@@ -33,9 +33,9 @@
     "build": "tsc -p tsconfig.build.json",
     "test": "node --test \"test/*.test.ts\""
   },
-  "dependencies": { "@dsh-brain-core/sdk": "^1.0.1-rc.1" },
+  "dependencies": { "@dsh-brain-core/sdk": "^1.0.2-rc.1" },
   "devDependencies": {
-    "@dsh-brain-core/testkit": "^1.0.1-rc.1",
+    "@dsh-brain-core/testkit": "^1.0.2-rc.1",
     "@types/node": "24.19.2",
     "typescript": "6.0.3"
   },

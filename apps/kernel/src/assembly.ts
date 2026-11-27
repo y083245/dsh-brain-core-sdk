@@ -1,4 +1,3 @@
-import { execFile } from 'node:child_process'
 import { randomBytes } from 'node:crypto'
 import { realpathSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
@@ -44,7 +43,7 @@ import {
 import { createExternalApply, attachMcp } from './plugin-external/index.ts'
 import type { ExternalDeps } from './plugin-external/index.ts'
 import {
-  createPluginLifecycle, discoverWorkspacePlugins, loadNodeEntry, resolveWorkspacePluginsDir,
+  createPluginLifecycle, discoverWorkspacePlugins, loadNodeEntry, resolveWorkspacePluginsDir, runCommand,
 } from './plugin-lifecycle/index.ts'
 import type { PluginLifecycle } from './plugin-lifecycle/index.ts'
 import { createPluginRuntime, createPluginStorage } from './plugin-runtime/index.ts'
@@ -148,24 +147,6 @@ function brainPackageDirectory(name: '@dsh-brain-core/sdk' | '@dsh-brain-core/ch
 
 function sdkDirectory(): string {
   return brainPackageDirectory('@dsh-brain-core/sdk')
-}
-
-/** npm is a batch file on Windows and needs cmd.exe; the other tools are real executables. */
-function executableOf(command: string): string {
-  if (process.platform !== 'win32') return command
-  if (command === 'npm' || command === 'npx') return `${command}.cmd`
-  return command
-}
-
-/** Runs one lifecycle tool without a shell, so arguments are never re-parsed. */
-function runCommand(command: string, args: readonly string[], options: { readonly cwd: string }): Promise<void> {
-  return new Promise((resolve, reject) => {
-    execFile(executableOf(command), [...args], { cwd: options.cwd, windowsHide: true, maxBuffer: 16 * 1024 * 1024 }, (error) => {
-      if (error === null) resolve()
-      // The tool's output may contain paths or package metadata; the error keeps only the command name.
-      else reject(new BrainError('INTERNAL', `command failed: ${command}`))
-    })
-  })
 }
 
 function styleOf(settings: { readonly style?: { readonly enabled?: boolean; readonly openers?: readonly string[] } }): {

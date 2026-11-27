@@ -20,6 +20,7 @@ import { PageHeader } from '../../ui/PageHeader.tsx'
 import { Plate } from '../../ui/Plate.tsx'
 import { toast } from '../../ui/SealToast.tsx'
 import { ManifestDrawer, PermissionCovenant, SealSourceDialog, UninstallCovenant, type SourceMode } from './SealDialogs.tsx'
+import { OFFICIAL_PLUGINS } from './officialPlugins.ts'
 import './seals.css'
 
 const KIND_LABELS: Readonly<Record<PluginKind, string>> = {
@@ -29,7 +30,7 @@ const KIND_LABELS: Readonly<Record<PluginKind, string>> = {
 type LocalAction = 'enable' | 'update'
 
 type Dialog =
-  | { readonly kind: 'source'; readonly mode: SourceMode; readonly plugin?: ConsolePluginItem }
+  | { readonly kind: 'source'; readonly mode: SourceMode; readonly plugin?: ConsolePluginItem; readonly initialSource?: string }
   | { readonly kind: 'permission'; readonly preview: ConsoleInstallPreview; readonly localAction?: LocalAction }
   | { readonly kind: 'manifest' | 'uninstall'; readonly plugin: ConsolePluginItem }
 
@@ -432,7 +433,26 @@ export function SealsPage() {
       } />
       {pluginsError instanceof Error ? <ErrorState message={pluginsError.message} code={pluginsError instanceof ApiError ? pluginsError.code : undefined} onRetry={() => { void refresh() }} /> : null}
       {!plugins && !pluginsError ? <InkSkeleton rows={2} height={180} /> : null}
-      {plugins && items.length === 0 ? <EmptyState glyph="无印" description="plugins/ 目录发现或手动安装的插件会列在印谱上。" /> : null}
+      {plugins && items.length === 0 ? <>
+        <EmptyState glyph="无印" style={{ padding: 'var(--sp-5) var(--sp-4)' }} description="通过 npm 安装的内核默认不预装插件，可从下方选择官方插件快捷安装，或点击右上角输入任意 npm 包名 / Git 地址 / 本地路径；从源码运行时，放入 plugins/ 目录后点「扫描插件」即可自动发现。" />
+        <section className="seals-official" aria-label="官方插件推荐">
+          <div className="seals-official-heading">
+            <h2>官方插件</h2>
+            <p className="seals-muted">择一枚印，添一项能力。安装前仍需校验来源并确认权限契约。</p>
+          </div>
+          <div className="seals-official-grid">
+            {OFFICIAL_PLUGINS.map((plugin) => (
+              <Plate as="article" className="seals-official-card" key={plugin.id}>
+                <div className="seals-official-title"><h3>{plugin.title}</h3><Badge>{plugin.kind}</Badge></div>
+                <p className="seals-muted">{plugin.summary}</p>
+                <code>{plugin.spec}</code>
+                <BrushButton variant="secondary" size="sm" aria-label={`安装${plugin.title}`}
+                  onClick={() => setDialog({ kind: 'source', mode: 'install', initialSource: plugin.spec })}>填入并安装</BrushButton>
+              </Plate>
+            ))}
+          </div>
+        </section>
+      </> : null}
       <div className="seals-grid">
         <AnimatePresence>
           {items.map((plugin) => (
@@ -443,7 +463,8 @@ export function SealsPage() {
         </AnimatePresence>
       </div>
       {dialog?.kind === 'source' ? (
-        <SealSourceDialog mode={dialog.mode} plugin={dialog.plugin} onClose={close} onApplied={() => { void refresh() }}
+        <SealSourceDialog mode={dialog.mode} plugin={dialog.plugin} initialSource={dialog.initialSource}
+          installedIds={new Set(items.map((plugin) => plugin.id))} onClose={close} onApplied={() => { void refresh() }}
           onLoadingChange={(loading) => setCarvingId(loading && dialog.mode === 'upgrade' ? dialog.plugin?.id ?? null : null)}
           onPreview={(preview) => {
             const upgrading = dialog.mode === 'upgrade'

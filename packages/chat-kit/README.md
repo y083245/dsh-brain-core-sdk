@@ -1,7 +1,7 @@
 # @dsh-brain-core/chat-kit
 
 Brain Core 通道插件可复用的纯逻辑工具：社交唤醒状态机、消息防抖聚合、已读游标、
-消息快照、拟人停顿与话题去重。当前预览版 `1.0.1-rc.1`。
+消息快照、拟人停顿与话题去重。当前预览版 `1.0.2-rc.1`。
 
 ```bash
 npm install @dsh-brain-core/chat-kit@next

@@ -15,6 +15,7 @@ import { InkInput } from '../../ui/InkInput.tsx'
 import { InkSwitch } from '../../ui/InkSwitch.tsx'
 import { MagneticButton } from '../../ui/MagneticButton.tsx'
 import { ScrollDrawer } from '../../ui/ScrollDrawer.tsx'
+import { availableOfficialPlugins } from './officialPlugins.ts'
 
 export type SourceMode = 'install' | 'upgrade' | 'check'
 const SOURCE_LABELS = { install: '安装插件', upgrade: '升级插件', check: '规范检查' } as const
@@ -36,15 +37,17 @@ export function Carving({ label }: { readonly label: string }) {
   )
 }
 
-export function SealSourceDialog({ mode, plugin, onPreview, onApplied, onClose, onLoadingChange }: {
+export function SealSourceDialog({ mode, plugin, initialSource, installedIds, onPreview, onApplied, onClose, onLoadingChange }: {
   readonly mode: SourceMode
   readonly plugin?: ConsolePluginItem
+  readonly initialSource?: string
+  readonly installedIds?: ReadonlySet<string>
   readonly onPreview: (preview: ConsoleInstallPreview) => void
   readonly onApplied: () => void
   readonly onClose: () => void
   readonly onLoadingChange: (loading: boolean) => void
 }) {
-  const [source, setSource] = useState('')
+  const [source, setSource] = useState(initialSource ?? '')
   const [loading, setLoading] = useState(false)
   const [report, setReport] = useState<CheckReport | null>(null)
   const [applied, setApplied] = useState<ConsoleInstallPreview | null>(null)
@@ -55,6 +58,13 @@ export function SealSourceDialog({ mode, plugin, onPreview, onApplied, onClose, 
     mounted.current = true
     return () => { mounted.current = false }
   }, [])
+  useEffect(() => {
+    setSource(initialSource ?? '')
+    setError('')
+    setReport(null)
+    setApplied(null)
+  }, [initialSource, mode, plugin?.id])
+  const shortcuts = mode === 'install' ? availableOfficialPlugins(installedIds) : []
 
   async function submit(event: FormEvent): Promise<void> {
     event.preventDefault()
@@ -104,7 +114,7 @@ export function SealSourceDialog({ mode, plugin, onPreview, onApplied, onClose, 
       ) : (
         <form className="seals-form" onSubmit={(event) => { void submit(event) }}>
           <InkInput label={mode === 'check' ? '插件目录' : '插件来源'} helperText={mode === 'check' ? '输入包含插件清单的目录路径。' : 'npm 包名、git+… 或本地目录路径。'}
-            value={source} onChange={(event) => { setSource(event.target.value); setReport(null) }} disabled={loading} monospace required />
+            value={source} onChange={(event) => { setSource(event.target.value); setReport(null); setError('') }} disabled={loading} monospace required />
           <div className="seals-actions">
             <MagneticButton disabled={loading || source.trim() === ''}>
               <BrushButton variant="primary" type="submit" loading={loading} disabled={source.trim() === ''}>{mode === 'check' ? '开始检查' : '取回并校验'}</BrushButton>
@@ -114,6 +124,18 @@ export function SealSourceDialog({ mode, plugin, onPreview, onApplied, onClose, 
           {loading ? <Carving label={mode === 'check' ? '正在检查规范' : '正在取回和校验'} /> : null}
           {error ? <p role="alert" style={{ color: 'var(--yanzhi)' }}>{error}</p> : null}
           {report ? <Report report={report} /> : null}
+          {shortcuts.length > 0 ? (
+            <div className="seals-shortcuts" role="group" aria-label="官方插件快捷填入">
+              <p className="seals-muted">官方插件快捷填入</p>
+              <div className="seals-shortcuts-list">
+                {shortcuts.map((item) => (
+                  <BrushButton key={item.id} variant="secondary" size="sm" disabled={loading}
+                    aria-label={`填入${item.title}`} aria-pressed={source === item.spec}
+                    onClick={() => { setSource(item.spec); setError(''); setReport(null) }}>{item.title}</BrushButton>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </form>
       )}
     </ScrollDrawer>

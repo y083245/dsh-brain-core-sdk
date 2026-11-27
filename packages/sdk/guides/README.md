@@ -1,6 +1,6 @@
 # 插件开发者指南
 
-用 `@dsh-brain-core/sdk` 为 Brain Core 开发通道、活动、工具能力与记忆增强插件。运行环境为 Node.js ≥ 24.12；当前 npm 预览版为 `1.0.1-rc.1`，使用 `next` 标签安装。内核提供 `brain` CLI，SDK 提供契约，testkit 提供离线测试环境。
+用 `@dsh-brain-core/sdk` 为 Brain Core 开发通道、活动、工具能力与记忆增强插件。运行环境为 Node.js ≥ 24.12；当前 npm 预览版为 `1.0.2-rc.1`，使用 `next` 标签安装。内核提供 `brain` CLI，SDK 提供契约，testkit 提供离线测试环境。
 
 ## 快速开始
 

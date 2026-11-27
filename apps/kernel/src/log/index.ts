@@ -9,6 +9,8 @@ export interface LogFields {
   readonly channel?: string
   readonly layer?: Layer
   readonly code?: string
+  readonly errorName?: string
+  readonly errorCode?: string
   readonly durationMs?: number
   readonly count?: number
 }
@@ -19,7 +21,7 @@ export interface Logger {
   error(event: string, fields?: LogFields): void
 }
 
-const FIELD_KEYS = ['requestId', 'recordId', 'plugin', 'channel', 'layer', 'code', 'durationMs', 'count'] as const
+const FIELD_KEYS = ['requestId', 'recordId', 'plugin', 'channel', 'layer', 'code', 'durationMs', 'count', 'errorName', 'errorCode'] as const
 const NUMERIC_KEYS = new Set<string>(['durationMs', 'count'])
 
 export function redact(text: string, secrets: Iterable<string>): string {

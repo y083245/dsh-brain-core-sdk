@@ -1,7 +1,7 @@
 # @dsh-brain-core/plugin-memory-vector
 
 Brain Core 记忆检索提供者（ID `memory-vector`，kind `memory-provider`），使用插件存储内的
-`vectors.bvec` 和 `meta.json` 保存量化向量及元数据。当前预览版 `1.0.1-rc.1`。
+`vectors.bvec` 和 `meta.json` 保存量化向量及元数据。当前预览版 `1.0.2-rc.1`。
 启动时分页索引原始记忆并通过内核的 provider 接口参与检索，不自行打开内核数据库。
 
 ```bash

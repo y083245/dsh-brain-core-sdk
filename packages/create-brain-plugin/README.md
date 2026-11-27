@@ -1,6 +1,6 @@
 # create-brain-plugin
 
-Brain Core 插件脚手架，当前 npm 预览版为 `1.0.1-rc.1`（`next`），需要 Node.js ≥ 24.12。
+Brain Core 插件脚手架，当前 npm 预览版为 `1.0.2-rc.1`（`next`），需要 Node.js ≥ 24.12。
 支持 `channel`、`activity`、`capability`、`memory-provider` 四种 kind，以及 Node TypeScript / Python 进程外两种运行时。
 
 ```bash

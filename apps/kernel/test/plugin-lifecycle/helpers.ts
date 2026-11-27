@@ -74,6 +74,8 @@ export interface FakeRunner {
   packSource?: string
   /** Simulates an npm pack that reports success but writes no archive. */
   packNoArchive?: boolean
+  /** Overrides the archive basename, keeping the package/ contents unchanged. */
+  packArchiveName?: string
   /** Runs before the built-in behaviour; throw here to simulate a failing command. */
   before?: (command: string, args: readonly string[], cwd: string) => void | Promise<void>
 }
@@ -95,7 +97,7 @@ export function createRunner(): FakeRunner {
         if (packSource === undefined) throw new Error('this test did not prepare a pack source')
         const parent = path.dirname(packSource)
         const leaf = path.basename(packSource)
-        await execFileAsync('tar', ['-czf', path.join(destination, `${leaf}.tgz`), '-C', parent, leaf], { cwd: destination })
+        await execFileAsync('tar', ['-czf', runner.packArchiveName ?? `${leaf}.tgz`, '-C', parent, leaf.startsWith('-') ? `./${leaf}` : leaf], { cwd: destination })
         return
       }
       if (command === 'tar') {

@@ -23,7 +23,7 @@ Brain Core 的 QQ 通道插件（`brain.id = "qq"`）采用项目的 [PolyForm N
 
 ### 方式 1：npm 安装（推荐）
 
-当前 npm 预览版为 `1.0.1-rc.1`（`next`）；正式版 `1.0.0` 将发布到 `latest`。核对来源后执行：
+当前 npm 预览版为 `1.0.2-rc.1`（`next`）；正式版 `1.0.0` 将发布到 `latest`。核对来源后执行：
 
 ```bash
 brain plugin install @dsh-brain-core/plugin-qq@next --yes

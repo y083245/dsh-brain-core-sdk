@@ -32,6 +32,18 @@
 .seals-form > p, .seals-contract-body p, .seals-contract-body h3 { margin: 0; }
 .seals-actions { display: flex; gap: var(--sp-3); align-items: center; flex-wrap: wrap; }
 .seals-muted { color: var(--text-2); }
+.seals-official, .seals-official-heading { display: grid; gap: var(--sp-3); min-width: 0; }
+.seals-official h2, .seals-official h3, .seals-official p, .seals-shortcuts p { margin: 0; }
+.seals-official h2, .seals-official h3 { font: 600 var(--fs-body)/var(--lh-body) var(--font-ui); }
+.seals-official-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.seals-official-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-3); min-width: 0; padding: var(--sp-4); border: 1px solid var(--hair); }
+.seals-official-title { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); }
+.seals-official-card p { font-size: var(--fs-small); line-height: var(--lh-small); }
+.seals-official-card code { font: var(--fs-small)/var(--lh-small) var(--font-mono); color: var(--text-2); overflow-wrap: anywhere; max-width: 100%; }
+.seals-official-card > button { margin-top: auto; }
+.seals-shortcuts { display: grid; gap: var(--sp-2); border-top: 1px solid var(--hair); padding-top: var(--sp-4); }
+.seals-shortcuts-list { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); }
+.seals-shortcuts-list [aria-pressed='true'] { color: var(--zhusha); }
 .seals-permissions { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--sp-2); }
 .seals-permission { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: baseline; gap: var(--sp-3); padding: var(--sp-2); overflow-wrap: anywhere; }
 .seals-permission[data-lan='true'] { border: 1px solid var(--yanzhi); }
@@ -46,6 +58,7 @@
 .seals-report li { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2); }
 @media (max-width: 1260px) { .seals-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 780px) {
+  .seals-official-grid { grid-template-columns: minmax(0, 1fr); }
   .seals-grid { grid-template-columns: minmax(0, 1fr); }
   .seals-permission { grid-template-columns: minmax(0, 1fr); gap: var(--sp-1); }
 }

@@ -1,7 +1,7 @@
 # @dsh-brain-core/testkit
 
 Brain Core 插件开发测试工具：假内核、假通道、FakeDeepSeek、契约测试、一致性用例及插件静态检查。
-当前预览版 `1.0.1-rc.1`，需要 Node.js ≥ 24.12。
+当前预览版 `1.0.2-rc.1`，需要 Node.js ≥ 24.12。
 
 ```bash
 npm install --save-dev @dsh-brain-core/testkit@next

@@ -1,7 +1,7 @@
 # @dsh-brain-core/plugin-web-reader
 
 定时读取公开网页的活动插件（ID `web-reader`，kind `activity`）。轮询配置的 URL，
-清理网页内容，写入带 L0 证据的 L1 知识记录，并静默唤醒活动会话。当前预览版 `1.0.1-rc.1`。
+清理网页内容，写入带 L0 证据的 L1 知识记录，并静默唤醒活动会话。当前预览版 `1.0.2-rc.1`。
 `feeds` 是页面 URL 列表，不是完整 RSS 订阅解析器。
 
 ```bash

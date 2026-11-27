@@ -1,7 +1,7 @@
 # @dsh-brain-core/console
 
 墨潮 · INKTIDE，Brain Core 的 Web 控制台支持包，提供插件「印谱」、记忆、附属会话、花费账本和设置界面。
-当前预览版 `1.0.1-rc.1`，由 `@dsh-brain-core/kernel` 自动引入并提供服务，无需单独部署此包。
+当前预览版 `1.0.2-rc.1`，由 `@dsh-brain-core/kernel` 自动引入并提供服务，无需单独部署此包。
 
 ```bash
 npm install -g @dsh-brain-core/kernel@next

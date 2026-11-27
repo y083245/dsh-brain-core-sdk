@@ -1073,7 +1073,13 @@ export function createMemoryApiServer(memory: Memory, options: {
           send(res, status, errorEnvelope(requestId, error))
         } else {
           status = 500
-          options.log.error('http.internal', { requestId })
+          const errorName = error instanceof Error ? error.name : undefined
+          const errorCode = typeof error === 'object' && error !== null && 'code' in error ? error.code : undefined
+          options.log.error('http.internal', {
+            requestId,
+            errorName: typeof errorName === 'string' && /^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(errorName) ? errorName : undefined,
+            errorCode: typeof errorCode === 'string' && /^[A-Za-z0-9_]{1,64}$/.test(errorCode) ? errorCode : undefined,
+          })
           send(res, status, {
             ok: false,
             error: { code: 'INTERNAL', message: 'internal error', details: {} },

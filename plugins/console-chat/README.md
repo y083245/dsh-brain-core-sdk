@@ -1,7 +1,7 @@
 # @dsh-brain-core/plugin-console-chat
 
 墨潮控制台聊天通道插件（ID `console-chat`，kind `channel`），提供「与她对话」页面、入站消息、
-身份关联、记忆写入、会话唤醒与 `send_message` 工具。当前预览版 `1.0.1-rc.1`。
+身份关联、记忆写入、会话唤醒与 `send_message` 工具。当前预览版 `1.0.2-rc.1`。
 
 ```bash
 brain plugin install @dsh-brain-core/plugin-console-chat@next --yes

@@ -119,8 +119,20 @@ test('an npm or git address goes through npm pack --ignore-scripts and tar', asy
   assert.ok(pack?.args.includes('--ignore-scripts'))
   assert.ok(pack?.args.includes('--pack-destination'))
   assert.ok(pack?.args.includes('github:someone/plugin'))
-  assert.deepEqual(h.runner.calls.filter((call) => call.command === 'tar').map((call) => call.args[0]), ['-xzf'])
+  const tar = h.runner.calls.find((call) => call.command === 'tar')
+  assert.deepEqual(tar?.args, ['-xzf', 'package.tgz', '-C', '.'])
+  assert.equal(tar?.cwd, pack?.cwd)
+  assert.equal(path.win32.isAbsolute(tar?.args[1] ?? ''), false)
+  assert.equal(path.isAbsolute(tar?.args[1] ?? ''), false)
   assert.equal((await installedDirs(h.pluginsDir)).length, 1)
+})
+
+test('tar prefixes archive basenames beginning with a dash', async (t) => {
+  const h = await setup(t)
+  h.runner.packSource = await makePlugin(path.join(h.root, 'package'))
+  h.runner.packArchiveName = '-package.tgz'
+  await h.lifecycle.install('@fixture/demo')
+  assert.deepEqual(h.runner.calls.find((call) => call.command === 'tar')?.args, ['-xzf', './-package.tgz', '-C', '.'])
 })
 
 test('a pyproject.toml triggers uv sync --no-dev', async (t) => {

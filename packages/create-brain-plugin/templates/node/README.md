@@ -1,6 +1,6 @@
 # __ID__
 
-由 `create-brain-plugin` 生成的 Brain Core Node 插件，适用于 npm 预览版 `1.0.1-rc.1`。
+由 `create-brain-plugin` 生成的 Brain Core Node 插件，适用于 npm 预览版 `1.0.2-rc.1`。
 需要 Node.js ≥ 24.12，以及提供 `brain` 命令的内核：`npm install -g @dsh-brain-core/kernel@next`。
 
 ## 本地开发
