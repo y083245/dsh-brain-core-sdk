@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { MemoryRecord } from '@brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import type { PolicyDecision } from '../../src/contracts/index.ts'
 import { DEFAULT_BUDGETS, createContextAssembler, renderText, stableStringify } from '../../src/memory-context/index.ts'
 import { createWorkingMemoryStore } from '../../src/working-memory/index.ts'

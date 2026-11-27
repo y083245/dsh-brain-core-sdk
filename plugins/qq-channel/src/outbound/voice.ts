@@ -1,6 +1,6 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-import type { PluginStorage } from '@brain-core/sdk'
+import type { PluginStorage } from '@dsh-brain-core/sdk'
 import type { QqVoiceSettings } from '../config.ts'
 
 export interface VoiceDependencies {

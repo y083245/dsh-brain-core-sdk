@@ -1,11 +1,11 @@
 {
-  "name": "@brain-core/spike-s1",
+  "name": "@dsh-brain-core/spike-s1",
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "dependencies": {
-    "@brain-core/satellite-bundle": "workspace:*",
-    "@brain-core/satellite-host": "workspace:*"
+    "@dsh-brain-core/satellite-bundle": "workspace:*",
+    "@dsh-brain-core/satellite-host": "workspace:*"
   }
 }

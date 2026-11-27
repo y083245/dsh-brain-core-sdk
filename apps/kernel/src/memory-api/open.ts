@@ -5,8 +5,8 @@ import {
   BrainError, LIMITS, VISIBILITIES,
   type ChannelEventResult, type DerivedRecordInput, type Disclosure, type MemoryRecord,
   type ReadL0Request, type ReadL0Result, type SearchHit, type SearchRequest, type Viewer,
-} from '@brain-core/sdk'
-import { scanInjection } from '@brain-core/shared'
+} from '@dsh-brain-core/sdk'
+import { scanInjection } from '@dsh-brain-core/shared'
 import type { BrainPaths } from '../home/index.ts'
 import type {
   Clock, ConsolidationEngine, CrossChannelMode, LlmClient, MemoryDecay, MemoryProviderRegistry,

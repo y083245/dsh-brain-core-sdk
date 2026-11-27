@@ -4,8 +4,8 @@ import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { BrainError } from '@brain-core/sdk'
-import { removeTree } from '@brain-core/satellite-host'
+import { BrainError } from '@dsh-brain-core/sdk'
+import { removeTree } from '@dsh-brain-core/satellite-host'
 import { preparePackage } from '../../src/plugin-lifecycle/prepare.ts'
 import { createLogger, createRunner, installedDirs, makePlugin, setup, throwsCode } from './helpers.ts'
 
@@ -61,7 +61,7 @@ test('the local copy skips node_modules and .git', async (t) => {
   assert.ok(dir !== undefined)
   const installed = path.join(h.pluginsDir, '.installed', 'demo', dir)
   assert.equal(await readFile(path.join(installed, 'lib/keep.txt'), 'utf8'), 'kept')
-  assert.deepEqual((await readdir(path.join(installed, 'node_modules'))).sort(), ['@brain-core'])
+  assert.deepEqual((await readdir(path.join(installed, 'node_modules'))).sort(), ['@dsh-brain-core'])
   await assert.rejects(readFile(path.join(installed, '.git/HEAD')), { code: 'ENOENT' })
 })
 
@@ -85,10 +85,10 @@ test('different contents hash to different directories and two versions coexist'
   assert.deepEqual([oldMain, newMain].sort(), ['export function apply() { /* changed */ }\n', 'export function apply() {}\n'])
 })
 
-test('dependencies: @brain-core/* is stripped; npm runs only when other dependencies remain', async (t) => {
+test('dependencies: @dsh-brain-core/* is stripped; npm runs only when other dependencies remain', async (t) => {
   const onlyKernel = await setup(t)
   const a = await makePlugin(path.join(onlyKernel.root, 'a'), {
-    packageJson: { dependencies: { '@brain-core/sdk': 'workspace:*', '@brain-core/shared': 'workspace:*' } },
+    packageJson: { dependencies: { '@dsh-brain-core/sdk': 'workspace:*', '@dsh-brain-core/shared': 'workspace:*' } },
   })
   await onlyKernel.lifecycle.install(a)
   const [dirA] = await installedDirs(onlyKernel.pluginsDir)
@@ -98,7 +98,7 @@ test('dependencies: @brain-core/* is stripped; npm runs only when other dependen
 
   const withOther = await setup(t)
   const b = await makePlugin(path.join(withOther.root, 'b'), {
-    packageJson: { dependencies: { '@brain-core/sdk': 'workspace:*', lodash: '4.17.21' } },
+    packageJson: { dependencies: { '@dsh-brain-core/sdk': 'workspace:*', lodash: '4.17.21' } },
   })
   await withOther.lifecycle.install(b)
   const [dirB] = await installedDirs(withOther.pluginsDir)
@@ -315,15 +315,15 @@ test('a failed post-install step removes the unpacked directory and the registry
   assert.deepEqual(await h.lifecycle.list(), [])
 })
 
-test('links whitelisted @brain-core/chat-kit while stripping non-whitelisted internal @brain-core/* deps', async (t) => {
+test('links whitelisted @dsh-brain-core/chat-kit while stripping non-whitelisted internal @dsh-brain-core/* deps', async (t) => {
   const h = await setup(t)
   const source = await makePlugin(path.join(h.root, 'chatkit-plugin'), {
     packageJson: {
       dependencies: {
-        '@brain-core/sdk': 'workspace:*',
-        '@brain-core/chat-kit': 'workspace:*',
-        '@brain-core/satellite-host': 'workspace:*',
-        '@brain-core/shared': 'workspace:*',
+        '@dsh-brain-core/sdk': 'workspace:*',
+        '@dsh-brain-core/chat-kit': 'workspace:*',
+        '@dsh-brain-core/satellite-host': 'workspace:*',
+        '@dsh-brain-core/shared': 'workspace:*',
       },
     },
   })
@@ -336,16 +336,45 @@ test('links whitelisted @brain-core/chat-kit while stripping non-whitelisted int
   const pkg = JSON.parse(await readFile(path.join(installed, 'package.json'), 'utf8'))
   assert.equal(pkg.dependencies, undefined)
 
-  const linkedPkgs = (await readdir(path.join(installed, 'node_modules', '@brain-core'))).sort()
+  const linkedPkgs = (await readdir(path.join(installed, 'node_modules', '@dsh-brain-core'))).sort()
   assert.deepEqual(linkedPkgs, ['chat-kit', 'sdk'])
 
-  const chatKitLink = path.join(installed, 'node_modules', '@brain-core', 'chat-kit')
+  const chatKitLink = path.join(installed, 'node_modules', '@dsh-brain-core', 'chat-kit')
   assert.equal((await lstat(chatKitLink)).isSymbolicLink(), true)
   const expectedChatKit = await realpath(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../packages/chat-kit'))
   assert.equal(await realpath(chatKitLink), expectedChatKit)
 })
 
-test('throws UNAVAILABLE and leaves no residue when whitelisted @brain-core/chat-kit target is missing', async (t) => {
+test('install and upgrade link chat-kit from an explicit package location outside the SDK tree', async (t) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'plugin-package-map-'))
+  t.after(async () => { await removeTree(root) })
+  const sdkDir = path.join(root, 'sdk-copy')
+  const chatKitDir = path.join(root, 'separate-store', 'chat-kit')
+  await mkdir(sdkDir, { recursive: true })
+  await mkdir(chatKitDir, { recursive: true })
+  const h = await setup(t, { sdkDir, brainPackages: { 'chat-kit': chatKitDir } })
+
+  for (const version of ['1.0.0', '1.0.1']) {
+    const source = await makePlugin(path.join(root, version), {
+      version,
+      packageJson: { dependencies: { '@dsh-brain-core/sdk': '^1', '@dsh-brain-core/chat-kit': '^1' } },
+    })
+    if (version === '1.0.0') {
+      await h.lifecycle.install(source)
+      await h.lifecycle.confirm('demo')
+    } else {
+      await h.lifecycle.upgrade('demo', source)
+    }
+    const dir = (await installedDirs(h.pluginsDir)).find((name) => name.startsWith(`${version}-`))
+    assert.ok(dir !== undefined)
+    const scope = path.join(h.pluginsDir, '.installed', 'demo', dir, 'node_modules', '@dsh-brain-core')
+    assert.equal(await realpath(path.join(scope, 'sdk')), await realpath(sdkDir))
+    assert.equal(await realpath(path.join(scope, 'chat-kit')), await realpath(chatKitDir))
+  }
+  assert.equal(h.runner.calls.length, 0, 'host-provided packages must not reach npm')
+})
+
+test('throws UNAVAILABLE and leaves no residue when whitelisted @dsh-brain-core/chat-kit target is missing', async (t) => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'plugin-prepare-missing-'))
   t.after(async () => { await removeTree(root) })
 
@@ -355,8 +384,8 @@ test('throws UNAVAILABLE and leaves no residue when whitelisted @brain-core/chat
   const source = await makePlugin(path.join(root, 'src'), {
     packageJson: {
       dependencies: {
-        '@brain-core/sdk': 'workspace:*',
-        '@brain-core/chat-kit': 'workspace:*',
+        '@dsh-brain-core/sdk': 'workspace:*',
+        '@dsh-brain-core/chat-kit': 'workspace:*',
       },
     },
   })

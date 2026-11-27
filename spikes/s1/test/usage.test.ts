@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { encodeSessionId } from '@brain-core/satellite-host'
+import { encodeSessionId } from '@dsh-brain-core/satellite-host'
 import { scriptedTools } from '../src/fake-deepseek.ts'
 import { withRig } from '../src/rig.ts'
 import { TokenMeter } from '../src/usage.ts'

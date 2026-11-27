@@ -1,4 +1,4 @@
-import { Schema } from '@brain-core/sdk'
+import { Schema } from '@dsh-brain-core/sdk'
 
 export interface WebReaderConfig {
   readonly feeds?: readonly string[]

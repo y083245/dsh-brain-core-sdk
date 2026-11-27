@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { encodeSessionId, type BridgeServer } from '@brain-core/satellite-host'
+import { encodeSessionId, type BridgeServer } from '@dsh-brain-core/satellite-host'
 import { scriptedTools } from '../src/fake-deepseek.ts'
 import { FLASH_LOW, withRig } from '../src/rig.ts'
 

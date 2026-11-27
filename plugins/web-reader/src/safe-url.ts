@@ -1,4 +1,4 @@
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 
 function normalizeHost(hostname: string): string {
   return hostname.trim().replace(/^\[|\]$/g, '').replace(/\.$/, '').toLowerCase()

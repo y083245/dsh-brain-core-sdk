@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
-import { BrainError, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, type MemoryRecord } from '@dsh-brain-core/sdk'
 import type { NewRecord, RecordFilter, RecordStore } from '../../src/contracts/index.ts'
 import { FakeClock } from '../fakes/index.ts'
 

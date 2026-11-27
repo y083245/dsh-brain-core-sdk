@@ -1,4 +1,4 @@
-import { ERROR_CODES, type Envelope, type ErrorCode, type Meta } from '@brain-core/sdk'
+import { ERROR_CODES, type Envelope, type ErrorCode, type Meta } from '@dsh-brain-core/sdk'
 
 export interface ApiFetchOptions {
   readonly token?: string

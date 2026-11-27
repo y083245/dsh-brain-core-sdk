@@ -1,4 +1,4 @@
-import { BrainError, LIMITS, type MemoryRecord, type Visibility } from '@brain-core/sdk'
+import { BrainError, LIMITS, type MemoryRecord, type Visibility } from '@dsh-brain-core/sdk'
 import type { RecordFilter, RecordStore } from '../contracts/index.ts'
 
 const PAGE_LIMIT = 1000

@@ -3,7 +3,7 @@ import { access, mkdir, mkdtemp, readdir, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { diffSnapshots, encodeSessionId, removeTree, snapshotTree } from '@brain-core/satellite-host'
+import { diffSnapshots, encodeSessionId, removeTree, snapshotTree } from '@dsh-brain-core/satellite-host'
 import { scriptedTools } from '../src/fake-deepseek.ts'
 import { withRig } from '../src/rig.ts'
 

@@ -4,7 +4,7 @@ import type {
   MemoryProviderQuery,
   MemoryRecord,
   ReadL0Result,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import { createSampleIndex } from './indexer.ts'
 
 const API_VERSION = '1.0.0'

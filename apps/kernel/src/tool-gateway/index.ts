@@ -1,7 +1,7 @@
-import { decodeSessionId, toDshParameters } from '@brain-core/satellite-host'
-import type { BridgeTool, BridgeToolResult, ToolCall } from '@brain-core/satellite-host'
-import { BrainError, LIMITS, evalWhen, parseWhen } from '@brain-core/sdk'
-import type { Viewer } from '@brain-core/sdk'
+import { decodeSessionId, toDshParameters } from '@dsh-brain-core/satellite-host'
+import type { BridgeTool, BridgeToolResult, ToolCall } from '@dsh-brain-core/satellite-host'
+import { BrainError, LIMITS, evalWhen, parseWhen } from '@dsh-brain-core/sdk'
+import type { Viewer } from '@dsh-brain-core/sdk'
 import type {
   Clock, ConsolidationEngine, GatewayTool, MemoryService, OutboundAudit, RecordStore, ToolGateway, WakePlan, WriteIdentity,
 } from '../contracts/index.ts'

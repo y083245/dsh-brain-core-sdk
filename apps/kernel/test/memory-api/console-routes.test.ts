@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, validate } from '@brain-core/sdk'
-import type { CheckReport } from '@brain-core/testkit'
+import { BrainError, validate } from '@dsh-brain-core/sdk'
+import type { CheckReport } from '@dsh-brain-core/testkit'
 import type { CrossChannelMode } from '../../src/contracts/index.ts'
 import {
   createMemoryApiServer,

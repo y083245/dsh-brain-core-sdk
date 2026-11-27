@@ -1,17 +1,17 @@
 {
-  "name": "@brain-core/acceptance",
+  "name": "@dsh-brain-core/acceptance",
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "dependencies": {
-    "@brain-core/console": "workspace:*",
-    "@brain-core/kernel": "workspace:*",
-    "@brain-core/plugin-console-chat": "workspace:*",
-    "@brain-core/plugin-web-reader": "workspace:*",
-    "@brain-core/satellite-host": "workspace:*",
-    "@brain-core/sdk": "workspace:*",
-    "@brain-core/shared": "workspace:*",
-    "@brain-core/testkit": "workspace:*"
+    "@dsh-brain-core/console": "workspace:*",
+    "@dsh-brain-core/kernel": "workspace:*",
+    "@dsh-brain-core/plugin-console-chat": "workspace:*",
+    "@dsh-brain-core/plugin-web-reader": "workspace:*",
+    "@dsh-brain-core/satellite-host": "workspace:*",
+    "@dsh-brain-core/sdk": "workspace:*",
+    "@dsh-brain-core/shared": "workspace:*",
+    "@dsh-brain-core/testkit": "workspace:*"
   }
 }

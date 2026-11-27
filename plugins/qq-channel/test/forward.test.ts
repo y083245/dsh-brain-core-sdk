@@ -3,7 +3,7 @@
 
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import type { ChannelEventResult } from '@brain-core/sdk'
+import type { ChannelEventResult } from '@dsh-brain-core/sdk'
 import { readForwardSummary } from '../src/inbound/forward.ts'
 
 const evidence: ChannelEventResult = {

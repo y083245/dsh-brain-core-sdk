@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 
-import { BrainError, type BrainContext, type Disposable, type PluginApply } from '@brain-core/sdk'
+import { BrainError, type BrainContext, type Disposable, type PluginApply } from '@dsh-brain-core/sdk'
 import { configSchema, type QqConfig } from './config.ts'
 import { MediaStore, cleanText, createInboundPipeline } from './inbound/index.ts'
 import { OneBotHealth, OneBotHttpClient, OneBotWsClient, normalizeAccountId } from './onebot/index.ts'

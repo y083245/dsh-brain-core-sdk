@@ -251,7 +251,7 @@ test('check passes a clean fake DSH home', async (t) => {
   })
 })
 
-for (const marker of ['brain-bridge', '@brain-core/', 'satellite-bundle'] as const) {
+for (const marker of ['brain-bridge', '@brain-core/', '@dsh-brain-core/', 'satellite-bundle'] as const) {
   for (const name of ['package.json', 'cordis.patch.yml'] as const) {
     test(`check reports ${marker} in a profile ${name}`, async (t) => {
       const { home } = await makeFixture(t)

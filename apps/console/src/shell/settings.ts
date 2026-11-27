@@ -1,5 +1,5 @@
-import { BrainError } from '@brain-core/sdk'
-import type { AgentClass, ModelSelection, ThinkingEffort } from '@brain-core/satellite-host'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { AgentClass, ModelSelection, ThinkingEffort } from '@dsh-brain-core/satellite-host'
 import { escapeHtml } from './theme.ts'
 
 export interface ModelCatalogEntry {

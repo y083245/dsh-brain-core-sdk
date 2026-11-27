@@ -3,9 +3,9 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { removeTree } from '@brain-core/satellite-host'
-import { BrainError, type BrainContext, type Envelope } from '@brain-core/sdk'
-import { checkPlugin, runPluginContractTests } from '@brain-core/testkit'
+import { removeTree } from '@dsh-brain-core/satellite-host'
+import { BrainError, type BrainContext, type Envelope } from '@dsh-brain-core/sdk'
+import { checkPlugin, runPluginContractTests } from '@dsh-brain-core/testkit'
 import {
   CONSOLE_CHAT_DIR, PYTHON_ECHO_DIR, WEB_READER_DIR,
   assertUnwrappedOk, httpJson, installAndEnablePlugin, setupAcceptanceKernel, waitFor,

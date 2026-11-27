@@ -2,7 +2,7 @@
 import { mkdtemp } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { BridgeServer, removeTree, Satellite, type BridgeTool, type ModelSelection, type SatelliteOptions, type ToolHandler } from '@brain-core/satellite-host'
+import { BridgeServer, removeTree, Satellite, type BridgeTool, type ModelSelection, type SatelliteOptions, type ToolHandler } from '@dsh-brain-core/satellite-host'
 import { FakeDeepSeek, type FakeScript } from './fake-deepseek.ts'
 
 export const FLASH_LOW: ModelSelection = { provider: 'deepseek-official', model: 'deepseek-flash', effort: 'low' }

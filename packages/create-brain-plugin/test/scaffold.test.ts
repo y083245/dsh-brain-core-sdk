@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import test, { type TestContext } from 'node:test'
-import { validateManifest, type PluginKind } from '@brain-core/sdk'
-import { checkPlugin } from '@brain-core/testkit'
+import { validateManifest, type PluginKind } from '@dsh-brain-core/sdk'
+import { checkPlugin } from '@dsh-brain-core/testkit'
 import {
   generateProject, idError, parseArgs, resolveOptions, runCli, USAGE,
   type PromptIo, type Runtime,

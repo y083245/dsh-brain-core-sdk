@@ -10,10 +10,10 @@
     "check": "brain plugin check"
   },
   "dependencies": {
-    "@brain-core/sdk": "^1.0.0"
+    "@dsh-brain-core/sdk": "^1.0.0"
   },
   "devDependencies": {
-    "@brain-core/testkit": "^1.0.0",
+    "@dsh-brain-core/testkit": "^1.0.0",
     "@types/node": "24.19.2",
     "typescript": "6.0.3"
   },

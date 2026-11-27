@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { setTimeout as sleep } from 'node:timers/promises'
 import test from 'node:test'
-import { encodeSessionId, isProcessAlive, killProcessTree, TurnTimeoutError, type ThinkingEffort } from '@brain-core/satellite-host'
+import { encodeSessionId, isProcessAlive, killProcessTree, TurnTimeoutError, type ThinkingEffort } from '@dsh-brain-core/satellite-host'
 import { FLASH_LOW, withRig } from '../src/rig.ts'
 
 const session = encodeSessionId({ agentClass: 'chat', channel: 'test:chat:e7', generation: 0 })

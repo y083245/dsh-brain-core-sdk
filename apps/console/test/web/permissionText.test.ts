@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { PLAIN_PERMISSIONS } from '@brain-core/sdk'
+import { PLAIN_PERMISSIONS } from '@dsh-brain-core/sdk'
 import { describePermission } from '../../web/src/plugins/permissionText.ts'
 
 test('every SDK plain permission has a Chinese description', () => {

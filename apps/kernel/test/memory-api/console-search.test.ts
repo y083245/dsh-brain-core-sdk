@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { LIMITS, validate, type SearchHit } from '@brain-core/sdk'
+import { LIMITS, validate, type SearchHit } from '@dsh-brain-core/sdk'
 import { OWNER_IDENTITY, openTempBrain, startApi } from './helpers.ts'
 
 function hitIds(body: Record<string, unknown>): string[] {

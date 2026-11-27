@@ -1,4 +1,4 @@
-import { parsePermission, type PlainPermission } from '@brain-core/sdk'
+import { parsePermission, type PlainPermission } from '@dsh-brain-core/sdk'
 
 const PLAIN_TEXT: Readonly<Record<PlainPermission, string>> = {
   'memory.ingest': '把内容写进记忆（原始层）',

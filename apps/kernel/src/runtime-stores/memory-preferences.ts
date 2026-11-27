@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
-import { BrainError } from '@brain-core/sdk'
-import { writeFileAtomic } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 import type { CrossChannelMode } from '../contracts/index.ts'
 
 interface MemoryPreferences {

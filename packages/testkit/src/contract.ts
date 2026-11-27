@@ -1,4 +1,4 @@
-import { BrainError, validateManifest, type BrainContext, type PluginApply, type ToolDefinition } from '@brain-core/sdk'
+import { BrainError, validateManifest, type BrainContext, type PluginApply, type ToolDefinition } from '@dsh-brain-core/sdk'
 import { createTestKernel, type LoadOptions, type TestKernel } from './kernel.ts'
 
 export interface ContractResult { readonly name: string; readonly ok: boolean; readonly message: string }

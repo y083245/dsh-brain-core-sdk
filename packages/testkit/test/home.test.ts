@@ -92,7 +92,7 @@ test('the contract checks pass with an empty HOME and no network', async () => {
   process.env.HOME = emptyHome
   try {
     const plugin = {
-      apply: (ctx: import('@brain-core/sdk').BrainContext) => {
+      apply: (ctx: import('@dsh-brain-core/sdk').BrainContext) => {
         ctx.tools.register({ name: 'look', description: 'Look around', parameters: { type: 'object' }, handler: async () => 'ok' })
       },
     }

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { decodeSessionId, encodeSessionId, type ToolCall } from '@brain-core/satellite-host'
+import { decodeSessionId, encodeSessionId, type ToolCall } from '@dsh-brain-core/satellite-host'
 import { withRig } from '../src/rig.ts'
 
 const channel = 'test:chat:bound'

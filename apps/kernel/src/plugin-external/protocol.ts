@@ -1,5 +1,5 @@
 import type { Readable, Writable } from 'node:stream'
-import { BrainError, ERROR_CODES, type ErrorCode } from '@brain-core/sdk'
+import { BrainError, ERROR_CODES, type ErrorCode } from '@dsh-brain-core/sdk'
 
 /** One JSON-RPC 2.0 message per line; a single line may not exceed 8 MiB. */
 export const MAX_LINE_BYTES = 8 * 1024 * 1024

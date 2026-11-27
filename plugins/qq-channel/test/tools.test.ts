@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { createSocialStateMachine } from '@brain-core/chat-kit'
+import { createSocialStateMachine } from '@dsh-brain-core/chat-kit'
 import {
   BrainError,
   type ChannelEventResult,
@@ -15,7 +15,7 @@ import {
   type PluginHttp,
   type ToolCallContext,
   type ToolDefinition,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import { DEFAULT_QQ_CONFIG, type QqConfig } from '../src/config.ts'
 import { MediaStore } from '../src/inbound/media-store.ts'
 import { OneBotHttpError } from '../src/onebot/http-client.ts'

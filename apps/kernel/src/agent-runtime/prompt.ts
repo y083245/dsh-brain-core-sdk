@@ -1,6 +1,6 @@
-import type { TurnBlock, TurnInput } from '@brain-core/satellite-host'
-import { LIMITS } from '@brain-core/sdk'
-import type { ContextBlock, WakeMessage } from '@brain-core/sdk'
+import type { TurnBlock, TurnInput } from '@dsh-brain-core/satellite-host'
+import { LIMITS } from '@dsh-brain-core/sdk'
+import type { ContextBlock, WakeMessage } from '@dsh-brain-core/sdk'
 
 /** The fixed rules at the head of the system prompt. Byte-stable: nothing dynamic goes here (FR-T05). */
 export const KERNEL_RULES = `你在一个长期运行的陪伴系统里。下面这些规则优先于其他内容：

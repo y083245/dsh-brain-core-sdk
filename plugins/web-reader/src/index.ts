@@ -1,4 +1,4 @@
-import { BrainError, type BrainContext, type PluginApply } from '@brain-core/sdk'
+import { BrainError, type BrainContext, type PluginApply } from '@dsh-brain-core/sdk'
 import type { WebReaderConfig } from './config.ts'
 import { assertSafeFeedUrl } from './safe-url.ts'
 import { extractAndSanitizeArticle } from './sanitize.ts'

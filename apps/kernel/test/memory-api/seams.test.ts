@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import type { IdentityService } from '../../src/identity-persona/index.ts'
 import type { LogFields } from '../../src/log/index.ts'
 import { createChannelFacts } from '../../src/memory-api/channel-facts.ts'

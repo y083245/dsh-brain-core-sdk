@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { Viewer } from '@brain-core/sdk'
+import type { Viewer } from '@dsh-brain-core/sdk'
 import { expandScope, indexText } from '../../src/memory-search/index.ts'
 import { makeRecord } from './helpers.ts'
 

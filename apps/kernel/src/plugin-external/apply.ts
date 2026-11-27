@@ -5,9 +5,9 @@ import type {
   BrainContext, ChannelProvider, DerivedRecordInput, Disposable, FetchOptions, MemoryProvider,
   MemoryProviderHealth, MemoryProviderHit, OutboundMessage, PluginApply, ReadL0Request, ToolDefinition,
   ToolOutput, ToolParameters, ViewOptions,
-} from '@brain-core/sdk'
-import { BrainError, PLUGIN_API_VERSION } from '@brain-core/sdk'
-import { killProcessTree } from '@brain-core/satellite-host'
+} from '@dsh-brain-core/sdk'
+import { BrainError, PLUGIN_API_VERSION } from '@dsh-brain-core/sdk'
+import { killProcessTree } from '@dsh-brain-core/satellite-host'
 import type { InstalledPlugin } from '../contracts/index.ts'
 import type { LogFields } from '../log/index.ts'
 import { createStderrSink, ensurePluginDirs, pluginEnvironment, stderrFile, type StderrSink } from './env.ts'

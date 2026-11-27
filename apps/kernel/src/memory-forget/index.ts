@@ -1,4 +1,4 @@
-import { BrainError, type ForgetReport, type ForgetSelector, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, type ForgetReport, type ForgetSelector, type MemoryRecord } from '@dsh-brain-core/sdk'
 import type { ForgetService, KeywordIndex, RecordFilter, RecordStore } from '../contracts/index.ts'
 
 /** Forget never selects L3 directly: M3 keeps profiles out of edits and version rollback owns them. */

@@ -5,7 +5,7 @@ import https from 'node:https'
 import net, { type AddressInfo, type Socket } from 'node:net'
 import test from 'node:test'
 import tls from 'node:tls'
-import type { WebSocketEvent } from '@brain-core/sdk'
+import type { WebSocketEvent } from '@dsh-brain-core/sdk'
 import { denial, installed, setup } from './helpers.ts'
 
 const WS_GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'

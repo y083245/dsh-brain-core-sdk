@@ -1,7 +1,7 @@
 import { lstat, mkdtemp, readdir, rename, rmdir, symlink, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { apiMajor, BrainError, PLUGIN_API_VERSION, type BrainManifest } from '@brain-core/sdk'
-import { removeTree } from '@brain-core/satellite-host'
+import { apiMajor, BrainError, PLUGIN_API_VERSION, type BrainManifest } from '@dsh-brain-core/sdk'
+import { removeTree } from '@dsh-brain-core/satellite-host'
 import type { Logger } from '../log/index.ts'
 import type { RunCommand } from './types.ts'
 import {
@@ -28,7 +28,7 @@ export interface PreparedPackage {
 }
 
 const CURRENT_MAJOR = Number(PLUGIN_API_VERSION.split('.')[0])
-const BRAIN_SCOPE_PREFIX = '@brain-core/'
+const BRAIN_SCOPE_PREFIX = '@dsh-brain-core/'
 const PUBLIC_BRAIN_PACKAGES: ReadonlySet<string> = new Set(['chat-kit'])
 
 /** A path on disk: relative, absolute, a drive letter, or an existing directory. Anything else is an npm/git spec. */
@@ -84,7 +84,7 @@ async function installDependencies(deps: PrepareDeps, dir: string): Promise<void
   }
 
   // A junction needs no administrator on Windows and resolves to the kernel's own SDK on every platform.
-  const linkParent = path.join(dir, 'node_modules', '@brain-core')
+  const linkParent = path.join(dir, 'node_modules', '@dsh-brain-core')
   await ensureDir(linkParent)
   await symlink(path.resolve(deps.sdkDir), path.join(linkParent, 'sdk'), 'junction')
 
@@ -92,7 +92,7 @@ async function installDependencies(deps: PrepareDeps, dir: string): Promise<void
     if (!PUBLIC_BRAIN_PACKAGES.has(pkgName)) continue
     const target = deps.brainPackages?.[pkgName] ?? path.join(path.dirname(path.resolve(deps.sdkDir)), pkgName)
     if (!(await isDirectory(target))) {
-      throw new BrainError('UNAVAILABLE', `public brain package @brain-core/${pkgName} directory is unavailable`)
+      throw new BrainError('UNAVAILABLE', `public brain package @dsh-brain-core/${pkgName} directory is unavailable`)
     }
     await symlink(path.resolve(target), path.join(linkParent, pkgName), 'junction')
   }
@@ -106,7 +106,7 @@ async function installPython(deps: PrepareDeps, dir: string): Promise<void> {
 
 /**
  * A symlink could point outside the package, making `resolveInside` approve a main that lives elsewhere.
- * Our own `node_modules/@brain-core/sdk` link is created later, so a genuine package has none.
+ * Our own `node_modules/@dsh-brain-core/sdk` link is created later, so a genuine package has none.
  */
 async function assertNoSymlinks(root: string): Promise<void> {
   async function walk(dir: string, prefix: string): Promise<void> {

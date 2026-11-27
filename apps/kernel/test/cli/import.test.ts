@@ -8,7 +8,7 @@ import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { writeFileAtomic } from '@brain-core/shared'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 
 const CLI = fileURLToPath(new URL('../../src/cli.ts', import.meta.url))
 

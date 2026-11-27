@@ -4,6 +4,28 @@ Brain Core SDK 是一个本地 AI 助手运行时和 TypeScript 插件 SDK。它
 
 项目提供 `brain` 命令、墨潮（INKTIDE）控制台、本地 SQLite 记忆存储和检索，以及附属 DSH 模型运行时。插件可以接入消息通道、扩展工具能力、运行定时活动或增强记忆检索。
 
+## 通过 npm 安装（预览版）
+
+需要 Node.js 24.12 或更高版本。
+
+```sh
+npm install -g @dsh-brain-core/kernel@next
+brain --version
+brain console
+```
+
+使用脚手架创建插件：
+
+```sh
+npm create brain-plugin@next my-plugin -- --kind capability --yes
+cd my-plugin
+npm install
+npm test
+brain plugin check
+```
+
+官方插件包（`@dsh-brain-core/plugin-qq@next`、`@dsh-brain-core/plugin-console-chat@next`、`@dsh-brain-core/plugin-web-reader@next`、`@dsh-brain-core/plugin-memory-vector@next`）可通过 `brain plugin install` 安装。
+
 ## 从源码部署
 
 支持 macOS、Linux 和 Windows。需要 Git、Node.js 24.12 或更高版本，以及 pnpm 10.28.0。在终端执行以下命令获取源码、安装依赖并构建控制台。

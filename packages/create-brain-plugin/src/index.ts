@@ -1,7 +1,7 @@
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { PLUGIN_KINDS, validateManifest, type PluginKind } from '@brain-core/sdk'
+import { PLUGIN_KINDS, validateManifest, type PluginKind } from '@dsh-brain-core/sdk'
 
 export type Runtime = 'node' | 'process'
 

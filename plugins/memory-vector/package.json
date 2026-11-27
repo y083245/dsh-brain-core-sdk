@@ -1,5 +1,5 @@
 {
-  "name": "@brain-core/plugin-memory-vector",
+  "name": "@dsh-brain-core/plugin-memory-vector",
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -22,9 +22,9 @@
     ]
   },
   "dependencies": {
-    "@brain-core/sdk": "workspace:*"
+    "@dsh-brain-core/sdk": "workspace:*"
   },
   "devDependencies": {
-    "@brain-core/testkit": "workspace:*"
+    "@dsh-brain-core/testkit": "workspace:*"
   }
 }

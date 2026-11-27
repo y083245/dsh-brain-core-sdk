@@ -1,4 +1,4 @@
-import { BrainError, type OwnTimeRequest } from '@brain-core/sdk'
+import { BrainError, type OwnTimeRequest } from '@dsh-brain-core/sdk'
 import type { Clock, RuntimeSettings, Scheduler } from '../contracts/index.ts'
 import type { Logger } from '../log/index.ts'
 import { readState, writeState, type SchedulerState } from './state.ts'

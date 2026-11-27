@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import {
   buildRoleCardFromInterview, MODEL_CATALOG, renderSettingsPanel,
   type ConsoleSettingsView, type RoleCardInterviewInput,

@@ -1,5 +1,5 @@
-import type { ToolUpdateMode } from '@brain-core/satellite-host'
-import type { ManifestGroup, ToolLoad, ToolParameters, Viewer, WhenExpr } from '@brain-core/sdk'
+import type { ToolUpdateMode } from '@dsh-brain-core/satellite-host'
+import type { ManifestGroup, ToolLoad, ToolParameters, Viewer, WhenExpr } from '@dsh-brain-core/sdk'
 import type { GatewayTool, ProactiveMessageSend, WriteIdentity } from '../contracts/index.ts'
 
 export interface BuiltinCall {

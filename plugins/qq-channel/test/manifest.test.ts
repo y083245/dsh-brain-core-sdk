@@ -6,8 +6,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { validateManifest, type BrainLogger, type PluginStorage } from '@brain-core/sdk'
-import { checkPlugin } from '@brain-core/testkit'
+import { validateManifest, type BrainLogger, type PluginStorage } from '@dsh-brain-core/sdk'
+import { checkPlugin } from '@dsh-brain-core/testkit'
 import configSchema, { DEFAULT_QQ_CONFIG } from '../src/config.ts'
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -39,9 +39,9 @@ test('package.json manifest validates cleanly with checkPlugin and exact permiss
     }
   }
 
-  assert.equal(pkg.name, '@brain-core/plugin-qq')
+  assert.equal(pkg.name, '@dsh-brain-core/plugin-qq')
   assert.equal(pkg.license, 'PolyForm-Noncommercial-1.0.0')
-  assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['@brain-core/chat-kit', '@brain-core/sdk'])
+  assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['@dsh-brain-core/chat-kit', '@dsh-brain-core/sdk'])
   assert.equal(pkg.brain.id, 'qq')
   assert.equal(pkg.brain.runtime, 'process')
   assert.equal(pkg.brain.permissions.length, 17)

@@ -7,7 +7,7 @@ import {
   BrainError, type BrainContext, type BrainManifest, type ChannelEventResult, type MemoryProvider,
   type MemoryRecord, type ReadL0Result, type ToolCallContext, type ToolDefinition,
   type WebSocketEvent, type WebSocketSubscribeOptions,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type { InstalledPlugin } from '../../src/contracts/index.ts'
 import type { ExternalDeps } from '../../src/plugin-external/index.ts'
 import type { Logger, LogFields } from '../../src/log/index.ts'

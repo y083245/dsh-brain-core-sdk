@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { cp, lstat, mkdir, readdir, readFile, readlink, stat } from 'node:fs/promises'
 import path from 'node:path'
-import { BrainError, validateManifest, type BrainManifest } from '@brain-core/sdk'
+import { BrainError, validateManifest, type BrainManifest } from '@dsh-brain-core/sdk'
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)

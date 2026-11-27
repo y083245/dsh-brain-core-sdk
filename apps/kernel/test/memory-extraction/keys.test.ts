@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { MemoryRecord, Visibility } from '@brain-core/sdk'
+import type { MemoryRecord, Visibility } from '@dsh-brain-core/sdk'
 import {
   EXTRACTION_SYSTEM_PROMPT, buildUserPrompt,
 } from '../../src/memory-extraction/index.ts'

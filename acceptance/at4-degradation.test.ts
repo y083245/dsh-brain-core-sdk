@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
-import { killProcessTree } from '@brain-core/satellite-host'
-import type { Envelope, SearchHit, WakeResult } from '@brain-core/sdk'
+import { killProcessTree } from '@dsh-brain-core/satellite-host'
+import type { Envelope, SearchHit, WakeResult } from '@dsh-brain-core/sdk'
 import {
   CONSOLE_CHAT_DIR, FLASH_LOW, assertUnwrappedOk, extractLatestWakeText,
   hasToolResultInLastMessage, httpJson, installAndEnablePlugin, setupAcceptanceKernel,

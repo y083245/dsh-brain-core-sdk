@@ -3,7 +3,7 @@ import { mkdtemp, rm, stat, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError, type MemoryRecord, type Trust, type Visibility } from '@brain-core/sdk'
+import { BrainError, type MemoryRecord, type Trust, type Visibility } from '@dsh-brain-core/sdk'
 import type { ConsolidationEngine, NewRecord } from '../../src/contracts/index.ts'
 import { createProfileStore, type ProfileStore } from '../../src/identity-persona/index.ts'
 import {

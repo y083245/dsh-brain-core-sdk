@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { killProcessTree } from '@brain-core/satellite-host'
+import { killProcessTree } from '@dsh-brain-core/satellite-host'
 import {
   BROKEN_PLUGIN, CHANNEL, CRASHING_PLUGIN, EXTERNAL_PLUGIN, FLASH, httpGet, installPlugin, readExternalPid, setup, waitFor,
   waitForExternalPid, waitForSatellitePid,

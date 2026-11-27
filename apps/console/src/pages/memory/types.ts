@@ -7,7 +7,7 @@ import {
   type RecordPatch,
   type SearchHit,
   type SearchRequest,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import { apiFetch, type ApiFetchOptions, type ApiResult } from '../../shell/api-fetch.ts'
 
 export type CrossChannelMode = 'off' | 'shadow' | 'on'

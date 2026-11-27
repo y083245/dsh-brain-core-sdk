@@ -1,4 +1,4 @@
-import type { BrainLogger, BrainManifest, PluginStorage } from '@brain-core/sdk'
+import type { BrainLogger, BrainManifest, PluginStorage } from '@dsh-brain-core/sdk'
 import type { Clock, PluginActivator } from '../contracts/index.ts'
 import type { Logger } from '../log/index.ts'
 

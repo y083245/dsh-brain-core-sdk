@@ -1,4 +1,4 @@
-import type { BrainContext } from '@brain-core/sdk'
+import type { BrainContext } from '@dsh-brain-core/sdk'
 import { createTestKernel, type LoadOptions, type TestKernel } from '../src/index.ts'
 
 export const OWN = 'demo:group:1'

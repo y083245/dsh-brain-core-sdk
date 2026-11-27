@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import type { Dirent } from 'node:fs'
 import { lstat, readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { BrainError, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, type MemoryRecord } from '@dsh-brain-core/sdk'
 
 export interface L0MatchCandidate {
   readonly id: string

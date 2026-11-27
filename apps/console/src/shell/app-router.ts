@@ -1,5 +1,5 @@
-import { BrainError, LAYERS, type Layer } from '@brain-core/sdk'
-import type { AgentClass } from '@brain-core/satellite-host'
+import { BrainError, LAYERS, type Layer } from '@dsh-brain-core/sdk'
+import type { AgentClass } from '@dsh-brain-core/satellite-host'
 import {
   createAccountingPageController,
   createHttpAccountingPageApi,

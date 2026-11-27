@@ -1,4 +1,4 @@
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import type {
   Clock,
   ModelAccountingStore,

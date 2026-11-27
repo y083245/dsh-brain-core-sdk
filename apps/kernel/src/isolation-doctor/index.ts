@@ -2,7 +2,7 @@
 import { execFile } from 'node:child_process'
 import { chmod, readdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { diffSnapshots, snapshotTree, type FileFingerprint } from '@brain-core/satellite-host'
+import { diffSnapshots, snapshotTree, type FileFingerprint } from '@dsh-brain-core/satellite-host'
 
 export type DoctorResult =
   | { readonly kind: 'snapshot'; readonly file: string; readonly entries: number }
@@ -29,7 +29,7 @@ export function resolveDshHome(flag: string | undefined, env: NodeJS.ProcessEnv,
 
 /** The profile config DSH reads; check touches only these two names, never credentials or sessions. */
 const PROFILE_FILES = ['package.json', 'cordis.patch.yml'] as const
-const FORBIDDEN_MARKERS = ['brain-bridge', '@brain-core/', 'satellite-bundle'] as const
+const FORBIDDEN_MARKERS = ['brain-bridge', '@brain-core/', '@dsh-brain-core/', 'satellite-bundle'] as const
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value)

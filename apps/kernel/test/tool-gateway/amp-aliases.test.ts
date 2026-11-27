@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { encodeSessionId } from '@brain-core/satellite-host'
+import { encodeSessionId } from '@dsh-brain-core/satellite-host'
 import type { MemoryService } from '../../src/contracts/index.ts'
 import { createToolGateway } from '../../src/tool-gateway/index.ts'
 import { FakeClock } from '../fakes/index.ts'

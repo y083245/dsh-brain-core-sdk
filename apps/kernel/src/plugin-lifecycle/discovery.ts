@@ -1,7 +1,7 @@
 import type { Dirent } from 'node:fs'
 import { lstat, readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { apiMajor, PLUGIN_API_VERSION, type BrainManifest } from '@brain-core/sdk'
+import { apiMajor, PLUGIN_API_VERSION, type BrainManifest } from '@dsh-brain-core/sdk'
 import type { Logger } from '../log/index.ts'
 import {
   contentHash8, invalidArgument, isRecord, mainOf, manifestOf, pathExists, resolveInside, versionOf,

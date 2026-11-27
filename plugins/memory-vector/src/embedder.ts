@@ -1,4 +1,4 @@
-import { BrainError, type BrainContext } from '@brain-core/sdk'
+import { BrainError, type BrainContext } from '@dsh-brain-core/sdk'
 
 export interface EmbedResult {
   readonly modelName: string

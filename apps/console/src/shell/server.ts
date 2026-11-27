@@ -5,12 +5,12 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { readdir, readFile, realpath, rm, stat } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { BrainError, ERROR_CODES, LIMITS, type Envelope, type Meta } from '@brain-core/sdk'
-import { createUlid, ensurePrivateDir, writeFileAtomic } from '@brain-core/shared'
+import { BrainError, ERROR_CODES, LIMITS, type Envelope, type Meta } from '@dsh-brain-core/sdk'
+import { createUlid, ensurePrivateDir, writeFileAtomic } from '@dsh-brain-core/shared'
 import {
   requireSelection, SelectionMissingError,
   type AgentClass, type ModelSelection,
-} from '@brain-core/satellite-host'
+} from '@dsh-brain-core/satellite-host'
 import { createSecretStore, type SecretStore } from './secrets.ts'
 import {
   buildRoleCardFromInterview, SHARED_QUOTA_SECRET,

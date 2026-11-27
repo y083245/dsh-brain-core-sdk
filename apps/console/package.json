@@ -1,5 +1,5 @@
 {
-  "name": "@brain-core/console",
+  "name": "@dsh-brain-core/console",
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -14,9 +14,9 @@
     "check:fonts": "node web/scripts/subset-fonts.mjs --check"
   },
   "dependencies": {
-    "@brain-core/satellite-host": "workspace:*",
-    "@brain-core/sdk": "workspace:*",
-    "@brain-core/shared": "workspace:*"
+    "@dsh-brain-core/satellite-host": "workspace:*",
+    "@dsh-brain-core/sdk": "workspace:*",
+    "@dsh-brain-core/shared": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.5",

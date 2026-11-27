@@ -1,7 +1,7 @@
 import { mkdir, readdir, readFile, realpath, rm } from 'node:fs/promises'
 import path from 'node:path'
-import { BrainError, type PluginStorage } from '@brain-core/sdk'
-import { writeFileAtomic } from '@brain-core/shared'
+import { BrainError, type PluginStorage } from '@dsh-brain-core/sdk'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 
 function denied(message: string): BrainError {
   return new BrainError('PERMISSION_DENIED', message)

@@ -1,7 +1,7 @@
-import { encodeSessionId, type AgentClass, type ToolCall, type ToolUpdateMode } from '@brain-core/satellite-host'
+import { encodeSessionId, type AgentClass, type ToolCall, type ToolUpdateMode } from '@dsh-brain-core/satellite-host'
 import type {
   ManifestGroup, ManifestTool, RecordInput, RecordPatch, SearchRequest, ToolCallContext, ToolOutput, Viewer, WakeFeatures,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type { Logger } from '../../src/log/index.ts'
 import type { Clock, GatewayTool, MemoryService, OutboundAudit, ToolGateway, WakePlan, WriteIdentity } from '../../src/contracts/index.ts'
 import { createToolGateway } from '../../src/tool-gateway/index.ts'

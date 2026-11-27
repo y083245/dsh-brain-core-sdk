@@ -2,8 +2,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import {
   BrainError, type EvidenceRef, type MemoryRecord, type RecordStatus,
-} from '@brain-core/sdk'
-import { createUlid, ensurePrivateDir, writeFileAtomic } from '@brain-core/shared'
+} from '@dsh-brain-core/sdk'
+import { createUlid, ensurePrivateDir, writeFileAtomic } from '@dsh-brain-core/shared'
 import {
   type Clock, type NewRecord, type ProfileReader, type ProfileSnapshot, type RecordStore,
 } from '../contracts/index.ts'

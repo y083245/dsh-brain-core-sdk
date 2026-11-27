@@ -6,7 +6,7 @@ import {
   type MemoryRecord,
   type RecordPatch,
   type SearchHit,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type {
   ConsolidationBudgetView,
   ConsolidationProposalView,

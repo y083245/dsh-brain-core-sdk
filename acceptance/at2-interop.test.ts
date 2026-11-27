@@ -3,8 +3,8 @@ import dns from 'node:dns'
 import http, { createServer } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import test from 'node:test'
-import { createHttpMemoryPageApi, createMemoryPageController } from '@brain-core/console'
-import type { Envelope, WakeResult } from '@brain-core/sdk'
+import { createHttpMemoryPageApi, createMemoryPageController } from '@dsh-brain-core/console'
+import type { Envelope, WakeResult } from '@dsh-brain-core/sdk'
 import {
   CONSOLE_CHAT_DIR, FLASH_LOW, WEB_READER_DIR, assertUnwrappedOk, closeHttpServer,
   extractLatestWakeText, hasToolResultInLastMessage, httpJson, installAndEnablePlugin,

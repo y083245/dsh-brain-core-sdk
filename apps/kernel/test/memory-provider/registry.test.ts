@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type MemoryProvider, type MemoryProviderQuery, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, type MemoryProvider, type MemoryProviderQuery, type MemoryRecord } from '@dsh-brain-core/sdk'
 import type { Logger, LogFields } from '../../src/log/index.ts'
 import { createMemoryProviderRegistry, fuseRankings } from '../../src/memory-provider/index.ts'
 

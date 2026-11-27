@@ -3,9 +3,9 @@ import { mkdtemp, readdir, readFile, stat } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { runDoctor } from '@brain-core/kernel/isolation-doctor'
-import { removeTree } from '@brain-core/satellite-host'
-import type { Envelope, WakeResult } from '@brain-core/sdk'
+import { runDoctor } from '@dsh-brain-core/kernel/isolation-doctor'
+import { removeTree } from '@dsh-brain-core/satellite-host'
+import type { Envelope, WakeResult } from '@dsh-brain-core/sdk'
 import {
   CONSOLE_CHAT_DIR, FLASH_LOW, assertUnwrappedOk, createFakeMainDshHome,
   hasToolResultInLastMessage, httpJson, installAndEnablePlugin, setupAcceptanceKernel,

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
-import type { MemoryRecord } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import { createMemoryDecay, parseDecayState } from '../../src/memory-decay/index.ts'
 
 const DAY = 86_400_000

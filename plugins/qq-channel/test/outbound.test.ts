@@ -3,7 +3,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { DEFAULT_QQ_CONFIG } from '../src/config.ts'
 import { SendRateLimit } from '../src/outbound/rate-limit.ts'
 import { sensitiveReason } from '../src/outbound/sensitive.ts'

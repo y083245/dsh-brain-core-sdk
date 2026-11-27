@@ -1,4 +1,4 @@
-import type { MemoryRecord } from '@brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 
 export const EXTRACTION_SYSTEM_PROMPT = `你从对话记录里提炼值得长期记住的事，只输出一个 JSON 对象，不要输出别的文字。
 格式：{"facts":[{"kind":"l1.fact","text":"…","subjects":["…"],"evidence":["…"],"confidence":0.9,"key":"…","value":"…"}]}

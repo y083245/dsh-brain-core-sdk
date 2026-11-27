@@ -1,4 +1,4 @@
-import type { Viewer } from '@brain-core/sdk'
+import type { Viewer } from '@dsh-brain-core/sdk'
 import type { ChannelFacts, RecordStore } from '../contracts/index.ts'
 import type { IdentityService } from '../identity-persona/index.ts'
 

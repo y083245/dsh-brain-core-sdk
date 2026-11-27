@@ -1,6 +1,6 @@
 # SDK 开发者指南
 
-`@brain-core/sdk` 提供插件清单、`BrainContext`、记忆记录和 API 请求响应的 TypeScript 契约。插件可声明 `channel`、`activity`、`capability` 或 `memory-provider` 类型。
+`@dsh-brain-core/sdk` 提供插件清单、`BrainContext`、记忆记录和 API 请求响应的 TypeScript 契约。插件可声明 `channel`、`activity`、`capability` 或 `memory-provider` 类型。
 
 ## 检查现有插件示例
 
@@ -20,10 +20,11 @@ node apps/kernel/src/cli.ts plugin check ./plugins/console-chat
 node packages/create-brain-plugin/src/cli.ts ./plugins/hello-plugin --kind capability --yes
 ```
 
-在生成的 `plugins/hello-plugin/package.json` 中，将 `@brain-core/sdk` 和 `@brain-core/testkit` 的版本改为 `workspace:*`，然后从仓库根目录运行以下命令。
+从仓库根目录将生成插件的 SDK 和 Testkit 依赖链接到当前工作区，然后运行测试和插件检查。
 
 ```sh
-pnpm install
+pnpm --filter hello-plugin add @dsh-brain-core/sdk --workspace
+pnpm --filter hello-plugin add -D @dsh-brain-core/testkit --workspace
 pnpm --filter hello-plugin test
 node apps/kernel/src/cli.ts plugin check ./plugins/hello-plugin
 ```

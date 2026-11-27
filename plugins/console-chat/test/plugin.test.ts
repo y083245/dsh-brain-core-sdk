@@ -3,8 +3,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { BrainError, type BrainContext, type ChannelProvider } from '@brain-core/sdk'
-import { checkPlugin, createTestKernel, runPluginContractTests } from '@brain-core/testkit'
+import { BrainError, type BrainContext, type ChannelProvider } from '@dsh-brain-core/sdk'
+import { checkPlugin, createTestKernel, runPluginContractTests } from '@dsh-brain-core/testkit'
 import { apply, createConsoleChatDebouncer, type ChatHistoryEntry } from '../src/index.ts'
 import { renderChatUiHtml } from '../src/ui.ts'
 
@@ -55,7 +55,7 @@ function captureApply(): {
 describe('plugin-console-chat', () => {
   it('passes all 7 contract checks and brain plugin check with 0 violations', async () => {
     const pkg = await readPackageJson()
-    assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['@brain-core/chat-kit', '@brain-core/sdk'])
+    assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['@dsh-brain-core/chat-kit', '@dsh-brain-core/sdk'])
 
     const contract = await runPluginContractTests({ apply }, pkg.brain)
     for (const item of contract) {

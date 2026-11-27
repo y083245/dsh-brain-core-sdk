@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type BrainContext } from '@brain-core/sdk'
+import { BrainError, type BrainContext } from '@dsh-brain-core/sdk'
 import { codeOf, loadIdle, MANIFEST, OWN, recordInput } from './helpers.ts'
 
 const provider = {

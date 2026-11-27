@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'node:url'
-import type { PluginApply } from '@brain-core/sdk'
+import type { PluginApply } from '@dsh-brain-core/sdk'
 import type { InstalledPlugin } from '../contracts/index.ts'
 import { invalidArgument, mainOf, pathExists, readPackageJson, resolveInside } from './fs-utils.ts'
 

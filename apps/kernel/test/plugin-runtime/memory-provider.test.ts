@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { MemoryProvider, MemoryRecord } from '@brain-core/sdk'
+import type { MemoryProvider, MemoryRecord } from '@dsh-brain-core/sdk'
 import { createMemoryProviderRegistry } from '../../src/memory-provider/index.ts'
 import { denial, installed, manifest, setup, stored } from './helpers.ts'
 

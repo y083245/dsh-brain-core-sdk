@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { DatabaseSync } from 'node:sqlite'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError, validate, type Viewer } from '@brain-core/sdk'
+import { BrainError, validate, type Viewer } from '@dsh-brain-core/sdk'
 import type { RecordStore } from '../../src/contracts/index.ts'
 import { agentViewer, facadeOf, openParts, openTempBrain, OWNER_IDENTITY, OWNER_VIEWER } from './helpers.ts'
 

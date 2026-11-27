@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import type { MemoryRecord, Viewer, Visibility } from '@brain-core/sdk'
+import type { MemoryRecord, Viewer, Visibility } from '@dsh-brain-core/sdk'
 import type { ChannelFacts, PolicyDecision } from '../../src/contracts/index.ts'
 import { LABELS, createPolicy } from '../../src/memory-policy/index.ts'
 
@@ -308,7 +308,7 @@ test('the source reads no clock, no randomness and no io', () => {
       assert.equal(source.includes(banned), false, `${file} must not mention ${banned}`)
     }
     for (const line of source.split(/\r?\n/u).filter((text) => text.startsWith('import '))) {
-      assert.match(line, /^import type .* from '(\.\.\/contracts\/index\.ts|@brain-core\/sdk)'$/u, `${file}: ${line}`)
+      assert.match(line, /^import type .* from '(\.\.\/contracts\/index\.ts|@dsh-brain-core\/sdk)'$/u, `${file}: ${line}`)
     }
   }
 })

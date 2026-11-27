@@ -5,7 +5,7 @@ import type { AddressInfo } from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 import test, { afterEach } from 'node:test'
-import { BrainError, type BrainContext, type BrainManifest, type ManifestMcp, type ManifestTool } from '@brain-core/sdk'
+import { BrainError, type BrainContext, type BrainManifest, type ManifestMcp, type ManifestTool } from '@dsh-brain-core/sdk'
 import type { InstalledPlugin } from '../../src/contracts/index.ts'
 import type { ExternalDeps } from '../../src/plugin-external/index.ts'
 import {

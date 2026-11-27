@@ -29,7 +29,7 @@ import {
   type ToolOutput,
   type WebSocketEvent,
   type WebSocketSubscribeOptions,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import { HOST_UNSUPPORTED_MESSAGE } from '../apply.ts'
 
 /** One JSON-RPC 2.0 message per line; a single line may not exceed 8 MiB. */

@@ -1,5 +1,5 @@
 {
-  "name": "@brain-core/satellite-host",
+  "name": "@dsh-brain-core/satellite-host",
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -8,7 +8,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@brain-core/satellite-bundle": "workspace:*",
+    "@dsh-brain-core/satellite-bundle": "workspace:*",
     "@deepseek-ai/cordis": "4.1.0",
     "@deepseek-ai/dsh": "0.2.2-rc.1",
     "@deepseek-ai/dsh-llm": "0.2.2-rc.1",

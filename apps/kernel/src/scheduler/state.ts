@@ -1,6 +1,6 @@
 import { mkdir, readFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
-import { writeFileAtomic } from '@brain-core/shared'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 
 /** `state/agent/scheduler.json` carries only what restarts need: ownTime's last run and the day's counts. */
 

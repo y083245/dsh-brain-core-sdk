@@ -1,4 +1,4 @@
-import type { ChannelProvider, OutboundMessage } from '@brain-core/sdk'
+import type { ChannelProvider, OutboundMessage } from '@dsh-brain-core/sdk'
 
 export interface FakeChannel extends ChannelProvider {
   readonly sent: readonly { readonly channel: string; readonly message: OutboundMessage }[]

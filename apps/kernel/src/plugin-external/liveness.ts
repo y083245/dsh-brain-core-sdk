@@ -1,4 +1,4 @@
-import type { BrainContext } from '@brain-core/sdk'
+import type { BrainContext } from '@dsh-brain-core/sdk'
 
 /** The runtime refuses every ctx call after the plugin's fiber is disposed; this event is the probe. */
 export const ALIVE_PROBE_SUFFIX = '.__brain_alive__'

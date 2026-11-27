@@ -1,6 +1,6 @@
 import path from 'node:path'
-import { assertOutsideDshHome } from '@brain-core/satellite-host'
-import { ensurePrivateDir } from '@brain-core/shared'
+import { assertOutsideDshHome } from '@dsh-brain-core/satellite-host'
+import { ensurePrivateDir } from '@dsh-brain-core/shared'
 
 export interface BrainPaths {
   readonly home: string

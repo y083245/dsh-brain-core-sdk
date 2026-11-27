@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { LIMITS } from '@brain-core/sdk'
+import { LIMITS } from '@dsh-brain-core/sdk'
 import { PRIVATE, call, fakeTool, harness, plan, rejection, sessionFor } from './helpers.ts'
 
 function started(h: ReturnType<typeof harness>, overrides: Parameters<typeof plan>[1] = {}): string {

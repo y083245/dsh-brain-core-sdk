@@ -3,8 +3,8 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { createReadCursor, createSocialStateMachine } from '@brain-core/chat-kit'
-import type { BrainContext, Disposable, PluginRequest } from '@brain-core/sdk'
+import { createReadCursor, createSocialStateMachine } from '@dsh-brain-core/chat-kit'
+import type { BrainContext, Disposable, PluginRequest } from '@dsh-brain-core/sdk'
 import configSchema, { DEFAULT_QQ_CONFIG } from '../src/config.ts'
 import { createInboundPipeline } from '../src/inbound/pipeline.ts'
 import { OneBotHealth } from '../src/onebot/health.ts'
@@ -36,7 +36,7 @@ test('config schema supports sticker collectAction/collectParamKey and matches D
 })
 
 test('ws-client tracks reconnectCount and unrefs watchdog timer', async () => {
-  let listener!: (event: import('@brain-core/sdk').WebSocketEvent) => void | Promise<void>
+  let listener!: (event: import('@dsh-brain-core/sdk').WebSocketEvent) => void | Promise<void>
   let reconnectCallback!: () => void
   const health = new OneBotHealth()
   const client = new OneBotWsClient({

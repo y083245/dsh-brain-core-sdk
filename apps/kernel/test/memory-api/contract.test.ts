@@ -5,7 +5,7 @@ import os from 'node:os'
 import { DatabaseSync } from 'node:sqlite'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError, LIMITS, validate, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, LIMITS, validate, type MemoryRecord } from '@dsh-brain-core/sdk'
 import type { Memory } from '../../src/memory-api/index.ts'
 import {
   agentViewer, openTempBrain, OWNER_IDENTITY, startApi, type TestApi,

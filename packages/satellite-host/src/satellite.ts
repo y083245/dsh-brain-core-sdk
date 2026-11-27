@@ -37,7 +37,7 @@ export class TurnTimeoutError extends Error {
 const require = createRequire(import.meta.url)
 
 export function hardeningPatchPath(): string {
-  return require.resolve('@brain-core/satellite-bundle/patches/hardening.yml')
+  return require.resolve('@dsh-brain-core/satellite-bundle/patches/hardening.yml')
 }
 
 /** Refuses a BRAIN_HOME inside the owner's DSH home, where it could leak into their sessions. */

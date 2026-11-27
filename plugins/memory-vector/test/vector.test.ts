@@ -3,8 +3,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { BrainError, type BrainContext, type MemoryRecord } from '@brain-core/sdk'
-import { checkPlugin, createTestKernel, runPluginContractTests } from '@brain-core/testkit'
+import { BrainError, type BrainContext, type MemoryRecord } from '@dsh-brain-core/sdk'
+import { checkPlugin, createTestKernel, runPluginContractTests } from '@dsh-brain-core/testkit'
 import {
   apply,
   BvecStore,
@@ -59,7 +59,7 @@ function float32Cosine(a: Float32Array, b: Float32Array): number {
 
 test('contract tests, checkPlugin (0 must / 0 should), and SDK-only runtime dependency pass', async () => {
   const pkg = await readManifest()
-  assert.deepEqual(Object.keys(pkg.dependencies), ['@brain-core/sdk'])
+  assert.deepEqual(Object.keys(pkg.dependencies), ['@dsh-brain-core/sdk'])
 
   const contractResults = await runPluginContractTests({ apply }, pkg.brain)
   for (const result of contractResults) {

@@ -8,7 +8,7 @@ import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { writeFileAtomic } from '@brain-core/shared'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 import { createSecretStore } from '../../src/secrets/index.ts'
 import { createSettingsStore } from '../../src/runtime-stores/settings.ts'
 

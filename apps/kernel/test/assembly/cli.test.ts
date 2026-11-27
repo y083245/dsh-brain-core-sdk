@@ -162,7 +162,7 @@ test('secret set reads stdin, stores the value and prints only the name', async 
 test('while a kernel is running plugin, model and secret changes are refused but plugin check still runs', async (t) => {
   const dir = await home(t)
   await mkdir(path.join(dir, 'state'), { recursive: true })
-  const { writeFileAtomic } = await import('@brain-core/shared')
+  const { writeFileAtomic } = await import('@dsh-brain-core/shared')
   await writeFileAtomic(path.join(dir, 'state', 'kernel.pid'), `${process.pid}\n`)
 
   for (const args of [

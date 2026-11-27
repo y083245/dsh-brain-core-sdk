@@ -1,7 +1,7 @@
 import type {
   ContextBundle, ContextRequest, Disclosure, EvidenceRef, ForgetReport, ForgetSelector, IngestEvent, Layer, MemoryRecord,
   RecordInput, RecordPatch, RecordStatus, SearchHit, SearchRequest, Trust, Viewer, Visibility,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 
 export interface Clock { now(): number }
 
@@ -45,7 +45,7 @@ export interface RecordFilter {
 
 export interface Page<T> { readonly items: readonly T[]; readonly nextCursor?: string }
 
-/** Errors are BrainError from @brain-core/sdk. */
+/** Errors are BrainError from @dsh-brain-core/sdk. */
 export interface RecordStore {
   /**
    * Fills id, tIngest, status 'active' and version 1. L0 takes no evidence; L1–L3 need at least one, each an
@@ -408,10 +408,10 @@ export interface MemoryProviderSearchResult {
 }
 
 export interface MemoryProviderRegistry {
-  register(pluginId: string, provider: import('@brain-core/sdk').MemoryProvider): () => void
+  register(pluginId: string, provider: import('@dsh-brain-core/sdk').MemoryProvider): () => void
   hasProviders(): boolean
   listIds(): readonly string[]
-  search(query: import('@brain-core/sdk').MemoryProviderQuery): Promise<MemoryProviderSearchResult>
+  search(query: import('@dsh-brain-core/sdk').MemoryProviderQuery): Promise<MemoryProviderSearchResult>
   notifyRecorded(record: MemoryRecord): Promise<void>
   notifyForgotten(ids: readonly string[]): Promise<void>
   health(): Promise<'ok' | 'degraded' | 'down' | undefined>

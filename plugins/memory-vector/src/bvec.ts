@@ -1,4 +1,4 @@
-import { BrainError, type Layer, type MemoryProviderHit } from '@brain-core/sdk'
+import { BrainError, type Layer, type MemoryProviderHit } from '@dsh-brain-core/sdk'
 
 const MAGIC = new Uint8Array([0x42, 0x56, 0x45, 0x43]) // "BVEC"
 const FORMAT_VERSION = 1

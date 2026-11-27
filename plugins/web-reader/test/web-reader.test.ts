@@ -3,8 +3,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { BrainError, type BrainContext } from '@brain-core/sdk'
-import { checkPlugin, createTestKernel, runPluginContractTests } from '@brain-core/testkit'
+import { BrainError, type BrainContext } from '@dsh-brain-core/sdk'
+import { checkPlugin, createTestKernel, runPluginContractTests } from '@dsh-brain-core/testkit'
 import configSchema, { type WebReaderConfig } from '../src/config.ts'
 import {
   apply,
@@ -29,7 +29,7 @@ async function readManifest(): Promise<{
 
 test('contract tests, brain plugin check, and FR-P01 dependency check pass', async () => {
   const pkg = await readManifest()
-  assert.deepEqual(Object.keys(pkg.dependencies), ['@brain-core/sdk'])
+  assert.deepEqual(Object.keys(pkg.dependencies), ['@dsh-brain-core/sdk'])
 
   const contractResults = await runPluginContractTests({ apply }, pkg.brain)
   for (const result of contractResults) {

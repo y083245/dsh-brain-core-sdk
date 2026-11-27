@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-import { computeHumanPauseMs } from '@brain-core/chat-kit'
-import type { IngestEvent } from '@brain-core/sdk'
+import { computeHumanPauseMs } from '@dsh-brain-core/chat-kit'
+import type { IngestEvent } from '@dsh-brain-core/sdk'
 import type { QqConfig, SendGapMode } from '../config.ts'
 import { allowed } from '../inbound/access.ts'
 import { normalizeMessageId } from '../onebot/types.ts'

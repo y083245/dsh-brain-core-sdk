@@ -1,5 +1,5 @@
 {
-  "name": "@brain-core/plugin-console-chat",
+  "name": "@dsh-brain-core/plugin-console-chat",
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -39,10 +39,10 @@
     ]
   },
   "dependencies": {
-    "@brain-core/chat-kit": "workspace:*",
-    "@brain-core/sdk": "workspace:*"
+    "@dsh-brain-core/chat-kit": "workspace:*",
+    "@dsh-brain-core/sdk": "workspace:*"
   },
   "devDependencies": {
-    "@brain-core/testkit": "workspace:*"
+    "@dsh-brain-core/testkit": "workspace:*"
   }
 }

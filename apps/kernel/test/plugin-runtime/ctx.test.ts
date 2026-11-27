@@ -4,7 +4,7 @@ import http from 'node:http'
 import type { AddressInfo } from 'node:net'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError, type BrainContext } from '@brain-core/sdk'
+import { BrainError, type BrainContext } from '@dsh-brain-core/sdk'
 import { denial, installed, manifest, setup, stored } from './helpers.ts'
 
 const OWN = 'qq:private:1'

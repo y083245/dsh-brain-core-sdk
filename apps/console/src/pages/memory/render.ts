@@ -1,4 +1,4 @@
-import { LAYERS, type Layer, type MemoryRecord, type SearchHit } from '@brain-core/sdk'
+import { LAYERS, type Layer, type MemoryRecord, type SearchHit } from '@dsh-brain-core/sdk'
 import { escapeHtml } from '../../shell/theme.ts'
 import type { MemoryPageState } from './controller.ts'
 import type {

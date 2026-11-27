@@ -6,11 +6,11 @@ import os from 'node:os'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import test from 'node:test'
-import { computeSatelliteMetricsSummary, type SessionSurfaceInfo, type WakeMetricSample } from '@brain-core/console'
-import { createKernel } from '@brain-core/kernel/assembly'
-import { encodeSessionId, removeTree, type AgentClass } from '@brain-core/satellite-host'
-import type { Envelope, WakeResult } from '@brain-core/sdk'
-import type { CapturedRequest } from '@brain-core/testkit'
+import { computeSatelliteMetricsSummary, type SessionSurfaceInfo, type WakeMetricSample } from '@dsh-brain-core/console'
+import { createKernel } from '@dsh-brain-core/kernel/assembly'
+import { encodeSessionId, removeTree, type AgentClass } from '@dsh-brain-core/satellite-host'
+import type { Envelope, WakeResult } from '@dsh-brain-core/sdk'
+import type { CapturedRequest } from '@dsh-brain-core/testkit'
 import {
   CONSOLE_CHAT_DIR, FLASH_LOW, TEST_TOKEN, assertUnwrappedOk, capturingLogger,
   hasToolResultInLastMessage, extractLatestWakeText, httpJson, installAndEnablePlugin,

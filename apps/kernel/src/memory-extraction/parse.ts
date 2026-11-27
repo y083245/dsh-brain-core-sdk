@@ -1,4 +1,4 @@
-import type { MemoryRecord } from '@brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import type { ExtractedFact } from './types.ts'
 
 const ALLOWED_KEYS = new Set(['kind', 'text', 'subjects', 'evidence', 'confidence', 'key', 'value', 'due'])

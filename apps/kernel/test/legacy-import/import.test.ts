@@ -5,7 +5,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, stat, symlink, writeFile } from 
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, type MemoryRecord } from '@dsh-brain-core/sdk'
 import { createIdentityService, createProfileStore } from '../../src/identity-persona/index.ts'
 import { createLegacyImporter } from '../../src/legacy-import/index.ts'
 import { createKeywordIndex } from '../../src/memory-search/index.ts'

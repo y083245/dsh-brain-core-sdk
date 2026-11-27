@@ -1,6 +1,6 @@
 import { appendFile, readFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
-import { ensurePrivateDir, hardenFile } from '@brain-core/shared'
+import { ensurePrivateDir, hardenFile } from '@dsh-brain-core/shared'
 import type { ProcessedLog } from './types.ts'
 
 /** A full L0 id: the layer prefix and a 26-character ULID. Anything else is a torn line from a crash. */

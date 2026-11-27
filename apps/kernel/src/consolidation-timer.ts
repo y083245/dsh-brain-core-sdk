@@ -1,4 +1,4 @@
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import type { Clock, RuntimeSettings, WriteIdentity } from './contracts/index.ts'
 import type { Logger } from './log/index.ts'
 import type { Memory } from './memory-api/index.ts'

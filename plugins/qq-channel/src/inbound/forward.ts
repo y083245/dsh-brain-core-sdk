@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 
-import { BrainError, type ChannelEventResult, type Disclosure } from '@brain-core/sdk'
+import { BrainError, type ChannelEventResult, type Disclosure } from '@dsh-brain-core/sdk'
 import { cleanText, decodeSegments, parseSegments } from './segments.ts'
 
 const MAX_DEPTH = 3

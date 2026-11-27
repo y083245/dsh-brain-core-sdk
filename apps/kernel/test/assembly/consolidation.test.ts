@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { ContextBundle, SearchHit } from '@brain-core/sdk'
+import type { ContextBundle, SearchHit } from '@dsh-brain-core/sdk'
 import { DEFAULT_CONSOLIDATION_INTERVAL_MS } from '../../src/consolidation-timer.ts'
 import type { Job } from '../../src/memory-api/index.ts'
 import { CHANNEL, FLASH, setup, TOKEN, waitFor, type Harness, type LogEntry } from './helpers.ts'

@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import type { EvidenceRef } from '@brain-core/sdk'
+import type { EvidenceRef } from '@dsh-brain-core/sdk'
 import {
   DEFAULT_SETTINGS, computeMoodSnapshot, createPersonaService, createRoleStore,
   decayEmotion, expressedPad, mergeSettings, modulation, moodWord, newCore, renderNow, renderStable, traitValues,

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type Viewer } from '@brain-core/sdk'
+import { BrainError, type Viewer } from '@dsh-brain-core/sdk'
 import type { WriteIdentity } from '../../src/contracts/index.ts'
 import { openTempBrain } from './helpers.ts'
 

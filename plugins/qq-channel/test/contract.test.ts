@@ -6,8 +6,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { BrainError, type BrainContext, type ToolOutput } from '@brain-core/sdk'
-import { createTestKernel, runPluginContractTests } from '@brain-core/testkit'
+import { BrainError, type BrainContext, type ToolOutput } from '@dsh-brain-core/sdk'
+import { createTestKernel, runPluginContractTests } from '@dsh-brain-core/testkit'
 import { apply, applyQqPlugin, type QqPluginHandle } from '../src/index.ts'
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')

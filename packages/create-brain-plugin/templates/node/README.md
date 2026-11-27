@@ -9,7 +9,7 @@ npm install
 npm test
 ```
 
-The test calls `runPluginContractTests` from `@brain-core/testkit`: it loads `apply` in a fake
+The test calls `runPluginContractTests` from `@dsh-brain-core/testkit`: it loads `apply` in a fake
 kernel and checks the manifest, registration, unload and late-registration rules. It also calls the
 `hello` tool; when the manifest has `memory.ingest` or `memory.record`, it checks the record the
 plugin writes.
@@ -30,15 +30,15 @@ same check is `brain plugin check`, which the `check` script in `package.json` a
 
 ## Before the packages are published
 
-`@brain-core/sdk` and `@brain-core/testkit` are not on npm yet, so `^1.0.0` cannot be installed. In
+`@dsh-brain-core/sdk` and `@dsh-brain-core/testkit` are not on npm yet, so `^1.0.0` cannot be installed. In
 the SDK repository, point the two dependencies at the local packages:
 
 ```json
-"@brain-core/sdk": "file:/path/to/brain-core/packages/sdk"
+"@dsh-brain-core/sdk": "file:/path/to/brain-core/packages/sdk"
 ```
 
 ```json
-"@brain-core/testkit": "file:/path/to/brain-core/packages/testkit"
+"@dsh-brain-core/testkit": "file:/path/to/brain-core/packages/testkit"
 ```
 
 The first line replaces the dependency, the second one the devDependency. Then run `npm install`.
@@ -52,4 +52,4 @@ The first line replaces the dependency, the second one the devDependency. Then r
 - `src/config.ts` — the Schemastery schema the console uses to build a form.
 - `test/plugin.test.ts` — the contract test.
 
-See the `BrainContext` and manifest types exported by `@brain-core/sdk` before changing permissions or adding tools.
+See the `BrainContext` and manifest types exported by `@dsh-brain-core/sdk` before changing permissions or adding tools.

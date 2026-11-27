@@ -1,5 +1,5 @@
-import { BrainError } from '@brain-core/sdk'
-import type { MemoryRecord } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import type { DecayState, MemoryDecay } from '../contracts/index.ts'
 
 const DAY_MS = 86_400_000

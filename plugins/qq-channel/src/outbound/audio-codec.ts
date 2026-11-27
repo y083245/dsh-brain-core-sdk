@@ -6,7 +6,7 @@ import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, dirname, extname, isAbsolute, join } from 'node:path'
 import { promisify } from 'node:util'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 
 const runFile = promisify(execFile)
 const MAX_AUDIO_BYTES = 4 * 1024 * 1024

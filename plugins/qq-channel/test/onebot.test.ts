@@ -3,7 +3,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { HOST_UNSUPPORTED_MESSAGE } from '../src/apply.ts'
 import { normalizeMessageId, normalizeAccountId, OneBotHealth, OneBotHttpClient, OneBotHttpError, OneBotWsClient } from '../src/onebot/index.ts'
 
@@ -61,7 +61,7 @@ test('late subscription is retired after stop', async () => {
 
 test('early close retires late handle and ignores callbacks from old connection', async () => {
   let release!: (dispose: () => void) => void
-  let oldListener!: (event: import('@brain-core/sdk').WebSocketEvent) => void | Promise<void>
+  let oldListener!: (event: import('@dsh-brain-core/sdk').WebSocketEvent) => void | Promise<void>
   let callback!: () => void
   let disposed = 0
   let calls = 0
@@ -153,7 +153,7 @@ test('stale status cannot be restored by online notice', () => {
 })
 
 test('identity from retired connection is discarded', async () => {
-  let listener!: (event: import('@brain-core/sdk').WebSocketEvent) => void | Promise<void>
+  let listener!: (event: import('@dsh-brain-core/sdk').WebSocketEvent) => void | Promise<void>
   let resolve!: (value: unknown) => void
   const client = new OneBotWsClient({
     http: {
@@ -185,7 +185,7 @@ test('invalid URL and secret errors are static and URLs reject embedded authenti
 test('watchdog probes once per expired heartbeat and rearms on a new heartbeat', async () => {
   let now = 100000
   let probes = 0
-  let listener!: (event: import('@brain-core/sdk').WebSocketEvent) => void | Promise<void>
+  let listener!: (event: import('@dsh-brain-core/sdk').WebSocketEvent) => void | Promise<void>
   const health = new OneBotHealth()
   const client = new OneBotWsClient({
     http: {
@@ -269,7 +269,7 @@ test('OB-10/OB-12: heartbeat requires good:true and 90s watchdog degrades health
 
   let now = 1000
   let probes = 0
-  let listener!: (event: import('@brain-core/sdk').WebSocketEvent) => void | Promise<void>
+  let listener!: (event: import('@dsh-brain-core/sdk').WebSocketEvent) => void | Promise<void>
   const wsHealth = new OneBotHealth()
   const client = new OneBotWsClient({
     http: {
@@ -302,7 +302,7 @@ test('OB-10/OB-12: heartbeat requires good:true and 90s watchdog degrades health
 })
 
 test('post-handshake INVALID_ARGUMENT WS error reconnects while PERMISSION_DENIED and unsupported host stop permanently', async () => {
-  let listener!: (event: import('@brain-core/sdk').WebSocketEvent) => void | Promise<void>
+  let listener!: (event: import('@dsh-brain-core/sdk').WebSocketEvent) => void | Promise<void>
   let scheduledFn: (() => void) | undefined
   let subscribeCalls = 0
   let scheduleCount = 0

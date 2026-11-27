@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, type MemoryRecord } from '@dsh-brain-core/sdk'
 import { createHttpMemoryPageApi } from '../../src/pages/memory/index.ts'
 
 interface RecordedCall {

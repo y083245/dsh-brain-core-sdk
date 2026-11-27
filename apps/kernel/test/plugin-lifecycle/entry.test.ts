@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile, unlink, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { loadNodeEntry } from '../../src/plugin-lifecycle/index.ts'
 import { brainManifest, installedDirs, makePlugin, setup, throwsCode } from './helpers.ts'
 
@@ -16,7 +16,7 @@ test('loadNodeEntry returns the plugin apply and the linked SDK is the kernel SD
   const h = await setup(t)
   const source = await makePlugin(path.join(h.root, 'src'), {
     mainSource: [
-      "import { BrainError } from '@brain-core/sdk'",
+      "import { BrainError } from '@dsh-brain-core/sdk'",
       'export function apply() { return BrainError }',
       '',
     ].join('\n'),

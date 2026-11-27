@@ -7,7 +7,7 @@ import {
   type MemoryProviderQuery,
   type MemoryRecord,
   type PluginApply,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import { BvecStore } from './bvec.ts'
 import { createHashEmbedder, createHttpEmbedder, type Embedder } from './embedder.ts'
 

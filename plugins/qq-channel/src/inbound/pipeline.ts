@@ -4,8 +4,8 @@ import {
   createMessageDebouncer,
   createReadCursor,
   createSocialStateMachine,
-} from '@brain-core/chat-kit'
-import { LIMITS, type BrainContext, type WakeMessage } from '@brain-core/sdk'
+} from '@dsh-brain-core/chat-kit'
+import { LIMITS, type BrainContext, type WakeMessage } from '@dsh-brain-core/sdk'
 import type { QqConfig } from '../config.ts'
 import { normalizeAccountId, normalizeMessageId } from '../onebot/types.ts'
 import { allowed } from './access.ts'

@@ -4,7 +4,7 @@ import { mkdtemp, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { isHardened } from '@brain-core/shared'
+import { isHardened } from '@dsh-brain-core/shared'
 import { prepareBrainHome, resolveBrainHome, type BrainPaths } from '../../src/home/index.ts'
 
 async function tempDir(): Promise<string> {

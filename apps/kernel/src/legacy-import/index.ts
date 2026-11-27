@@ -1,7 +1,7 @@
 import { constants as fsConstants } from 'node:fs'
 import { access, stat } from 'node:fs/promises'
 import path from 'node:path'
-import { ensurePrivateDir, writeFileAtomic } from '@brain-core/shared'
+import { ensurePrivateDir, writeFileAtomic } from '@dsh-brain-core/shared'
 import type {
   Clock, KeywordIndex, LegacyImportMode, LegacyImportOptions, LegacyImportReport, RecordStore,
 } from '../contracts/index.ts'

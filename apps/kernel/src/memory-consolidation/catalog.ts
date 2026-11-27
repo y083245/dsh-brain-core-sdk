@@ -1,4 +1,4 @@
-import type { MemoryRecord } from '@brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import type { RecordStore } from '../contracts/index.ts'
 import { listAll, truncateCodePoints } from './helpers.ts'
 

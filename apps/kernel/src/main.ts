@@ -4,8 +4,8 @@ import { readFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
-import { isProcessAlive } from '@brain-core/satellite-host'
-import { BrainError } from '@brain-core/sdk'
+import { isProcessAlive } from '@dsh-brain-core/satellite-host'
+import { BrainError } from '@dsh-brain-core/sdk'
 import type { CrossChannelMode, RuntimeSettings } from './contracts/index.ts'
 import { prepareBrainHome } from './home/index.ts'
 import { createLogger } from './log/index.ts'
@@ -149,7 +149,7 @@ async function start(args: readonly string[], io: Io): Promise<number> {
   })
 
   const pidFile = pidFileOf(paths)
-  const { writeFileAtomic } = await import('@brain-core/shared')
+  const { writeFileAtomic } = await import('@dsh-brain-core/shared')
   await writeFileAtomic(pidFile, `${process.pid}\n`)
 
   // The only place the token is ever printed, and only once.
@@ -227,7 +227,7 @@ async function consoleCommand(args: readonly string[], io: Io): Promise<number> 
   let consoleServer: { listen(): Promise<{ readonly port: number }>; close(): Promise<void> }
   let boundConsolePort: number
   try {
-    const { createConsoleServer } = await import('@brain-core/console')
+    const { createConsoleServer } = await import('@dsh-brain-core/console')
     consoleServer = createConsoleServer({
       token,
       port: consolePort,
@@ -254,7 +254,7 @@ async function consoleCommand(args: readonly string[], io: Io): Promise<number> 
 
   const pidFile = pidFileOf(paths)
   try {
-    const { writeFileAtomic } = await import('@brain-core/shared')
+    const { writeFileAtomic } = await import('@dsh-brain-core/shared')
     await writeFileAtomic(pidFile, `${process.pid}\n`)
   } catch (error) {
     try { await consoleServer.close() } catch { /* best-effort cleanup */ }
@@ -301,7 +301,7 @@ async function cliLifecycle(): Promise<PluginLifecycle> {
   return createPluginLifecycle({
     pluginsDir: paths.plugins,
     sdkDir: sdkDirectory(),
-    brainPackages: { 'chat-kit': brainPackageDirectory('@brain-core/chat-kit') },
+    brainPackages: { 'chat-kit': brainPackageDirectory('@dsh-brain-core/chat-kit') },
     activator: filesOnly,
     storageFor: (id) => createPluginStorage(path.join(paths.plugins, id)),
     loggerFor: (id) => createPluginLogger({ dir: path.join(paths.plugins, id), now: () => clock.now() }),
@@ -397,7 +397,7 @@ async function pluginCommand(args: readonly string[], io: Io): Promise<number> {
   const [action, ...rest] = args
   if (action === 'check') {
     // Static checks need no kernel and are allowed while one is running.
-    const { runCheckCli } = await import('@brain-core/testkit')
+    const { runCheckCli } = await import('@dsh-brain-core/testkit')
     return await runCheckCli(rest, io)
   }
   if (action === 'install') return await pluginInstall(rest, io, false)
@@ -471,7 +471,7 @@ async function modelSet(args: readonly string[], io: Io): Promise<number> {
     io.stderr(USAGE)
     return 2
   }
-  const { THINKING_EFFORTS } = await import('@brain-core/satellite-host')
+  const { THINKING_EFFORTS } = await import('@dsh-brain-core/satellite-host')
   if (!(THINKING_EFFORTS as readonly string[]).includes(values.effort)) {
     io.stderr(`unknown effort: ${values.effort}\n${USAGE}`)
     return 2

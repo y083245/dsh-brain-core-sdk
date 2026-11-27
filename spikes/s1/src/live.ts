@@ -10,7 +10,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
-import { BridgeServer, encodeSessionId, killProcessTree, requireSelection, Satellite, type BridgeTool, type ToolHandler } from '@brain-core/satellite-host'
+import { BridgeServer, encodeSessionId, killProcessTree, requireSelection, Satellite, type BridgeTool, type ToolHandler } from '@dsh-brain-core/satellite-host'
 import { hitRatio, stepUsages, TokenMeter, type StepUsage } from './usage.ts'
 
 const { values, positionals } = parseArgs({

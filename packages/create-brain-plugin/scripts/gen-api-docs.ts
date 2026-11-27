@@ -16,7 +16,7 @@ const HEADER = [
   '签名末尾的注释是调用它需要的权限，没有注释的方法不需要权限。',
 ]
 
-const INTERFACE_NOTE = '类型来自 `@brain-core/sdk`。'
+const INTERFACE_NOTE = '类型来自 `@dsh-brain-core/sdk`。'
 
 interface MemberDoc {
   readonly name: string

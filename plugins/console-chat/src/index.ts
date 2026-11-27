@@ -7,8 +7,8 @@ import {
   type ChatTimers,
   type FormattedSnapshotItem,
   type MessageDebouncer,
-} from '@brain-core/chat-kit'
-import { BrainError, type BrainContext, type PluginApply, type WakeMessage, type WakeResult } from '@brain-core/sdk'
+} from '@dsh-brain-core/chat-kit'
+import { BrainError, type BrainContext, type PluginApply, type WakeMessage, type WakeResult } from '@dsh-brain-core/sdk'
 import { renderChatUiHtml } from './ui.ts'
 
 export interface ChatHistoryEntry {

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { ContextBundle, MemoryRecord, SearchHit, Viewer } from '@brain-core/sdk'
+import type { ContextBundle, MemoryRecord, SearchHit, Viewer } from '@dsh-brain-core/sdk'
 import { openTempBrain, OWNER_IDENTITY } from './helpers.ts'
 
 const GROUP = 'qq:group:20001'

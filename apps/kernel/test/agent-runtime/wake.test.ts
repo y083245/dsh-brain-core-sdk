@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { LIMITS } from '@brain-core/sdk'
-import type { WakeMessage } from '@brain-core/sdk'
+import { LIMITS } from '@dsh-brain-core/sdk'
+import type { WakeMessage } from '@dsh-brain-core/sdk'
 import { FEED, GROUP, OTHER, PRIVATE, harness, msg, rejection, settle, textOf, until } from './helpers.ts'
 import type { Harness } from './helpers.ts'
 

@@ -1,10 +1,10 @@
 // The console's own secret store: `state/secrets.json`, 600, values never leave this file.
 //
 // It is deliberately a copy of the kernel's store rather than an import: `apps/console` only depends on
-// `@brain-core/sdk`, `satellite-host` and `shared`, and the console must never reach into the main DSH's home.
+// `@dsh-brain-core/sdk`, `satellite-host` and `shared`, and the console must never reach into the main DSH's home.
 import { readFile } from 'node:fs/promises'
-import { BrainError } from '@brain-core/sdk'
-import { writeFileAtomic } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 
 export interface SecretStore {
   set(name: string, value: string): Promise<void>

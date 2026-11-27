@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, validate, type ContextBundle, type SearchHit } from '@brain-core/sdk'
+import { BrainError, validate, type ContextBundle, type SearchHit } from '@dsh-brain-core/sdk'
 import type { LlmClient } from '../../src/contracts/index.ts'
 import { createJobRunner } from '../../src/memory-api/jobs.ts'
 import { openTempBrain, openParts, OWNER_IDENTITY, startApi } from './helpers.ts'

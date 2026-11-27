@@ -7,14 +7,14 @@ import { fileURLToPath } from 'node:url'
 import {
   SelectionMissingError, createDebugViewController, createRealSatelliteFactory, createSupervisor, encodeSessionId,
   fetchToolUpdateMode, purgeSessions, requireSelection,
-} from '@brain-core/satellite-host'
+} from '@dsh-brain-core/satellite-host'
 import type {
   AgentClass, DebugViewController, ModelSelection, SatelliteFactory, SatelliteLike, ToolUpdateMode, TurnRunner,
-} from '@brain-core/satellite-host'
-import type { BrainEvents, BrainManifest, PluginApply } from '@brain-core/sdk'
-import { BrainError, validateManifest } from '@brain-core/sdk'
-import { createUlid, writeFileAtomic } from '@brain-core/shared'
-import { checkPlugin } from '@brain-core/testkit'
+} from '@dsh-brain-core/satellite-host'
+import type { BrainEvents, BrainManifest, PluginApply } from '@dsh-brain-core/sdk'
+import { BrainError, validateManifest } from '@dsh-brain-core/sdk'
+import { createUlid, writeFileAtomic } from '@dsh-brain-core/shared'
+import { checkPlugin } from '@dsh-brain-core/testkit'
 import {
   buildSystemPrompt, createAgentRuntime, createSatelliteLlm, readSessions,
   type DetailedLlmClient, type DetailedLlmResult,
@@ -140,14 +140,14 @@ function isSelected(value: Partial<Record<keyof ModelSelection, unknown>> | unde
 }
 
 /** `packages/sdk`, found from the SDK's exported entry so the CLI and tests agree on one copy. */
-function brainPackageDirectory(name: '@brain-core/sdk' | '@brain-core/chat-kit'): string {
+function brainPackageDirectory(name: '@dsh-brain-core/sdk' | '@dsh-brain-core/chat-kit'): string {
   const resolved = import.meta.resolve(name)
   const file = resolved.startsWith('file:') ? fileURLToPath(resolved) : resolved
   return path.dirname(path.dirname(realpathSync(file)))
 }
 
 function sdkDirectory(): string {
-  return brainPackageDirectory('@brain-core/sdk')
+  return brainPackageDirectory('@dsh-brain-core/sdk')
 }
 
 /** npm is a batch file on Windows and needs cmd.exe; the other tools are real executables. */
@@ -700,7 +700,7 @@ export async function createKernel(options: KernelOptions): Promise<Kernel> {
     const lifecycle = createPluginLifecycle({
       pluginsDir: paths.plugins,
       sdkDir: sdkDirectory(),
-      brainPackages: { 'chat-kit': brainPackageDirectory('@brain-core/chat-kit') },
+      brainPackages: { 'chat-kit': brainPackageDirectory('@dsh-brain-core/chat-kit') },
       activator: runtime,
       storageFor: (id) => createPluginStorage(path.join(paths.plugins, id)),
       loggerFor: (id) => ({

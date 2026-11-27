@@ -1,4 +1,4 @@
-import type { Layer } from '@brain-core/sdk'
+import type { Layer } from '@dsh-brain-core/sdk'
 
 /** The only fields a log line may carry (RFC R8): no message text, no record content, no secrets. */
 export interface LogFields {

@@ -18,11 +18,11 @@ export async function tempDir(t: TestContext, label: string): Promise<string> {
 }
 
 /**
- * A generated plugin imports `@brain-core/*`, so the test links the workspace packages into the
+ * A generated plugin imports `@dsh-brain-core/*`, so the test links the workspace packages into the
  * generated directory. Junctions work without developer mode on Windows.
  */
 export async function linkWorkspace(dir: string): Promise<void> {
-  const scope = path.join(dir, 'node_modules', '@brain-core')
+  const scope = path.join(dir, 'node_modules', '@dsh-brain-core')
   await mkdir(scope, { recursive: true })
   for (const name of ['sdk', 'testkit']) {
     await symlink(path.join(REPO_DIR, 'packages', name), path.join(scope, name), 'junction')

@@ -1,4 +1,4 @@
-import type { Layer, MemoryProviderHit, MemoryProviderQuery, MemoryRecord } from '@brain-core/sdk'
+import type { Layer, MemoryProviderHit, MemoryProviderQuery, MemoryRecord } from '@dsh-brain-core/sdk'
 
 interface IndexedMeta {
   readonly id: string

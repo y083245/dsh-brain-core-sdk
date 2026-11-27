@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { BrainError } from '@brain-core/sdk'
-import { ensurePrivateDir, writeFileAtomic } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import { ensurePrivateDir, writeFileAtomic } from '@dsh-brain-core/shared'
 import type { Clock, ConsolidationProposal } from '../contracts/index.ts'
 import { isPlainObject } from './helpers.ts'
 

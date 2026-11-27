@@ -21,8 +21,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Install the next tag of the DSH packages
         run: |
-          pnpm --filter @brain-core/satellite-host add @deepseek-ai/dsh@next @deepseek-ai/dsh-llm@next @deepseek-ai/dsh-sdk-client@next @deepseek-ai/dsh-sdk-protocol@next @deepseek-ai/dsh-session@next
-          pnpm --filter @brain-core/satellite-bundle add -D @deepseek-ai/dsh-tools@next
+          pnpm --filter @dsh-brain-core/satellite-host add @deepseek-ai/dsh@next @deepseek-ai/dsh-llm@next @deepseek-ai/dsh-sdk-client@next @deepseek-ai/dsh-sdk-protocol@next @deepseek-ai/dsh-session@next
+          pnpm --filter @dsh-brain-core/satellite-bundle add -D @deepseek-ai/dsh-tools@next
       - name: Show the installed DSH versions
         run: pnpm -r ls --depth 0 "@deepseek-ai/*"
       - run: pnpm build

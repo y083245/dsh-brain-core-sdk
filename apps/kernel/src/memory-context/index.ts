@@ -1,6 +1,6 @@
 import type {
   ContextBlock, ContextBlockName, ContextBundle, ContextItem, ContextRequest, Disclosure, MemoryRecord, Viewer,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import {
   KINDS, type ChannelFacts, type Clock, type ContextAssembler, type CrossChannelMode, type KeywordIndex,
   type MemoryAudit, type MemoryDecay, type Policy, type ProfileReader, type RecordFilter, type RecordStore,

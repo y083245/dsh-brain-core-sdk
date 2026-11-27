@@ -4,7 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import vm from 'node:vm'
-import { validate } from '@brain-core/sdk'
+import { validate } from '@dsh-brain-core/sdk'
 import { makeBrainHome, modeOf, startConsole, TOKEN } from './helpers.ts'
 
 const KERNEL_TOKEN = 'kernel-secret-token-9f4e'

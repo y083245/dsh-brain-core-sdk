@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { cp, mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import test, { type TestContext } from 'node:test'
-import type { BrainManifest } from '@brain-core/sdk'
+import type { BrainManifest } from '@dsh-brain-core/sdk'
 import { backupDirs, installedDirs, makePlugin, setup, throwsCode } from './helpers.ts'
 
 const SOURCE = {

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import http from 'node:http'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { createHttpPluginsPageApi } from '../../src/pages/plugins/index.ts'
 
 interface RecordedRequest {

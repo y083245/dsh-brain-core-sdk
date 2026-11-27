@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { BrainError } from '@brain-core/sdk'
-import type { EvidenceRef } from '@brain-core/sdk'
-import { createUlid, ensurePrivateDir, writeFileAtomic } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { EvidenceRef } from '@dsh-brain-core/sdk'
+import { createUlid, ensurePrivateDir, writeFileAtomic } from '@dsh-brain-core/shared'
 import type { Clock, WorkingMemoryInput, WorkingMemoryItem, WorkingMemoryStore } from '../contracts/index.ts'
 
 export const MAX_WORKING_MEMORY_TTL_MS = 86_400_000

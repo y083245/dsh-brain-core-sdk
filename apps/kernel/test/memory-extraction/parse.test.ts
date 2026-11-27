@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { MemoryRecord } from '@brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import { parseExtraction } from '../../src/memory-extraction/index.ts'
 import { World } from './helpers.ts'
 

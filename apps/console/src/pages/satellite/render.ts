@@ -1,4 +1,4 @@
-import type { AgentClass } from '@brain-core/satellite-host'
+import type { AgentClass } from '@dsh-brain-core/satellite-host'
 import { escapeHtml } from '../../shell/theme.ts'
 import type { SatellitePageState } from './controller.ts'
 import type { Percentiles, SatelliteMetricsSummary, SessionSurfaceWarning } from './metrics.ts'

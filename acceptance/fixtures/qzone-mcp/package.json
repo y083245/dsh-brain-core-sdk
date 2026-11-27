@@ -1,5 +1,5 @@
 {
-  "name": "@brain-core/acceptance-qzone-mcp",
+  "name": "@dsh-brain-core/acceptance-qzone-mcp",
   "version": "1.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -42,6 +42,6 @@
     }
   },
   "dependencies": {
-    "@brain-core/sdk": "workspace:*"
+    "@dsh-brain-core/sdk": "workspace:*"
   }
 }

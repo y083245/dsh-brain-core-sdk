@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 
-import { formatRelativeTime, type ChatMode } from '@brain-core/chat-kit'
+import { formatRelativeTime, type ChatMode } from '@dsh-brain-core/chat-kit'
 import type { HealthState } from '../onebot/health.ts'
 
 export interface QqChannelBudgetView {

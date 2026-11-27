@@ -4,7 +4,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import {
   createChannelRegistry, createOutboundAudit, createSettingsStore, createWakeMetrics,
 } from '../../src/runtime-stores/index.ts'

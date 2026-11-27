@@ -1,5 +1,5 @@
-import { BrainError } from '@brain-core/sdk'
-import type { ChannelProvider } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { ChannelProvider } from '@dsh-brain-core/sdk'
 import type { ChannelRegistry } from '../contracts/index.ts'
 
 /**

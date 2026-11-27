@@ -1,4 +1,4 @@
-import type { ManifestResult } from '@brain-core/sdk'
+import type { ManifestResult } from '@dsh-brain-core/sdk'
 import type { ContractResult } from '../contract.ts'
 
 /** One thing `brain plugin check` found. A `must` finding makes the plugin unfit to install. */

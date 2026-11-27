@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { toDshParameters } from '@brain-core/satellite-host'
-import { BrainError } from '@brain-core/sdk'
+import { toDshParameters } from '@dsh-brain-core/satellite-host'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { fakeTool, harness, rejection } from './helpers.ts'
 
 const BUILTINS = ['memory__forget', 'memory__remember', 'memory__search', 'memory__update', 'tools__load', 'tools__search']

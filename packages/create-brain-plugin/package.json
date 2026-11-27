@@ -10,10 +10,10 @@
     "gen:api": "node scripts/gen-api-docs.ts"
   },
   "dependencies": {
-    "@brain-core/sdk": "workspace:*"
+    "@dsh-brain-core/sdk": "workspace:*"
   },
   "devDependencies": {
-    "@brain-core/testkit": "workspace:*",
+    "@dsh-brain-core/testkit": "workspace:*",
     "typescript": "6.0.3"
   }
 }

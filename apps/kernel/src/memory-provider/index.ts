@@ -4,7 +4,7 @@ import {
   type MemoryProviderHit,
   type MemoryProviderQuery,
   type MemoryRecord,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type { MemoryProviderRegistry, MemoryProviderSearchResult } from '../contracts/index.ts'
 import type { Logger } from '../log/index.ts'
 

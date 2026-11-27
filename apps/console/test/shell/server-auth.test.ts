@@ -4,7 +4,7 @@ import { connect } from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { LIMITS, validate } from '@brain-core/sdk'
+import { LIMITS, validate } from '@dsh-brain-core/sdk'
 import { makeBrainHome, startConsole, TOKEN, type TempHome, type TestConsole } from './helpers.ts'
 
 const PROTECTED_ROUTES: readonly { readonly method: string; readonly route: string; readonly body?: unknown }[] = [

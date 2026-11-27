@@ -5,7 +5,7 @@ import net from 'node:net'
 import {
   BrainError, parsePermission,
   type Disposable, type WebSocketAuthOptions, type WebSocketEvent, type WebSocketSubscribeOptions,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type { InstalledPlugin } from '../contracts/index.ts'
 import { redact, type Logger } from '../log/index.ts'
 import { bareHost, isLoopbackIp, REDIRECTS, resolveAll, type Lookup } from './network.ts'

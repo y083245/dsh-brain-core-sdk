@@ -2,7 +2,7 @@ import dns from 'node:dns'
 import http from 'node:http'
 import https from 'node:https'
 import net from 'node:net'
-import { BrainError, hostAllowed, parsePermission, type FetchOptions, type FetchResponse, type ParsedPermission } from '@brain-core/sdk'
+import { BrainError, hostAllowed, parsePermission, type FetchOptions, type FetchResponse, type ParsedPermission } from '@dsh-brain-core/sdk'
 import type { InstalledPlugin } from '../contracts/index.ts'
 import { isPrivateIp } from './safe-fetch.ts'
 

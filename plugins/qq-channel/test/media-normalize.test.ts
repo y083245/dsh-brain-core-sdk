@@ -10,7 +10,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { delimiter, join } from 'node:path'
 import { test } from 'node:test'
 import { deflateSync } from 'node:zlib'
-import type { PluginHttp } from '@brain-core/sdk'
+import type { PluginHttp } from '@dsh-brain-core/sdk'
 import { DEFAULT_QQ_CONFIG, type QqMediaSettings } from '../src/config.ts'
 import { normalizeImage, normalizeImageDetailed, planAnimation, readMessageImages, resolveFfmpegPath, resolveSharp, sampleFrameIndices, type SharpLoader } from '../src/outbound/media-normalize.ts'
 
@@ -199,9 +199,9 @@ test('offline-installed plugin discovers sharp via the realpath of its SDK junct
   const plugin = join(directory, '.installed', 'qq', 'version')
   const outbound = join(plugin, 'src', 'outbound')
   await mkdir(outbound, { recursive: true })
-  await mkdir(join(plugin, 'node_modules', '@brain-core'), { recursive: true })
-  await writeFile(join(plugin, 'package.json'), JSON.stringify({ type: 'module', dependencies: { '@brain-core/sdk': 'workspace:*' } }))
-  await symlink(fileURLToPath(new URL('../../../packages/sdk', import.meta.url)), join(plugin, 'node_modules', '@brain-core', 'sdk'), 'junction')
+  await mkdir(join(plugin, 'node_modules', '@dsh-brain-core'), { recursive: true })
+  await writeFile(join(plugin, 'package.json'), JSON.stringify({ type: 'module', dependencies: { '@dsh-brain-core/sdk': 'workspace:*' } }))
+  await symlink(fileURLToPath(new URL('../../../packages/sdk', import.meta.url)), join(plugin, 'node_modules', '@dsh-brain-core', 'sdk'), 'junction')
   const target = join(outbound, 'media-normalize.ts')
   await copyFile(new URL('../src/outbound/media-normalize.ts', import.meta.url), target)
   const output = execFileSync(process.execPath, ['--input-type=module', '-e',

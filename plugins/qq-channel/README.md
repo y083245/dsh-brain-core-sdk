@@ -1,6 +1,6 @@
-# `@brain-core/plugin-qq`（QQ 通道插件）
+# `@dsh-brain-core/plugin-qq`（QQ 通道插件）
 
-Brain Core 的 Clean-Room 原创 QQ 通道插件（`brain.id = "qq"`）采用项目的 [PolyForm Noncommercial License 1.0.0](../../LICENSE)，商业用途须取得版权方的单独授权。它仅依赖 `@brain-core/sdk`、`@brain-core/chat-kit` 与 Node.js 内置模块。
+Brain Core 的 Clean-Room 原创 QQ 通道插件（`brain.id = "qq"`）采用项目的 [PolyForm Noncommercial License 1.0.0](../../LICENSE)，商业用途须取得版权方的单独授权。它仅依赖 `@dsh-brain-core/sdk`、`@dsh-brain-core/chat-kit` 与 Node.js 内置模块。
 
 通过标准 **OneBot v11 HTTP + Forward WebSocket** 协议对接外部独立运行的协议端，让 Brain Core 统一的「她」（全局唯一记忆、人格、PAD 情绪与关系图谱）安全长出 QQ 私聊与群聊感官与四肢。
 

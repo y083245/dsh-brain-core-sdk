@@ -4,7 +4,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { PassThrough } from 'node:stream'
 import test, { afterEach } from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { LineConnection } from '../../src/plugin-external/protocol.ts'
 import { harness, readEntries, rejectsWithCode, waitUntil, type Harness, type HarnessOptions } from './helpers.ts'
 
@@ -130,7 +130,7 @@ test('BrainError becomes -32000 with data.code; other errors hide their text; un
       ],
     },
   })
-  h.ctx.state.failures.set('memory.ingest', new (await import('@brain-core/sdk')).BrainError('PERMISSION_DENIED', 'no memory.ingest'))
+  h.ctx.state.failures.set('memory.ingest', new (await import('@dsh-brain-core/sdk')).BrainError('PERMISSION_DENIED', 'no memory.ingest'))
   h.ctx.state.failures.set('memory.record', new Error('chat text must not leak'))
   await h.apply(h.ctx.ctx, {})
   await h.waitFor((entries) => ['denied', 'internal', 'unknown', 'missing'].every((key) => entries.some((entry) => entry.event === 'response' && entry.key === key)))

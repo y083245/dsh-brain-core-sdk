@@ -6,12 +6,12 @@ import os from 'node:os'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import test from 'node:test'
-import { createKernel } from '@brain-core/kernel/assembly'
-import { runDoctor } from '@brain-core/kernel/isolation-doctor'
-import { encodeSessionId, removeTree } from '@brain-core/satellite-host'
-import type { Envelope, WakeResult } from '@brain-core/sdk'
-import { createUlid } from '@brain-core/shared'
-import { FakeDeepSeek } from '@brain-core/testkit'
+import { createKernel } from '@dsh-brain-core/kernel/assembly'
+import { runDoctor } from '@dsh-brain-core/kernel/isolation-doctor'
+import { encodeSessionId, removeTree } from '@dsh-brain-core/satellite-host'
+import type { Envelope, WakeResult } from '@dsh-brain-core/sdk'
+import { createUlid } from '@dsh-brain-core/shared'
+import { FakeDeepSeek } from '@dsh-brain-core/testkit'
 import {
   CONSOLE_CHAT_DIR, FLASH_LOW, TEST_TOKEN, assertUnwrappedOk, capturingLogger,
   closeHttpServer, createFakeMainDshHome, hasToolResultInLastMessage, httpJson,

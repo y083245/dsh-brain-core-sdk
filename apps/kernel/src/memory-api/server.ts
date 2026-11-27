@@ -7,10 +7,10 @@ import {
   type ContextRequest, type Envelope, type EvidenceRef, type ForgetSelector, type IngestEvent, type Layer,
   type ManifestTool, type Meta, type PluginKind, type PluginRequest, type RecordInput, type RecordPatch,
   type SearchRequest, type Viewer,
-} from '@brain-core/sdk'
-import type { AgentClass, ModelSelection, RunnerStatus } from '@brain-core/satellite-host'
-import type { CheckReport } from '@brain-core/testkit'
-import { createUlid } from '@brain-core/shared'
+} from '@dsh-brain-core/sdk'
+import type { AgentClass, ModelSelection, RunnerStatus } from '@dsh-brain-core/satellite-host'
+import type { CheckReport } from '@dsh-brain-core/testkit'
+import { createUlid } from '@dsh-brain-core/shared'
 import type {
   AccountingSummary, ConsolidationApproveOptions, ConsolidationProposal, CrossChannelMode, DebugViewStatus,
   ModelPriceBook, ReadOnlyMcpStatus, RecordFilter, RuntimeSettings, WorkingMemoryInput, WriteIdentity,

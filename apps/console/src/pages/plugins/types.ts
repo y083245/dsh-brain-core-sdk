@@ -5,7 +5,7 @@ import {
   type PluginKind,
   type ToolEffect,
   type ToolLoad,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import { apiFetch, type ApiFetchOptions } from '../../shell/api-fetch.ts'
 
 export type { ManifestResult, ManifestTool, PluginKind, ToolEffect, ToolLoad }

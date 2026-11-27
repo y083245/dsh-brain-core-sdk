@@ -5,13 +5,13 @@ import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { createKernel } from '@brain-core/kernel/assembly'
-import { runDoctor } from '@brain-core/kernel/isolation-doctor'
-import { encodeSessionId, removeTree } from '@brain-core/satellite-host'
-import { BrainError, type Envelope, type PluginApply, type WakeResult } from '@brain-core/sdk'
+import { createKernel } from '@dsh-brain-core/kernel/assembly'
+import { runDoctor } from '@dsh-brain-core/kernel/isolation-doctor'
+import { encodeSessionId, removeTree } from '@dsh-brain-core/satellite-host'
+import { BrainError, type Envelope, type PluginApply, type WakeResult } from '@dsh-brain-core/sdk'
 import {
   FakeDeepSeek, checkPlugin, createTestKernel, runPluginContractTests,
-} from '@brain-core/testkit'
+} from '@dsh-brain-core/testkit'
 import { extractLatestWakeText, hasToolResultInLastMessage, waitFor } from './helpers.ts'
 import { apply as qqApply } from './fixtures/qq-sample/src/index.ts'
 import { apply as qzoneApply } from './fixtures/qzone-mcp/src/index.ts'
@@ -65,16 +65,16 @@ function readOutboundAuditRows(brainHome: string): readonly {
   }
 }
 
-test('AT-8 part 1: qq-sample and qzone-mcp import ONLY @brain-core/sdk and pass contract + checkPlugin + TestKernel RFC 8.9 SDK rows', async () => {
+test('AT-8 part 1: qq-sample and qzone-mcp import ONLY @dsh-brain-core/sdk and pass contract + checkPlugin + TestKernel RFC 8.9 SDK rows', async () => {
   const qqPkg = await readManifest(QQ_SAMPLE_DIR)
   const qzonePkg = await readManifest(QZONE_MCP_DIR)
-  assert.deepEqual(Object.keys(qqPkg.dependencies ?? {}), ['@brain-core/sdk'])
-  assert.deepEqual(Object.keys(qzonePkg.dependencies ?? {}), ['@brain-core/sdk'])
+  assert.deepEqual(Object.keys(qqPkg.dependencies ?? {}), ['@dsh-brain-core/sdk'])
+  assert.deepEqual(Object.keys(qzonePkg.dependencies ?? {}), ['@dsh-brain-core/sdk'])
 
   const qqSource = await readFile(path.join(QQ_SAMPLE_DIR, 'src', 'index.ts'), 'utf8')
   const qzoneSource = await readFile(path.join(QZONE_MCP_DIR, 'src', 'index.ts'), 'utf8')
-  assert.deepEqual(extractImports(qqSource), ['@brain-core/sdk'])
-  assert.deepEqual(extractImports(qzoneSource), ['@brain-core/sdk'])
+  assert.deepEqual(extractImports(qqSource), ['@dsh-brain-core/sdk'])
+  assert.deepEqual(extractImports(qzoneSource), ['@dsh-brain-core/sdk'])
 
   // Contract tests & checkPlugin
   for (const [dir, applyFn, pkg] of [

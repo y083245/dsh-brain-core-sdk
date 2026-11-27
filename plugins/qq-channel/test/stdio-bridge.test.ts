@@ -11,7 +11,7 @@ import {
   type ChannelProvider,
   type MemoryProvider,
   type MemoryRecord,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import { HOST_UNSUPPORTED_MESSAGE } from '../src/apply.ts'
 import { OneBotHealth, OneBotWsClient } from '../src/onebot/index.ts'
 import {

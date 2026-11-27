@@ -1,5 +1,5 @@
 import type { DatabaseSync, StatementSync } from 'node:sqlite'
-import type { AgentClass } from '@brain-core/satellite-host'
+import type { AgentClass } from '@dsh-brain-core/satellite-host'
 import type { WakeMetrics } from '../contracts/index.ts'
 import { hasTable, openPrivateDb } from './sqlite.ts'
 

@@ -5,7 +5,7 @@ import test from 'node:test'
 import { makePlugin, setup, throwsCode } from './helpers.ts'
 
 const CONFIG_MODULE = [
-  "import { Schema } from '@brain-core/sdk'",
+  "import { Schema } from '@dsh-brain-core/sdk'",
   'export default Schema.object({',
   "  name: Schema.string().default('anon'),",
   '  count: Schema.number().default(1),',
@@ -94,7 +94,7 @@ test('setConfig on a pending plugin is denied before the config module runs', as
   const marker = path.join(h.root, 'config-imported')
   const configModule = [
     "import { writeFileSync } from 'node:fs'",
-    "import { Schema } from '@brain-core/sdk'",
+    "import { Schema } from '@dsh-brain-core/sdk'",
     `writeFileSync(${JSON.stringify(marker)}, 'ran')`,
     "export default Schema.object({ name: Schema.string().default('anon') })",
     '',

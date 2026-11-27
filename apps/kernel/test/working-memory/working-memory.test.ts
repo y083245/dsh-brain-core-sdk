@@ -3,7 +3,7 @@ import { mkdtemp, rm, stat, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { MAX_WORKING_MEMORY_TTL_MS, createWorkingMemoryStore } from '../../src/working-memory/index.ts'
 import { FakeClock } from '../fakes/index.ts'
 

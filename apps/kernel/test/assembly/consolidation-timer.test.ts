@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { createConsolidationTimer, DEFAULT_CONSOLIDATION_INTERVAL_MS } from '../../src/consolidation-timer.ts'
 import type {
   Clock, ConsolidationApplyReport, ConsolidationEngine, ConsolidationProposal, RuntimeSettings,

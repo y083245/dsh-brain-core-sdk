@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { validateManifest, type ManifestResult, type PluginApply } from '@brain-core/sdk'
+import { validateManifest, type ManifestResult, type PluginApply } from '@dsh-brain-core/sdk'
 import { runPluginContractTests, type ContractResult } from '../contract.ts'
 import { SCAN_RULES, scanSources } from './scan.ts'
 import type { CheckFinding, CheckReport } from './types.ts'

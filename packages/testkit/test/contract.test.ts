@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { BrainContext } from '@brain-core/sdk'
+import type { BrainContext } from '@dsh-brain-core/sdk'
 import {
   evaluateLateRegister, evaluateNoExtraTools, evaluateUnloadClean, runPluginContractTests,
 } from '../src/contract.ts'

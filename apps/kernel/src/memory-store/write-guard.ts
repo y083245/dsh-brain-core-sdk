@@ -1,5 +1,5 @@
-import { BrainError } from '@brain-core/sdk'
-import type { IngestEvent, Layer, RecordInput } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { IngestEvent, Layer, RecordInput } from '@dsh-brain-core/sdk'
 import { KINDS, type NewRecord, type WriteIdentity } from '../contracts/index.ts'
 
 /** `<source>:<kind>:<id>`. */

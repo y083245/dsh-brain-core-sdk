@@ -4,7 +4,7 @@ import { request as httpRequest } from 'node:http'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { validate } from '@brain-core/sdk'
+import { validate } from '@dsh-brain-core/sdk'
 import { makeBrainHome, startConsole, TOKEN } from './helpers.ts'
 
 const WEB_SRC_DIR = fileURLToPath(new URL('../../web/src', import.meta.url))
@@ -168,7 +168,7 @@ test('path traversal, null-byte, directory read, and symlink escape attacks agai
         const res = await rawGet(consoleServer.port, attackPath, token)
         assert.equal(res.status, 404, `expected 404 for ${attackPath} (token=${String(token)})`)
         assert.equal(res.text.includes(outsideSecretSentinel), false, `must not leak sentinel on ${attackPath}`)
-        assert.equal(res.text.includes('@brain-core/console'), false, `must not leak package.json on ${attackPath}`)
+        assert.equal(res.text.includes('@dsh-brain-core/console'), false, `must not leak package.json on ${attackPath}`)
         const parsed = JSON.parse(res.text) as Record<string, unknown>
         validate('Envelope', parsed)
         assert.equal(parsed.ok, false)

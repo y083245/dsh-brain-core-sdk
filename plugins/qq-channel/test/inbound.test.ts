@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import type { BrainContext } from '@brain-core/sdk'
+import type { BrainContext } from '@dsh-brain-core/sdk'
 import { DEFAULT_QQ_CONFIG } from '../src/config.ts'
 import {
   allowed,

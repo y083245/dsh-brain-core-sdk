@@ -4,8 +4,8 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import type { MemoryRecord } from '@brain-core/sdk'
-import { checkPlugin } from '@brain-core/testkit'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
+import { checkPlugin } from '@dsh-brain-core/testkit'
 import { createSampleIndex } from '../src/indexer.ts'
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')

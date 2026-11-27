@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, LIMITS, type MemoryRecord, type SearchHit } from '@brain-core/sdk'
+import { BrainError, LIMITS, type MemoryRecord, type SearchHit } from '@dsh-brain-core/sdk'
 import { GROUP, PRIVATE, call, fakeTool, harness, plan, rejection, sessionFor } from './helpers.ts'
 
 function record(overrides: Partial<MemoryRecord> = {}): MemoryRecord {

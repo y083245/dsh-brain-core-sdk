@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readFile, symlink, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { createPluginLogger } from '../../src/plugin-runtime/plugin-logger.ts'
 import { createPluginStorage } from '../../src/plugin-runtime/index.ts'
 

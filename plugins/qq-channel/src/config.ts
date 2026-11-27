@@ -1,8 +1,8 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 
-import type { GroupTrigger } from '@brain-core/chat-kit'
-import { Schema } from '@brain-core/sdk'
+import type { GroupTrigger } from '@dsh-brain-core/chat-kit'
+import { Schema } from '@dsh-brain-core/sdk'
 
 export type SendGapMode = 'auto' | 'byLength' | 'fixed'
 

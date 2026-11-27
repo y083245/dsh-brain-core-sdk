@@ -1,6 +1,6 @@
 import { appendFile, mkdir, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import type { BrainLogger } from '@brain-core/sdk'
+import type { BrainLogger } from '@dsh-brain-core/sdk'
 import { redact } from '../log/index.ts'
 
 const MAX_BYTES = 1024 * 1024

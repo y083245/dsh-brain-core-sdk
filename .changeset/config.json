@@ -6,7 +6,7 @@
   "commit": false,
   "fixed": [],
   "linked": [],
-  "ignore": ["@brain-core/spike-s1"],
+  "ignore": ["@dsh-brain-core/spike-s1"],
   "updateInternalDependencies": "patch",
   "privatePackages": { "version": true, "tag": false }
 }

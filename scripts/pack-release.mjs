@@ -8,7 +8,7 @@ import process from 'node:process'
 
 const root = path.join(import.meta.dirname, '..')
 const packages = [
-  ['packages/sdk', ['generated']],
+  ['packages/sdk', ['generated', 'README.md']],
   ['packages/shared', []],
   ['packages/chat-kit', []],
   ['packages/testkit', []],
@@ -84,14 +84,25 @@ function pack(source, assets, manifest, version, names, staging, output) {
     publishable.dependencies[name] = version
   }
 
-  const satelliteBundle = manifest.name === '@brain-core/satellite-bundle'
+  const satelliteBundle = manifest.name === '@dsh-brain-core/satellite-bundle'
   const runtimeDir = satelliteBundle ? 'dist' : 'src'
   const compiled = satelliteBundle ? 'dist' : path.join('dist', 'src')
   cpSync(path.join(source, compiled), path.join(staging, runtimeDir), { recursive: true })
   for (const asset of assets) cpSync(path.join(source, asset), path.join(staging, asset), { recursive: true })
   cpSync(path.join(root, 'LICENSE'), path.join(staging, 'LICENSE'))
-  if (manifest.name === '@brain-core/kernel') cpSync(path.join(root, 'README.md'), path.join(staging, 'README.md'))
-  if (manifest.name === '@brain-core/console') writeConsoleNotices(source, staging)
+  if (manifest.name === '@dsh-brain-core/kernel' && existsSync(path.join(root, 'README.md'))) {
+    cpSync(path.join(root, 'README.md'), path.join(staging, 'README.md'))
+  }
+  if (manifest.name === 'create-brain-plugin') {
+    // The template contains __KINDS__ and other placeholders, so it is not JSON yet.
+    const template = path.join(staging, 'templates', 'node', 'package.json')
+    const content = readFileSync(template, 'utf8').replace(
+      /("@dsh-brain-core\/(?:sdk|testkit)"\s*:\s*)"[^"]*"/g,
+      `$1"^${version}"`,
+    )
+    writeFileSync(template, content)
+  }
+  if (manifest.name === '@dsh-brain-core/console') writeConsoleNotices(source, staging)
 
   const entryPoints = [publishable.main, ...Object.values(publishable.bin ?? {}), ...Object.values(publishable.exports ?? {})]
   for (const filename of entryPoints) {
@@ -106,8 +117,8 @@ function pack(source, assets, manifest, version, names, staging, output) {
 }
 
 const [version, directory] = process.argv.slice(2)
-if (!/^\d+\.\d+\.\d+$/.test(version ?? '') || directory === undefined) {
-  console.error('usage: node scripts/pack-release.mjs <major.minor.patch> <new-output-directory>')
+if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version ?? '') || directory === undefined) {
+  console.error('usage: node scripts/pack-release.mjs <major.minor.patch[-prerelease]> <new-output-directory>')
   process.exit(2)
 }
 

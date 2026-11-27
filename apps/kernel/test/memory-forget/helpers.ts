@@ -1,4 +1,4 @@
-import type { MemoryRecord } from '@brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import type { ForgetService, NewRecord } from '../../src/contracts/index.ts'
 import { createForgetService } from '../../src/memory-forget/index.ts'
 import { FakeClock, FakeKeywordIndex, FakeRecordStore } from '../fakes/index.ts'

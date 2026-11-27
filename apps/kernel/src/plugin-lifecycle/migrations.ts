@@ -1,8 +1,8 @@
 import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
-import type { BrainLogger, BrainManifest, PluginStorage } from '@brain-core/sdk'
-import { writeFileAtomic } from '@brain-core/shared'
+import type { BrainLogger, BrainManifest, PluginStorage } from '@dsh-brain-core/sdk'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 import { ensureDir, invalidArgument, pathExists, resolveInside } from './fs-utils.ts'
 
 export interface MigrationDeps {

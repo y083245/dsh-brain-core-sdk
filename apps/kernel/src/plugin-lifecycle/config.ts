@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { BrainError, type BrainManifest } from '@brain-core/sdk'
-import { writeFileAtomic } from '@brain-core/shared'
+import { BrainError, type BrainManifest } from '@dsh-brain-core/sdk'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 import { ensureDir, invalidArgument, isRecord, pathExists, resolveInside } from './fs-utils.ts'
 
 type ConfigSchema = (value: unknown) => unknown

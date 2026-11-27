@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 import { createHash } from 'node:crypto'
-import { BrainError, hostAllowed, type PluginMemory, type PluginStorage, type ToolCallContext } from '@brain-core/sdk'
+import { BrainError, hostAllowed, type PluginMemory, type PluginStorage, type ToolCallContext } from '@dsh-brain-core/sdk'
 import { SendRateLimit } from './rate-limit.ts'
 import { cleanText } from '../inbound/segments.ts'
 

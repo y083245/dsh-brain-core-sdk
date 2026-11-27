@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type BrainContext, type PluginApply } from '@brain-core/sdk'
+import { BrainError, type BrainContext, type PluginApply } from '@dsh-brain-core/sdk'
 import { denial, installed, manifest, setup } from './helpers.ts'
 
 test('enable then disable undoes every registration and the plugin can be enabled again', async () => {

@@ -7,7 +7,7 @@ import {
   type DerivedRecordInput, type Disposable, type ForgetSelector, type MemoryProvider, type MemoryRecord,
   type OutboundMessage, type PluginApply, type PluginRequest, type ReadL0Request, type ReadL0Result,
   type ToolDefinition, type Viewer, type ViewOptions,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type {
   AgentRuntime, ChannelRegistry, Clock, GatewayTool, InstalledPlugin, MemoryProviderRegistry, MemoryService,
   OutboundAudit, PluginActivator, PluginLlmExecutor, Scheduler, ToolGateway, WriteIdentity,

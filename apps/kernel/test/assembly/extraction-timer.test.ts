@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { createExtractionTimer } from '../../src/extraction-timer.ts'
 import type { Job, JobRunner } from '../../src/memory-api/index.ts'
 import type { LogFields } from '../../src/log/index.ts'

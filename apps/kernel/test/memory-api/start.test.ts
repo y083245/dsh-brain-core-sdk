@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { validate } from '@brain-core/sdk'
+import { validate } from '@dsh-brain-core/sdk'
 
 const cli = fileURLToPath(new URL('../../src/cli.ts', import.meta.url))
 

@@ -5,8 +5,8 @@ import {
   type IngestEvent, type Layer, type MemoryRecord, type RecordInput, type RecordPatch, type RecordStatus,
   type SearchHistoryItem, type SearchHit, type SearchNeighbor, type SearchRequest, type SearchScope,
   type Viewer, type Visibility,
-} from '@brain-core/sdk'
-import { scanInjection } from '@brain-core/shared'
+} from '@dsh-brain-core/sdk'
+import { scanInjection } from '@dsh-brain-core/shared'
 import {
   type ChannelFacts, type Clock, type ContextAssembler, type CrossChannelMode, type ForgetService,
   type KeywordIndex, type MemoryAudit, type MemoryProviderRegistry, type MemoryService, type Policy, type PolicyDecision,

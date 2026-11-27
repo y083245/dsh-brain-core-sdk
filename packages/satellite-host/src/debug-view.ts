@@ -39,7 +39,7 @@ const DEFAULT_START_TIMEOUT_MS = 30_000
 const MAX_STDERR_TAIL = 2_000
 
 export function debugHardeningPatchPath(): string {
-  return require.resolve('@brain-core/satellite-bundle/patches/debug-hardening.yml')
+  return require.resolve('@dsh-brain-core/satellite-bundle/patches/debug-hardening.yml')
 }
 
 export function dshBinPath(): string {

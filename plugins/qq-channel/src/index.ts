@@ -4,7 +4,7 @@
 import { realpathSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import { applyQqPlugin, type QqPluginHandle } from './apply.ts'
 import { runStdioPlugin } from './rpc/stdio-bridge.ts'
 

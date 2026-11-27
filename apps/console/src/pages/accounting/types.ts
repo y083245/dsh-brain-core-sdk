@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@brain-core/sdk'
+import type { ErrorCode } from '@dsh-brain-core/sdk'
 import { apiFetch } from '../../shell/api-fetch.ts'
 
 export interface ModelPriceEntry {

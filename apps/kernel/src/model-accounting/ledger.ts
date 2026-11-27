@@ -1,8 +1,8 @@
 import { existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { DatabaseSync, type StatementSync } from 'node:sqlite'
-import { BrainError } from '@brain-core/sdk'
-import { createUlid, ensurePrivateDir, hardenFile } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import { createUlid, ensurePrivateDir, hardenFile } from '@dsh-brain-core/shared'
 import type {
   AccountingEntry,
   AccountingEntryInput,

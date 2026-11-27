@@ -1,6 +1,6 @@
 import { lstat } from 'node:fs/promises'
 import path from 'node:path'
-import type { EvidenceRef } from '@brain-core/sdk'
+import type { EvidenceRef } from '@dsh-brain-core/sdk'
 import type { KeywordIndex, NewRecord, RecordStore } from '../contracts/index.ts'
 import type { ProfileStore } from '../identity-persona/index.ts'
 import {

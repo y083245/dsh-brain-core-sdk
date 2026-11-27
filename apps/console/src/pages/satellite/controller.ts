@@ -1,4 +1,4 @@
-import type { AgentClass } from '@brain-core/satellite-host'
+import type { AgentClass } from '@dsh-brain-core/satellite-host'
 import { computeSatelliteMetricsSummary, type SatelliteMetricsSummary } from './metrics.ts'
 import type {
   AgentProcessStatus,

@@ -22,8 +22,8 @@ test('the package depends only on the SDK inside the workspace and imports no fo
     readonly dependencies?: Readonly<Record<string, string>>
   }
   const dependencies = Object.keys(manifest.dependencies ?? {})
-  const workspace = dependencies.filter((name) => name.startsWith('@brain-core/'))
-  assert.deepEqual(workspace, ['@brain-core/sdk'])
+  const workspace = dependencies.filter((name) => name.startsWith('@dsh-brain-core/'))
+  assert.deepEqual(workspace, ['@dsh-brain-core/sdk'])
 
   const files = await sources(SRC_DIR)
   assert.ok(files.length > 0)

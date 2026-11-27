@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { MemoryRecord, Viewer } from '@brain-core/sdk'
+import type { MemoryRecord, Viewer } from '@dsh-brain-core/sdk'
 import type { ChannelFacts, NewRecord } from '../../src/contracts/index.ts'
 import { createContextAssembler } from '../../src/memory-context/index.ts'
 import { FakeAudit, FakeClock, FakeKeywordIndex, FakePolicy, FakeProfiles, FakeRecordStore } from '../fakes/index.ts'

@@ -1,4 +1,4 @@
-import { BrainError, LIMITS } from '@brain-core/sdk'
+import { BrainError, LIMITS } from '@dsh-brain-core/sdk'
 import type {
   ManifestGroup,
   ManifestTool,
@@ -9,8 +9,8 @@ import type {
   ToolLoad,
   ToolParameters,
   Viewer,
-} from '@brain-core/sdk'
-import { scanInjection } from '@brain-core/shared'
+} from '@dsh-brain-core/sdk'
+import { scanInjection } from '@dsh-brain-core/shared'
 import type {
   ConsolidationEngine,
   GatewayTool,

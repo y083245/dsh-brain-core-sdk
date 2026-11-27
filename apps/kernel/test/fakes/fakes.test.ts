@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type MemoryRecord, type Viewer } from '@brain-core/sdk'
+import { BrainError, type MemoryRecord, type Viewer } from '@dsh-brain-core/sdk'
 import type { ChannelFacts, NewRecord, RecordFilter } from '../../src/contracts/index.ts'
 import {
   FakeAudit, FakeClock, FakeKeywordIndex, FakeLlm, FakePolicy, FakeProfiles, FakeRecordStore,

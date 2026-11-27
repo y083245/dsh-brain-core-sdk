@@ -1,4 +1,4 @@
-import type { EvidenceRef, MemoryRecord } from '@brain-core/sdk'
+import type { EvidenceRef, MemoryRecord } from '@dsh-brain-core/sdk'
 import type {
   LlmClient, RecordStore, ShadowL3PersonPatch, ShadowL3SelfPatch,
 } from '../contracts/index.ts'

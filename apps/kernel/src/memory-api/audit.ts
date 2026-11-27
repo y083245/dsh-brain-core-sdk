@@ -2,7 +2,7 @@ import { existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import type { StatementSync } from 'node:sqlite'
-import { ensurePrivateDir, hardenFile } from '@brain-core/shared'
+import { ensurePrivateDir, hardenFile } from '@dsh-brain-core/shared'
 import type { CrossChannelMode, MemoryAudit } from '../contracts/index.ts'
 
 export interface AuditEntry {

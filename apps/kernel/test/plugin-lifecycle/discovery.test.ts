@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, symlink, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { removeTree } from '@brain-core/satellite-host'
+import { removeTree } from '@dsh-brain-core/satellite-host'
 import {
   defaultWorkspacePluginsDir,
   discoverWorkspacePlugins,
@@ -71,8 +71,8 @@ test('discoverWorkspacePlugins validates node and process plugins, skips non-plu
     version: '1.2.3',
     runtime: 'node',
   })
-  await mkdir(path.join(nodeDir, 'node_modules', '@brain-core'), { recursive: true })
-  await symlink(SDK_DIR, path.join(nodeDir, 'node_modules', '@brain-core', 'sdk'))
+  await mkdir(path.join(nodeDir, 'node_modules', '@dsh-brain-core'), { recursive: true })
+  await symlink(SDK_DIR, path.join(nodeDir, 'node_modules', '@dsh-brain-core', 'sdk'))
 
   // Valid process plugin (no main required)
   await makePlugin(path.join(wsDir, 'beta-proc'), {

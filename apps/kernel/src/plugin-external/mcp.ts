@@ -2,7 +2,7 @@ import { Client, StreamableHTTPClientTransport, type CallToolResult, type Transp
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio'
 import {
   BrainError, type BrainContext, type Disposable, type ToolDefinition, type ToolImage, type ToolOutput, type ToolParameters,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type { InstalledPlugin } from '../contracts/index.ts'
 import { guardUrl } from '../plugin-runtime/index.ts'
 import { createStderrSink, ensurePluginDirs, pluginEnvironment, stderrFile } from './env.ts'

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
-import { RunnerFailedError } from '@brain-core/satellite-host'
+import { RunnerFailedError } from '@dsh-brain-core/satellite-host'
 import type { RuntimeSettings } from '../../src/contracts/index.ts'
 import { PRIVATE, SELECTION, harness, msg, sends, settle, until } from './helpers.ts'
 import type { Harness } from './helpers.ts'

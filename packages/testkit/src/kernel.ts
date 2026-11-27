@@ -10,7 +10,7 @@ import {
   type ToolCallContext, type ToolDefinition, type ToolOutput,
   type Viewer, type ViewOptions, type Visibility, type WakeInput, type WakeResult,
   type WebSocketEvent, type WebSocketSubscribeOptions,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 
 export interface LoadOptions {
   readonly config?: Readonly<Record<string, unknown>>

@@ -1,8 +1,8 @@
 import type {
   BrainManifest, ChannelProvider, ManifestGroup, ManifestTool, OwnTimeRequest, ToolCallContext, ToolOutput, ToolParameters,
   WakeFeatures, WakeInput, WakeResult, WakeSkip,
-} from '@brain-core/sdk'
-import type { AgentClass, BridgeTool, BridgeToolResult, ModelSelection, ToolCall, ToolUpdateMode } from '@brain-core/satellite-host'
+} from '@dsh-brain-core/sdk'
+import type { AgentClass, BridgeTool, BridgeToolResult, ModelSelection, ToolCall, ToolUpdateMode } from '@dsh-brain-core/satellite-host'
 
 export interface GatewayTool {
   readonly pluginId: string

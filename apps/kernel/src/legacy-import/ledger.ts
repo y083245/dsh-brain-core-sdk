@@ -1,6 +1,6 @@
 import { lstat } from 'node:fs/promises'
 import path from 'node:path'
-import type { EvidenceRef, Visibility } from '@brain-core/sdk'
+import type { EvidenceRef, Visibility } from '@dsh-brain-core/sdk'
 import type { KeywordIndex, NewRecord, RecordStore } from '../contracts/index.ts'
 import {
   addL1SubjectId, errorCode, invalidArgument, isDigits, isPlainObject, type L0MatchCandidate, parseTimestamp,

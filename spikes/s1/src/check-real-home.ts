@@ -9,7 +9,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { diffSnapshots, snapshotTree, type FileFingerprint } from '@brain-core/satellite-host'
+import { diffSnapshots, snapshotTree, type FileFingerprint } from '@dsh-brain-core/satellite-host'
 
 const [command, first, second] = process.argv.slice(2)
 const root = process.env.DSH_HOME ?? path.join(os.homedir(), '.dsh')

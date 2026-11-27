@@ -1,6 +1,6 @@
 /** Runs one turn with a hostile parent env. e1-strace.sh runs this under strace on Linux. */
 import path from 'node:path'
-import { encodeSessionId } from '@brain-core/satellite-host'
+import { encodeSessionId } from '@dsh-brain-core/satellite-host'
 import { scriptedTools } from './fake-deepseek.ts'
 import { withRig } from './rig.ts'
 

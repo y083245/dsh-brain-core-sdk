@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 
-import type { PluginHttp, PluginSecrets } from '@brain-core/sdk'
+import type { PluginHttp, PluginSecrets } from '@dsh-brain-core/sdk'
 
 export class OneBotHttpError extends Error {
   readonly kind: 'auth' | 'http' | 'protocol'

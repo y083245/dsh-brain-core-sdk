@@ -1,5 +1,5 @@
-import { BrainError, type ErrorCode } from '@brain-core/sdk'
-import { createUlid } from '@brain-core/shared'
+import { BrainError, type ErrorCode } from '@dsh-brain-core/sdk'
+import { createUlid } from '@dsh-brain-core/shared'
 import type { Clock, ConsolidationEngine, KeywordIndex, RecordStore } from '../contracts/index.ts'
 import type { ExtractionReport } from '../memory-extraction/index.ts'
 

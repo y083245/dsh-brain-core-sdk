@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto'
 import { createServer } from 'node:http'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { BrainError, LIMITS, type SearchScope, type Viewer } from '@brain-core/sdk'
+import { BrainError, LIMITS, type SearchScope, type Viewer } from '@dsh-brain-core/sdk'
 import type { MemoryService, ProfileReader, ReadOnlyMcpStatus, RecordStore } from '../contracts/index.ts'
 import type { Logger } from '../log/index.ts'
 

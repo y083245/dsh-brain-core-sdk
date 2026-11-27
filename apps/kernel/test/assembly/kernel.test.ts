@@ -101,7 +101,7 @@ test('a restart enables what the registry says is enabled and survives one plugi
   const dshHome = path.join(home, 'dsh')
   await mkdir(dshHome, { recursive: true })
   const env = { ...process.env, BRAIN_HOME: home, DSH_HOME: dshHome }
-  const { removeTree } = await import('@brain-core/satellite-host')
+  const { removeTree } = await import('@dsh-brain-core/satellite-host')
 
   try {
     const firstLogs: import('./helpers.ts').LogEntry[] = []

@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 
-import type { GroupTrigger, ChatMode, SocialStateMachine } from '@brain-core/chat-kit'
+import type { GroupTrigger, ChatMode, SocialStateMachine } from '@dsh-brain-core/chat-kit'
 import {
   BrainError,
   hostAllowed,
@@ -14,7 +14,7 @@ import {
   type ToolCallContext,
   type ToolDefinition,
   type ToolOutput,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type { QqConfig, SendGapMode } from '../config.ts'
 import { allowed } from '../inbound/access.ts'
 import { readForwardSummary } from '../inbound/forward.ts'

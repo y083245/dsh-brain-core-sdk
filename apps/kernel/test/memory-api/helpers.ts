@@ -1,7 +1,7 @@
 import { mkdtemp, rm } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import type { Viewer } from '@brain-core/sdk'
+import type { Viewer } from '@dsh-brain-core/sdk'
 import type {
   ContextAssembler, CrossChannelMode, ForgetService, KeywordIndex, Policy, RecordStore, WriteIdentity,
 } from '../../src/contracts/index.ts'

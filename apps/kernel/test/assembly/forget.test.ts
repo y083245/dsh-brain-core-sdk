@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { encodeSessionId } from '@brain-core/satellite-host'
+import { encodeSessionId } from '@dsh-brain-core/satellite-host'
 import { CHANNEL, FLASH, sessionDirs, setup, waitFor } from './helpers.ts'
 
 const MODEL = { agents: { chat: { ...FLASH } }, timezone: 'UTC' }

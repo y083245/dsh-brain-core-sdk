@@ -2,8 +2,8 @@ import { existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import type { SQLInputValue, StatementSync } from 'node:sqlite'
-import type { MemoryRecord, SearchScope, Viewer } from '@brain-core/sdk'
-import { ensurePrivateDir, hardenFile } from '@brain-core/shared'
+import type { MemoryRecord, SearchScope, Viewer } from '@dsh-brain-core/sdk'
+import { ensurePrivateDir, hardenFile } from '@dsh-brain-core/shared'
 import type { IndexHit, IndexQuery, KeywordIndex } from '../contracts/index.ts'
 
 /** FTS5's trigram tokenizer misses two-character Chinese words, so CJK runs are split into bigrams here. */

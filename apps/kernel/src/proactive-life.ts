@@ -1,8 +1,8 @@
 import { mkdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { BrainError } from '@brain-core/sdk'
-import type { MemoryRecord, SearchHit, Viewer, WakeSkip } from '@brain-core/sdk'
-import { writeFileAtomic } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { MemoryRecord, SearchHit, Viewer, WakeSkip } from '@dsh-brain-core/sdk'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 import { dayOf, zonedParts } from './agent-runtime/index.ts'
 import type {
   AgentRuntime, ChannelFacts, ChannelRegistry, Clock, CrossChannelMode, MemoryDecay, MemoryService,

@@ -1,5 +1,5 @@
-import { BrainError, type EvidenceRef, type MemoryRecord } from '@brain-core/sdk'
-import { createUlid } from '@brain-core/shared'
+import { BrainError, type EvidenceRef, type MemoryRecord } from '@dsh-brain-core/sdk'
+import { createUlid } from '@dsh-brain-core/shared'
 import type {
   Clock, ConsolidationApplyReport, ConsolidationApproveOptions, ConsolidationEngine, ConsolidationProposal,
   KeywordIndex, LlmClient, NewRecord, RecordStore,

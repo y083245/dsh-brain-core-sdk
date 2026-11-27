@@ -1,4 +1,4 @@
-import { formatRelativeTime } from '@brain-core/chat-kit'
+import { formatRelativeTime } from '@dsh-brain-core/chat-kit'
 
 export interface ChatUiMessage {
   readonly messageId: string

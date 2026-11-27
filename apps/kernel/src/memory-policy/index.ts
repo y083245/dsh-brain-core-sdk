@@ -1,4 +1,4 @@
-import type { MemoryRecord, Viewer } from '@brain-core/sdk'
+import type { MemoryRecord, Viewer } from '@dsh-brain-core/sdk'
 import type { ChannelFacts, Policy, PolicyDecision } from '../contracts/index.ts'
 
 /** The only words a label may use (RFC P2): no account, group or channel id ever appears. */

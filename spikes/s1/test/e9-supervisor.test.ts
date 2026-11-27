@@ -14,7 +14,7 @@ import {
   TurnInterruptedError,
   type ProcessConfig,
   type TurnRunner,
-} from '@brain-core/satellite-host'
+} from '@dsh-brain-core/satellite-host'
 import { FakeDeepSeek, type FakeScript } from '../src/fake-deepseek.ts'
 import { DEMO_TOOLS, FLASH_LOW } from '../src/rig.ts'
 

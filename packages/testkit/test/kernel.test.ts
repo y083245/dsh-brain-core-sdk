@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, LIMITS, type BrainContext, type ToolCallContext, type WebSocketEvent } from '@brain-core/sdk'
+import { BrainError, LIMITS, type BrainContext, type ToolCallContext, type WebSocketEvent } from '@dsh-brain-core/sdk'
 import { codeOf, HERE, ingestEvent, loadIdle, MANIFEST, manifestWith, OTHER, OWN, recordInput, sourceWith } from './helpers.ts'
 import { createFakeChannel, createTestKernel, type TestKernel } from '../src/index.ts'
 import { filterLogFields } from '../src/kernel.ts'

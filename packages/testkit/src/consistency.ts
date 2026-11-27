@@ -1,4 +1,4 @@
-import { BrainError, type BrainContext, type Envelope } from '@brain-core/sdk'
+import { BrainError, type BrainContext, type Envelope } from '@dsh-brain-core/sdk'
 import type { ContractResult } from './contract.ts'
 import type { LoadOptions } from './kernel.ts'
 

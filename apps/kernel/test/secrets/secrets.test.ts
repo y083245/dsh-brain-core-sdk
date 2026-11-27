@@ -3,8 +3,8 @@ import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
-import { BrainError } from '@brain-core/sdk'
-import { isHardened } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import { isHardened } from '@dsh-brain-core/shared'
 import { createSecretStore } from '../../src/secrets/index.ts'
 
 async function tempDir(): Promise<string> {

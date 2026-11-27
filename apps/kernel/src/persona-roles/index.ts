@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import type { EvidenceRef } from '@brain-core/sdk'
-import { ensurePrivateDir, writeFileAtomic } from '@brain-core/shared'
+import type { EvidenceRef } from '@dsh-brain-core/sdk'
+import { ensurePrivateDir, writeFileAtomic } from '@dsh-brain-core/shared'
 import type { Clock, NewRecord, RecordStore } from '../contracts/index.ts'
 import { isPlainObject } from './helpers.ts'
 import {

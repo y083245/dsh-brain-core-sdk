@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type ForgetReport, type MemoryRecord } from '@brain-core/sdk'
+import { BrainError, type ForgetReport, type MemoryRecord } from '@dsh-brain-core/sdk'
 import {
   createMemoryPageController,
   renderMemoryPage,

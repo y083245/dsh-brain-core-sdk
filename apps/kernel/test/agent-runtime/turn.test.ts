@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
-import { RunnerFailedError, SelectionMissingError, TurnInterruptedError, decodeSessionId, encodeSessionId } from '@brain-core/satellite-host'
+import { RunnerFailedError, SelectionMissingError, TurnInterruptedError, decodeSessionId, encodeSessionId } from '@dsh-brain-core/satellite-host'
 import { buildSystemPrompt, KERNEL_RULES } from '../../src/agent-runtime/index.ts'
 import { createToolGateway } from '../../src/tool-gateway/index.ts'
 import { FEED, GROUP, OTHER, PRIVATE, bundleOf, harness, msg, rejection, settle, textOf, turn, until } from './helpers.ts'

@@ -43,7 +43,7 @@ test('every TypeScript example in the guide compiles', guideOptions, async (t) =
   }
   assert.ok(blocks.length >= 5, `expected runnable examples, found ${blocks.length}`)
 
-  // Inside the package so `@brain-core/sdk` and `@brain-core/testkit` resolve like a plugin's own code.
+  // Inside the package so `@dsh-brain-core/sdk` and `@dsh-brain-core/testkit` resolve like a plugin's own code.
   const root = await mkdtemp(path.join(PACKAGE_DIR, '.guide-'))
   t.after(async () => { await rm(root, { recursive: true, force: true }) })
 

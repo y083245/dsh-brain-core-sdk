@@ -1,10 +1,10 @@
 import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import type { AgentClass, ToolUpdateMode, TurnInput, TurnResult, TurnRunner } from '@brain-core/satellite-host'
+import type { AgentClass, ToolUpdateMode, TurnInput, TurnResult, TurnRunner } from '@dsh-brain-core/satellite-host'
 import type {
   BrainEvents, ChannelProvider, ContextBundle, ContextRequest, MemoryRecord, RecordInput, Viewer, WakeInput, WakeMessage, WakeResult,
-} from '@brain-core/sdk'
+} from '@dsh-brain-core/sdk'
 import type { AgentRuntime, ChannelRegistry, MemoryService, RuntimeSettings, ToolGateway, WakeMetrics, WakePlan, WriteIdentity } from '../../src/contracts/index.ts'
 import { createAgentRuntime } from '../../src/agent-runtime/index.ts'
 import type { AgentRuntimeDeps } from '../../src/agent-runtime/index.ts'

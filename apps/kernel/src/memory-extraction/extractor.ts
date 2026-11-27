@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
-import { TRUST_LEVELS, type MemoryRecord, type Trust } from '@brain-core/sdk'
-import { scanInjection } from '@brain-core/shared'
+import { TRUST_LEVELS, type MemoryRecord, type Trust } from '@dsh-brain-core/sdk'
+import { scanInjection } from '@dsh-brain-core/shared'
 import type { Clock, LlmClient, NewRecord, RecordFilter, RecordStore } from '../contracts/index.ts'
 import { parseExtraction, isCompleteJson, keepGroundedFacts } from './parse.ts'
 import { EXTRACTION_SYSTEM_PROMPT, buildUserPrompt } from './prompt.ts'

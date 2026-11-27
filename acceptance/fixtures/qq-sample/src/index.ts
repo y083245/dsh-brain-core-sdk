@@ -1,4 +1,4 @@
-import { BrainError, type BrainContext, type PluginApply } from '@brain-core/sdk'
+import { BrainError, type BrainContext, type PluginApply } from '@dsh-brain-core/sdk'
 
 interface SentLogEntry {
   readonly channel: string

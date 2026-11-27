@@ -4,10 +4,10 @@
 const STATE_FILE = 'qq-state.json'
 
 /**
- * Initial schema migration for @brain-core/plugin-qq.
+ * Initial schema migration for @dsh-brain-core/plugin-qq.
  * Idempotently records initial plugin state without touching chat content.
  *
- * @param {{ storage: import('@brain-core/sdk').PluginStorage, logger: import('@brain-core/sdk').BrainLogger }} ctx
+ * @param {{ storage: import('@dsh-brain-core/sdk').PluginStorage, logger: import('@dsh-brain-core/sdk').BrainLogger }} ctx
  */
 export async function up({ storage, logger }) {
   const existing = await storage.read(STATE_FILE)

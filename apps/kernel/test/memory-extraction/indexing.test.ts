@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { MemoryRecord } from '@brain-core/sdk'
+import type { MemoryRecord } from '@dsh-brain-core/sdk'
 import { FakeKeywordIndex, FakeLlm } from '../fakes/index.ts'
 import { WINDOW, World, reply } from './helpers.ts'
 

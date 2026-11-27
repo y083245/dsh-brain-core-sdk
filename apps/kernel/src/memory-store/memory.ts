@@ -1,6 +1,6 @@
-import { BrainError } from '@brain-core/sdk'
-import type { Layer, MemoryRecord, RecordPatch } from '@brain-core/sdk'
-import { createUlid } from '@brain-core/shared'
+import { BrainError } from '@dsh-brain-core/sdk'
+import type { Layer, MemoryRecord, RecordPatch } from '@dsh-brain-core/sdk'
+import { createUlid } from '@dsh-brain-core/shared'
 import type { Clock, NewRecord, Page, RecordFilter, RecordStore } from '../contracts/index.ts'
 
 const LAYER_ORDER: Record<Layer, number> = { L0: 0, L1: 1, L2: 2, L3: 3 }

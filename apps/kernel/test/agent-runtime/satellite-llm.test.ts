@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { RunnerFailedError, SelectionMissingError, TurnInterruptedError, decodeSessionId } from '@brain-core/satellite-host'
+import { RunnerFailedError, SelectionMissingError, TurnInterruptedError, decodeSessionId } from '@dsh-brain-core/satellite-host'
 import { createSatelliteLlm } from '../../src/agent-runtime/index.ts'
 import { FakeRunner, rejection, turn } from './helpers.ts'
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { BrainError, type IngestEvent, type RecordInput } from '@brain-core/sdk'
+import { BrainError, type IngestEvent, type RecordInput } from '@dsh-brain-core/sdk'
 import type { WriteIdentity } from '../../src/contracts/index.ts'
 import { CHANNEL_PATTERN, applyWriteGuard, isValidChannel } from '../../src/memory-store/index.ts'
 

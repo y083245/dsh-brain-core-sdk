@@ -2,11 +2,11 @@ import { existsSync, unlinkSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import type { SQLInputValue } from 'node:sqlite'
-import { BrainError } from '@brain-core/sdk'
+import { BrainError } from '@dsh-brain-core/sdk'
 import type {
   EvidenceRef, Layer, MemoryRecord, RecordPatch, RecordStatus, Trust, Visibility,
-} from '@brain-core/sdk'
-import { createUlid, ensurePrivateDir, hardenFile, writeFileAtomic } from '@brain-core/shared'
+} from '@dsh-brain-core/sdk'
+import { createUlid, ensurePrivateDir, hardenFile, writeFileAtomic } from '@dsh-brain-core/shared'
 import type { Clock, NewRecord, Page, RecordFilter, RecordStore } from '../contracts/index.ts'
 
 const LAYER_ORDER: Record<Layer, number> = { L0: 0, L1: 1, L2: 2, L3: 3 }

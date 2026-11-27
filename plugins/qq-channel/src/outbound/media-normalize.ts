@@ -8,7 +8,7 @@ import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { basename, dirname, isAbsolute, join, win32 } from 'node:path'
 import { promisify } from 'node:util'
-import { BrainError, LIMITS, hostAllowed, type PluginHttp, type ToolImage, type ToolOutput } from '@brain-core/sdk'
+import { BrainError, LIMITS, hostAllowed, type PluginHttp, type ToolImage, type ToolOutput } from '@dsh-brain-core/sdk'
 import type { QqMediaSettings } from '../config.ts'
 
 const runFile = promisify(execFile)
@@ -230,10 +230,10 @@ export function resolveSharp(): SharpLoader | null {
   try {
     let sdkPackage: string
     try {
-      sdkPackage = localRequire.resolve('@brain-core/sdk/package.json')
+      sdkPackage = localRequire.resolve('@dsh-brain-core/sdk/package.json')
     } catch {
       // SDK exports only its entry point. Locate its package.json before resolving junctions.
-      let directory = dirname(localRequire.resolve('@brain-core/sdk'))
+      let directory = dirname(localRequire.resolve('@dsh-brain-core/sdk'))
       while (!existsSync(join(directory, 'package.json'))) {
         const parent = dirname(directory)
         if (parent === directory) return (cachedSharp = null)

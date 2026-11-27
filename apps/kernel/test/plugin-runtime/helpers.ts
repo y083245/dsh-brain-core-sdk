@@ -1,7 +1,7 @@
 import { mkdtemp } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { BrainError, type BrainContext, type BrainManifest, type MemoryRecord, type PluginApply } from '@brain-core/sdk'
+import { BrainError, type BrainContext, type BrainManifest, type MemoryRecord, type PluginApply } from '@dsh-brain-core/sdk'
 import type { InstalledPlugin } from '../../src/contracts/index.ts'
 import { createPluginRuntime, type PluginRuntime, type PluginRuntimeDeps } from '../../src/plugin-runtime/index.ts'
 import { FakeClock } from '../fakes/index.ts'

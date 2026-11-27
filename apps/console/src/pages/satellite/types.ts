@@ -1,5 +1,5 @@
-import type { AgentClass, ModelSelection, RunnerStatus } from '@brain-core/satellite-host'
-import type { ErrorCode } from '@brain-core/sdk'
+import type { AgentClass, ModelSelection, RunnerStatus } from '@dsh-brain-core/satellite-host'
+import type { ErrorCode } from '@dsh-brain-core/sdk'
 import { apiFetch } from '../../shell/api-fetch.ts'
 
 export type SatelliteRecoveryPhase = 'idle' | 'running' | 'crashing' | 'restarting' | 'recovered' | 'failed'

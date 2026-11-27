@@ -1,7 +1,7 @@
 import { mkdir, readFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
-import { encodeSessionId } from '@brain-core/satellite-host'
-import { writeFileAtomic } from '@brain-core/shared'
+import { encodeSessionId } from '@dsh-brain-core/satellite-host'
+import { writeFileAtomic } from '@dsh-brain-core/shared'
 
 export const MAX_PEOPLE = 32
 export const MAX_EVIDENCE = 20

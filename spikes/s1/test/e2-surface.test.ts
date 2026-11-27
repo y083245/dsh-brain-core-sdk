@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import test from 'node:test'
-import { encodeSessionId, removeTree } from '@brain-core/satellite-host'
+import { encodeSessionId, removeTree } from '@dsh-brain-core/satellite-host'
 import { scriptedTools } from '../src/fake-deepseek.ts'
 import { DEMO_TOOLS, withRig } from '../src/rig.ts'
 
@@ -26,7 +26,7 @@ test('with the hardening removed, the check fails closed and the model is never 
   const dir = await mkdtemp(path.join(os.tmpdir(), 'brain-unhardened-'))
   t.after(() => removeTree(dir))
   const require = createRequire(import.meta.url)
-  const hardening = require.resolve('@brain-core/satellite-bundle/patches/hardening.yml')
+  const hardening = require.resolve('@dsh-brain-core/satellite-bundle/patches/hardening.yml')
   const bundle = pathToFileURL(path.join(path.dirname(hardening), '..', 'dist', 'index.js')).href
   const patch = path.join(dir, 'bridge-only.yml')
   await writeFile(patch, `- insert:\n    - id: brain-bridge\n      name: ${JSON.stringify(bundle)}\n`)
@@ -45,7 +45,7 @@ test('hardening stops the session log and plugin list from being uploaded', asyn
   const dir = await mkdtemp(path.join(os.tmpdir(), 'brain-uploads-'))
   t.after(() => removeTree(dir))
   const require = createRequire(import.meta.url)
-  const hardening = require.resolve('@brain-core/satellite-bundle/patches/hardening.yml')
+  const hardening = require.resolve('@dsh-brain-core/satellite-bundle/patches/hardening.yml')
   const bundle = pathToFileURL(path.join(path.dirname(hardening), '..', 'dist', 'index.js')).href
   const uploads = ['dsh_session_log', 'dsh_plugin_packages']
 

@@ -1,6 +1,6 @@
-import { RunnerFailedError, SelectionMissingError, encodeSessionId } from '@brain-core/satellite-host'
-import type { TurnRunner } from '@brain-core/satellite-host'
-import { BrainError } from '@brain-core/sdk'
+import { RunnerFailedError, SelectionMissingError, encodeSessionId } from '@dsh-brain-core/satellite-host'
+import type { TurnRunner } from '@dsh-brain-core/satellite-host'
+import { BrainError } from '@dsh-brain-core/sdk'
 import type { LlmClient, TokenUsage } from '../contracts/index.ts'
 import type { DetailedLlmClient, DetailedLlmResult } from '../model-accounting/index.ts'
 

@@ -1,5 +1,5 @@
-import { BrainError, type Layer, type MemoryRecord, type RecordPatch, type Viewer } from '@brain-core/sdk'
-import { createUlid } from '@brain-core/shared'
+import { BrainError, type Layer, type MemoryRecord, type RecordPatch, type Viewer } from '@dsh-brain-core/sdk'
+import { createUlid } from '@dsh-brain-core/shared'
 import type {
   ChannelFacts, Clock, IndexHit, IndexQuery, KeywordIndex, LlmClient, MemoryAudit, NewRecord, Page, Policy,
   PolicyDecision, ProfileReader, ProfileSnapshot, RecordFilter, RecordStore,

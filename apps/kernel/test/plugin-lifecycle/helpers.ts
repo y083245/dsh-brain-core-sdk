@@ -5,10 +5,10 @@ import path from 'node:path'
 import type { TestContext } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
-import type { BrainLogger, BrainManifest, PluginStorage } from '@brain-core/sdk'
-import { removeTree } from '@brain-core/satellite-host'
+import type { BrainLogger, BrainManifest, PluginStorage } from '@dsh-brain-core/sdk'
+import { removeTree } from '@dsh-brain-core/satellite-host'
 import type { InstalledPlugin, PluginActivator } from '../../src/contracts/index.ts'
-import { createPluginLifecycle, type PluginLifecycle, type RunCommand } from '../../src/plugin-lifecycle/index.ts'
+import { createPluginLifecycle, type PluginLifecycle, type PluginLifecycleDeps, type RunCommand } from '../../src/plugin-lifecycle/index.ts'
 import type { Logger } from '../../src/log/index.ts'
 import { FakeClock } from '../fakes/index.ts'
 
@@ -181,7 +181,7 @@ export interface Harness {
   readonly warnings: string[]
 }
 
-export async function setup(t: TestContext): Promise<Harness> {
+export async function setup(t: TestContext, options: Partial<Pick<PluginLifecycleDeps, 'sdkDir' | 'brainPackages'>> = {}): Promise<Harness> {
   const root = await mkdtemp(path.join(os.tmpdir(), 'plugin-lifecycle-'))
   t.after(async () => { await removeTree(root) })
   const pluginsDir = path.join(root, 'plugins')
@@ -192,7 +192,8 @@ export async function setup(t: TestContext): Promise<Harness> {
   const warnings: string[] = []
   const lifecycle = createPluginLifecycle({
     pluginsDir,
-    sdkDir: SDK_DIR,
+    sdkDir: options.sdkDir ?? SDK_DIR,
+    brainPackages: options.brainPackages,
     activator,
     storageFor: (id) => {
       let storage = storages.get(id)

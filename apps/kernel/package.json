@@ -1,5 +1,5 @@
 {
-  "name": "@brain-core/kernel",
+  "name": "@dsh-brain-core/kernel",
   "version": "0.0.0",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -19,12 +19,12 @@
     "brain": "./src/cli.ts"
   },
   "dependencies": {
-    "@brain-core/chat-kit": "workspace:*",
-    "@brain-core/console": "workspace:*",
-    "@brain-core/satellite-host": "workspace:*",
-    "@brain-core/sdk": "workspace:*",
-    "@brain-core/shared": "workspace:*",
-    "@brain-core/testkit": "workspace:*",
+    "@dsh-brain-core/chat-kit": "workspace:*",
+    "@dsh-brain-core/console": "workspace:*",
+    "@dsh-brain-core/satellite-host": "workspace:*",
+    "@dsh-brain-core/sdk": "workspace:*",
+    "@dsh-brain-core/shared": "workspace:*",
+    "@dsh-brain-core/testkit": "workspace:*",
     "@deepseek-ai/cordis": "4.1.0",
     "@modelcontextprotocol/client": "2.2.0"
   }

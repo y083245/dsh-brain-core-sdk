@@ -1,7 +1,7 @@
 // Copyright (c) 2026 xiaoyuan
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 
-import type { PluginHttp, WebSocketEvent } from '@brain-core/sdk'
+import type { PluginHttp, WebSocketEvent } from '@dsh-brain-core/sdk'
 import { OneBotHealth } from './health.ts'
 import { normalizeAccountId, type OneBotEvent } from './types.ts'
 

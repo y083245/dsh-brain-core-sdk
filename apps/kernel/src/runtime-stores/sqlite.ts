@@ -1,7 +1,7 @@
 import { existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
-import { ensurePrivateDir, hardenFile } from '@brain-core/shared'
+import { ensurePrivateDir, hardenFile } from '@dsh-brain-core/shared'
 
 function errorCode(error: unknown): string | undefined {
   return error instanceof Error && 'code' in error && typeof (error as { code?: unknown }).code === 'string'
